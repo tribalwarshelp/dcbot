@@ -9,8 +9,9 @@ type Tribe struct {
 }
 
 type TribeFilter struct {
-	ID     []string
-	Limit  int      `urlstruct:",nowhere"`
-	Offset int      `urlstruct:",nowhere"`
-	Order  []string `urlstruct:",nowhere"`
+	ID       []int
+	ServerID []string
+	Limit    int      `urlstruct:",nowhere"`
+	Offset   int      `urlstruct:",nowhere"`
+	Order    []string `urlstruct:",nowhere"`
 }
