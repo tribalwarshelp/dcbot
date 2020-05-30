@@ -1,0 +1,31 @@
+version: '3.6'
+services:
+  db:
+    image: 'postgres:10.13'
+    container_name: twdcpg
+    networks:
+      - internal
+    volumes:
+      - '/twdcpg:/var/lib/postgresql/data'
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=twdcbot
+      - TZ=UTC
+  bot:
+    build: ./
+    container_name: twdc
+    networks:
+      - internal
+    environment:
+      - WAIT_HOSTS=db:5432
+      - DB_HOST=db
+      - DB_NAME=twdcbot
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - TZ=UTC
+      - BOT_TOKEN
+
+networks:
+  internal:
+    external: false
