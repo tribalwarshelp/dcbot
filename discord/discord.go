@@ -78,7 +78,9 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	case ListCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleListCommand(m)
 	case LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleLostVillagesCommand(m)
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleConqueredVillagesCommand(m)
 	}
 }
 
@@ -86,19 +88,32 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 	s.sendHelpMessage(m.Author.Mention(), m.ChannelID)
 }
 
-func (s *Session) handleListCommand(m *discordgo.MessageCreate) {
-	tribes, _, err := s.cfg.TribeRepository.Fetch(context.Background(), &models.TribeFilter{
-		ServerID: []string{m.GuildID},
-	})
+func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate) {
+	server := &models.Server{
+		ID: m.GuildID,
+	}
+	err := s.cfg.ServerRepository.Store(context.Background(), server)
 	if err != nil {
 		return
 	}
-	msg := m.Author.Mention() + " ```ID w bazie - Świat - ID plemienia \n\n"
-	for _, tribe := range tribes {
-		msg += fmt.Sprintf(">>> %d - %s - %d\n", tribe.ID, tribe.World, tribe.TribeID)
+	server.LostVillagesChannelID = m.ChannelID
+	go s.cfg.ServerRepository.Update(context.Background(), server)
+	s.sendMessage(m.ChannelID,
+		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o straconych wioskach.", m.Author.Mention()))
+}
+
+func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate) {
+	server := &models.Server{
+		ID: m.GuildID,
 	}
-	msg += "```"
-	s.sendMessage(m.ChannelID, msg)
+	err := s.cfg.ServerRepository.Store(context.Background(), server)
+	if err != nil {
+		return
+	}
+	server.ConqueredVillagesChannelID = m.ChannelID
+	go s.cfg.ServerRepository.Update(context.Background(), server)
+	s.sendMessage(m.ChannelID,
+		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o podbitych wioskach.", m.Author.Mention()))
 }
 
 func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
@@ -175,6 +190,21 @@ func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string
 	})
 
 	s.sendMessage(m.ChannelID, m.Author.Mention()+` Usunięto.`)
+}
+
+func (s *Session) handleListCommand(m *discordgo.MessageCreate) {
+	tribes, _, err := s.cfg.TribeRepository.Fetch(context.Background(), &models.TribeFilter{
+		ServerID: []string{m.GuildID},
+	})
+	if err != nil {
+		return
+	}
+	msg := m.Author.Mention() + " ```ID w bazie - Świat - ID plemienia \n\n"
+	for _, tribe := range tribes {
+		msg += fmt.Sprintf(">>> %d - %s - %d\n", tribe.ID, tribe.World, tribe.TribeID)
+	}
+	msg += "```"
+	s.sendMessage(m.ChannelID, msg)
 }
 
 func (s *Session) Close() error {
