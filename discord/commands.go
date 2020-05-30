@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -24,7 +25,19 @@ func (cmd Command) WithPrefix(prefix string) string {
 }
 
 func (s *Session) sendHelpMessage(mention, channelID string) {
-	s.SendMessage(channelID, mention+" zaraz ogarnę help cmd")
+	s.SendMessage(channelID, mention+"```Dostępne komendy \n"+fmt.Sprintf(`
+- %s [świat] [id] - dodaje plemię z danego świata do obserwowanych
+- %s - wyświetla wszystkie obserwowane plemiona
+- %s [id z %s] - usuwa plemię z obserwowanych
+- %s - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
+- %s - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
+	`,
+		AddCommand.WithPrefix(s.cfg.CommandPrefix),
+		ListCommand.WithPrefix(s.cfg.CommandPrefix),
+		DeleteCommand.WithPrefix(s.cfg.CommandPrefix),
+		ListCommand.WithPrefix(s.cfg.CommandPrefix),
+		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+		ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix))+"```")
 }
 
 func (s *Session) sendUnknownCommandError(mention, channelID string, command ...string) {
