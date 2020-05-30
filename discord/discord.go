@@ -98,7 +98,7 @@ func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate) {
 	}
 	server.LostVillagesChannelID = m.ChannelID
 	go s.cfg.ServerRepository.Update(context.Background(), server)
-	s.sendMessage(m.ChannelID,
+	s.SendMessage(m.ChannelID,
 		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o straconych wioskach.", m.Author.Mention()))
 }
 
@@ -112,7 +112,7 @@ func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate) {
 	}
 	server.ConqueredVillagesChannelID = m.ChannelID
 	go s.cfg.ServerRepository.Update(context.Background(), server)
-	s.sendMessage(m.ChannelID,
+	s.SendMessage(m.ChannelID,
 		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o podbitych wioskach.", m.Author.Mention()))
 }
 
@@ -122,7 +122,7 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[2:argsLength]...)
 		return
 	} else if argsLength < 2 {
-		s.sendMessage(m.ChannelID,
+		s.SendMessage(m.ChannelID,
 			fmt.Sprintf("%s %s [świat] [id plemienia]",
 				m.Author.Mention(),
 				AddCommand.WithPrefix(s.cfg.CommandPrefix)))
@@ -131,7 +131,7 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 	world := args[0]
 	id, err := strconv.Atoi(args[1])
 	if err != nil {
-		s.sendMessage(m.ChannelID,
+		s.SendMessage(m.ChannelID,
 			fmt.Sprintf("%s %s [świat] [id plemienia]",
 				m.Author.Mention(),
 				AddCommand.WithPrefix(s.cfg.CommandPrefix)))
@@ -142,11 +142,11 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 	}
 	err = s.cfg.ServerRepository.Store(context.Background(), server)
 	if err != nil {
-		s.sendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
+		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
 		return
 	}
 	if len(server.Tribes) >= TribesPerServer {
-		s.sendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion (%d/%d).`, TribesPerServer, TribesPerServer))
+		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion (%d/%d).`, TribesPerServer, TribesPerServer))
 		return
 	}
 	err = s.cfg.TribeRepository.Store(context.Background(), &models.Tribe{
@@ -155,11 +155,11 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 		ServerID: server.ID,
 	})
 	if err != nil {
-		s.sendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
+		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
 		return
 	}
 
-	s.sendMessage(m.ChannelID, m.Author.Mention()+` Dodano.`)
+	s.SendMessage(m.ChannelID, m.Author.Mention()+` Dodano.`)
 }
 
 func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string) {
@@ -168,7 +168,7 @@ func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string
 		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
 		return
 	} else if argsLength < 1 {
-		s.sendMessage(m.ChannelID,
+		s.SendMessage(m.ChannelID,
 			fmt.Sprintf(`%s %s [id z tw!list]`,
 				m.Author.Mention(),
 				DeleteCommand.WithPrefix(s.cfg.CommandPrefix)))
@@ -177,7 +177,7 @@ func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string
 
 	id, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.sendMessage(m.ChannelID,
+		s.SendMessage(m.ChannelID,
 			fmt.Sprintf(`%s %s [id z tw!list]`,
 				m.Author.Mention(),
 				DeleteCommand.WithPrefix(s.cfg.CommandPrefix)))
@@ -189,7 +189,7 @@ func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string
 		ID:       []int{id},
 	})
 
-	s.sendMessage(m.ChannelID, m.Author.Mention()+` Usunięto.`)
+	s.SendMessage(m.ChannelID, m.Author.Mention()+` Usunięto.`)
 }
 
 func (s *Session) handleListCommand(m *discordgo.MessageCreate) {
@@ -204,7 +204,7 @@ func (s *Session) handleListCommand(m *discordgo.MessageCreate) {
 		msg += fmt.Sprintf(">>> %d - %s - %d\n", tribe.ID, tribe.World, tribe.TribeID)
 	}
 	msg += "```"
-	s.sendMessage(m.ChannelID, msg)
+	s.SendMessage(m.ChannelID, msg)
 }
 
 func (s *Session) Close() error {

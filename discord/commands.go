@@ -24,13 +24,13 @@ func (cmd Command) WithPrefix(prefix string) string {
 }
 
 func (s *Session) sendHelpMessage(mention, channelID string) {
-	s.sendMessage(channelID, mention+" zaraz ogarnę help cmd")
+	s.SendMessage(channelID, mention+" zaraz ogarnę help cmd")
 }
 
 func (s *Session) sendUnknownCommandError(mention, channelID string, command ...string) {
-	s.sendMessage(channelID, mention+` Nieznana komenda: `+strings.Join(command, " "))
+	s.SendMessage(channelID, mention+` Nieznana komenda: `+strings.Join(command, " "))
 }
 
-func (s *Session) sendMessage(channelID, message string) {
+func (s *Session) SendMessage(channelID, message string) {
 	s.dg.ChannelMessageSend(channelID, message)
 }

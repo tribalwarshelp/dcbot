@@ -31,12 +31,34 @@ type Conquer struct {
 	ConqueredAt       time.Time
 }
 
+type Conquers []*Conquer
+
+func (c Conquers) LostVillages(tribeID int) Conquers {
+	filtered := Conquers{}
+	for _, conquer := range c {
+		if conquer.OldOwnerTribeID == tribeID && conquer.OldOwnerTribeID != conquer.NewOwnerTribeID {
+			filtered = append(filtered, conquer)
+		}
+	}
+	return filtered
+}
+
+func (c Conquers) ConqueredVillages(tribeID int) Conquers {
+	filtered := Conquers{}
+	for _, conquer := range c {
+		if conquer.NewOwnerTribeID == tribeID && conquer.NewOwnerTribeID != conquer.OldOwnerTribeID {
+			filtered = append(filtered, conquer)
+		}
+	}
+	return filtered
+}
+
 type Scraper struct {
 	worlds    []string
 	since     time.Time
 	collector *colly.Collector
 	mutex     sync.Mutex
-	result    map[string][]*Conquer
+	result    map[string]Conquers
 }
 
 func New(worlds []string, since time.Time) *Scraper {
@@ -117,8 +139,8 @@ func (s *Scraper) handleHTML(row *colly.HTMLElement) {
 	s.mutex.Unlock()
 }
 
-func (s *Scraper) Scrap() map[string][]*Conquer {
-	s.result = make(map[string][]*Conquer)
+func (s *Scraper) Scrap() map[string]Conquers {
+	s.result = make(map[string]Conquers)
 	s.collector.OnHTML(".r1", s.handleHTML)
 	s.collector.OnHTML(".r2", s.handleHTML)
 

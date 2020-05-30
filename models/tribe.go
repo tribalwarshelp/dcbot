@@ -8,6 +8,17 @@ type Tribe struct {
 	Server   *Server `json:"server,omitempty" gqlgen:"server"`
 }
 
+type Tribes []*Tribe
+
+func (t Tribes) Contains(world string, id int) bool {
+	for _, tribe := range t {
+		if tribe.TribeID == id && tribe.World == world {
+			return true
+		}
+	}
+	return false
+}
+
 type TribeFilter struct {
 	ID       []int
 	ServerID []string

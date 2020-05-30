@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	_cron "twdcbot/cron"
 	"twdcbot/discord"
 	"twdcbot/mode"
 	server_repository "twdcbot/server/repository"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/go-pg/pg/v10"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,7 +49,7 @@ func main() {
 	sess, err := discord.New(discord.SessionConfig{
 		Token:            os.Getenv("BOT_TOKEN"),
 		CommandPrefix:    "tw!",
-		Status:           "Twstats",
+		Status:           "Tribalwars | tw!help",
 		TribeRepository:  tribeRepo,
 		ServerRepository: serverRepo,
 	})
@@ -56,32 +58,18 @@ func main() {
 	}
 	defer sess.Close()
 
-	// for world, conquers := range scraper.New([]string{"pl149", "pl150"}, time.Now().Add(time.Minute*-10)).Scrap() {
-	// 	fmt.Print("\n\n", world, "\n\n")
-	// 	for _, c := range conquers {
-	// 		log.Print(c.ConqueredAt,
-	// 			" | ",
-	// 			c.VillageID,
-	// 			" | ",
-	// 			c.Village,
-	// 			" | ",
-	// 			c.OldOwnerID,
-	// 			" | ",
-	// 			c.OldOwnerName,
-	// 			" | ",
-	// 			c.OldOwnerTribeID,
-	// 			" | ",
-	// 			c.OldOwnerTribeName,
-	// 			" | ",
-	// 			c.NewOwnerID,
-	// 			" | ",
-	// 			c.NewOwnerName,
-	// 			" | ",
-	// 			c.NewOwnerTribeID,
-	// 			" | ",
-	// 			c.NewOwnerTribeName)
-	// 	}
-	// }
+	c := cron.New(cron.WithChain(
+		cron.SkipIfStillRunning(cron.VerbosePrintfLogger(log.New(os.Stdout, "cron: ", log.LstdFlags))),
+	))
+	_cron.AttachHandlers(c, _cron.Config{
+		ServerRepo: serverRepo,
+		TribeRepo:  tribeRepo,
+		Discord:    sess,
+	})
+	go func() {
+		c.Run()
+	}()
+	defer c.Stop()
 
 	log.Print("Bot is waiting for your actions!")
 
