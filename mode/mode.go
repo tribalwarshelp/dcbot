@@ -12,8 +12,7 @@ const (
 var mode = DevelopmentMode
 
 func init() {
-	mode := os.Getenv(EnvMode)
-	Set(mode)
+	Set(os.Getenv(EnvMode))
 }
 
 func Set(value string) {

@@ -33,25 +33,25 @@ func AttachHandlers(c *cron.Cron, cfg Config) {
 		tribeRepo:  cfg.TribeRepo,
 		discord:    cfg.Discord,
 	}
-	c.AddFunc("@every 1m", h.checkConquers)
+	c.AddFunc("@every 1m", h.checkEnnoblements)
 }
 
-func (h *handler) checkConquers() {
+func (h *handler) checkEnnoblements() {
 	worlds, err := h.tribeRepo.FetchWorlds(context.Background())
 	if err != nil {
-		log.Print("checkConquers: " + err.Error())
+		log.Print("checkEnnoblements: " + err.Error())
 		return
 	}
-	log.Print("checkConquers: worlds: ", worlds)
+	log.Print("checkEnnoblements: worlds: ", worlds)
 	servers, total, err := h.serverRepo.Fetch(context.Background(), nil)
 	if err != nil {
-		log.Print("checkConquers: " + err.Error())
+		log.Print("checkEnnoblements: " + err.Error())
 		return
 	}
-	log.Print("checkConquers: total number of servers: ", total)
+	log.Print("checkEnnoblements: total number of servers: ", total)
 	data := scraper.New(worlds, h.since).Scrap()
 	h.since = time.Now()
-	log.Print("checkConquers: scrapped data: ", data)
+	log.Print("checkEnnoblements: scrapped data: ", data)
 	for _, server := range servers {
 		if server.ConqueredVillagesChannelID == "" && server.LostVillagesChannelID == "" {
 			continue
