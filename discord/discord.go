@@ -212,6 +212,14 @@ func (s *Session) Close() error {
 }
 
 func (s *Session) memberHasPermission(guildID string, userID string, permission int) (bool, error) {
+	guild, err := s.dg.State.Guild(guildID)
+	if err != nil {
+		return false, err
+	}
+	if guild.OwnerID == userID {
+		return true, nil
+	}
+
 	member, err := s.dg.State.Member(guildID, userID)
 	if err != nil {
 		if member, err = s.dg.GuildMember(guildID, userID); err != nil {
