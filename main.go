@@ -14,7 +14,6 @@ import (
 	"github.com/go-pg/pg/v10"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
-	"github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -35,7 +34,7 @@ func main() {
 	})
 	defer func() {
 		if err := db.Close(); err != nil {
-			logrus.Fatal(err)
+			log.Fatal(err)
 		}
 	}()
 	serverRepo, err := server_repository.NewPgRepo(db)
@@ -77,7 +76,7 @@ func main() {
 	signal.Notify(channel, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT)
 	<-channel
 
-	logrus.Info("shutting down")
+	log.Print("shutting down")
 	os.Exit(0)
 
 }

@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 	"twdcbot/tribalwars"
+	"twdcbot/utils"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
@@ -17,7 +18,7 @@ const (
 	pathEnnoblementsLive = "/%s/index.php?page=ennoblements&live=live"
 )
 
-type Conquer struct {
+type Conquest struct {
 	Village           string
 	VillageID         int
 	NewOwnerID        int
@@ -31,10 +32,10 @@ type Conquer struct {
 	ConqueredAt       time.Time
 }
 
-type Conquers []*Conquer
+type Conquests []*Conquest
 
-func (c Conquers) LostVillages(tribeID int) Conquers {
-	filtered := Conquers{}
+func (c Conquests) LostVillages(tribeID int) Conquests {
+	filtered := Conquests{}
 	for _, conquer := range c {
 		if conquer.OldOwnerTribeID == tribeID && conquer.OldOwnerTribeID != conquer.NewOwnerTribeID {
 			filtered = append(filtered, conquer)
@@ -43,8 +44,8 @@ func (c Conquers) LostVillages(tribeID int) Conquers {
 	return filtered
 }
 
-func (c Conquers) ConqueredVillages(tribeID int) Conquers {
-	filtered := Conquers{}
+func (c Conquests) ConqueredVillages(tribeID int) Conquests {
+	filtered := Conquests{}
 	for _, conquer := range c {
 		if conquer.NewOwnerTribeID == tribeID && conquer.NewOwnerTribeID != conquer.OldOwnerTribeID {
 			filtered = append(filtered, conquer)
@@ -58,7 +59,7 @@ type Scraper struct {
 	since     time.Time
 	collector *colly.Collector
 	mutex     sync.Mutex
-	result    map[string]Conquers
+	result    map[string]Conquests
 }
 
 func New(worlds []string, since time.Time) *Scraper {
@@ -99,16 +100,21 @@ func (s *Scraper) getIDFromNodeHref(node *goquery.Selection) int {
 func (s *Scraper) handleHTML(row *colly.HTMLElement) {
 	world := strings.Split(row.Request.URL.Path, "/")[1]
 	var err error
-	c := &Conquer{}
+	c := &Conquest{}
+
 	conqueredAtString := strings.TrimSpace(row.DOM.Find("td:last-child").Text())
-	location := Locations[tribalwars.LanguageCodeFromWorldName(world)]
-	c.ConqueredAt, err = time.ParseInLocation("2006-01-02 - 15:04:05", conqueredAtString, location)
+	location := utils.GetLocation(tribalwars.LanguageCodeFromWorldName(world))
+	c.ConqueredAt, err = time.ParseInLocation("2006-01-02 - 15:04:05",
+		conqueredAtString,
+		location)
 	if err != nil || c.ConqueredAt.Before(s.since.In(location)) {
 		return
 	}
+
 	villageAnchor := row.DOM.Find("a:first-child").First()
 	c.VillageID = s.getIDFromNodeHref(villageAnchor)
 	c.Village = strings.TrimSpace(villageAnchor.Text())
+
 	oldOwnerNode := row.DOM.Find("td:nth-child(3) a:first-child")
 	if len(oldOwnerNode.Nodes) == 0 {
 		c.OldOwnerName = "-"
@@ -124,6 +130,7 @@ func (s *Scraper) handleHTML(row *colly.HTMLElement) {
 			c.OldOwnerTribeName = "-"
 		}
 	}
+
 	newOwnerNode := row.DOM.Find("td:nth-child(4) a:first-child")
 	c.NewOwnerID = s.getIDFromNodeHref(newOwnerNode)
 	c.NewOwnerName = strings.TrimSpace(newOwnerNode.Text())
@@ -134,13 +141,14 @@ func (s *Scraper) handleHTML(row *colly.HTMLElement) {
 	} else {
 		c.NewOwnerTribeName = "-"
 	}
+
 	s.mutex.Lock()
 	s.result[world] = append(s.result[world], c)
 	s.mutex.Unlock()
 }
 
-func (s *Scraper) Scrap() map[string]Conquers {
-	s.result = make(map[string]Conquers)
+func (s *Scraper) Scrap() map[string]Conquests {
+	s.result = make(map[string]Conquests)
 	s.collector.OnHTML(".r1", s.handleHTML)
 	s.collector.OnHTML(".r2", s.handleHTML)
 

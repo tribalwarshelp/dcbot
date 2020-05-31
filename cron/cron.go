@@ -8,7 +8,9 @@ import (
 	"twdcbot/discord"
 	"twdcbot/scraper"
 	"twdcbot/server"
+	"twdcbot/tribalwars"
 	"twdcbot/tribe"
+	"twdcbot/utils"
 
 	"github.com/robfig/cron/v3"
 )
@@ -57,22 +59,22 @@ func (h *handler) checkEnnoblements() {
 			continue
 		}
 		for _, tribe := range server.Tribes {
-			conquers, ok := data[tribe.World]
+			conquests, ok := data[tribe.World]
 			if ok {
 				if server.LostVillagesChannelID != "" {
-					for _, conquer := range conquers.LostVillages(tribe.TribeID) {
-						if server.Tribes.Contains(tribe.World, conquer.NewOwnerTribeID) {
+					for _, conquest := range conquests.LostVillages(tribe.TribeID) {
+						if server.Tribes.Contains(tribe.World, conquest.NewOwnerTribeID) {
 							continue
 						}
-						h.discord.SendMessage(server.LostVillagesChannelID, formatMsgAboutVillageLost(conquer))
+						h.discord.SendMessage(server.LostVillagesChannelID, formatMsgAboutVillageLost(tribe.World, conquest))
 					}
 				}
 				if server.ConqueredVillagesChannelID != "" {
-					for _, conquer := range conquers.ConqueredVillages(tribe.TribeID) {
-						if server.Tribes.Contains(tribe.World, conquer.OldOwnerTribeID) {
+					for _, conquest := range conquests.ConqueredVillages(tribe.TribeID) {
+						if server.Tribes.Contains(tribe.World, conquest.OldOwnerTribeID) {
 							continue
 						}
-						h.discord.SendMessage(server.ConqueredVillagesChannelID, formatMsgAboutVillageConquered(conquer))
+						h.discord.SendMessage(server.ConqueredVillagesChannelID, formatMsgAboutVillageConquest(tribe.World, conquest))
 					}
 				}
 			}
@@ -80,20 +82,28 @@ func (h *handler) checkEnnoblements() {
 	}
 }
 
-func formatMsgAboutVillageLost(conquer *scraper.Conquer) string {
-	return fmt.Sprintf(`Wioska %s (właściciel: %s [%s]) została stracona na rzecz gracza %s (%s)`,
-		conquer.Village,
-		conquer.OldOwnerName,
-		conquer.OldOwnerTribeName,
-		conquer.NewOwnerName,
-		conquer.NewOwnerTribeName)
+func formatDateOfConquest(loc *time.Location, t time.Time) string {
+	return t.In(loc).Format("15:04:05")
 }
 
-func formatMsgAboutVillageConquered(conquer *scraper.Conquer) string {
-	return fmt.Sprintf(`Gracz %s (%s) podbił wioskę %s od gracza %s (%s)`,
-		conquer.NewOwnerName,
-		conquer.NewOwnerTribeName,
-		conquer.Village,
-		conquer.OldOwnerName,
-		conquer.OldOwnerTribeName)
+func formatMsgAboutVillageLost(world string, conquest *scraper.Conquest) string {
+	return fmt.Sprintf(`**%s** %s: Wioska %s (właściciel: %s [%s]) została stracona na rzecz gracza %s (%s)`,
+		world,
+		formatDateOfConquest(utils.GetLocation(tribalwars.LanguageCodeFromWorldName(world)), conquest.ConqueredAt),
+		conquest.Village,
+		conquest.OldOwnerName,
+		conquest.OldOwnerTribeName,
+		conquest.NewOwnerName,
+		conquest.NewOwnerTribeName)
+}
+
+func formatMsgAboutVillageConquest(world string, conquest *scraper.Conquest) string {
+	return fmt.Sprintf(`**%s** %s: Gracz %s (%s) podbił wioskę %s od gracza %s (%s)`,
+		world,
+		formatDateOfConquest(utils.GetLocation(tribalwars.LanguageCodeFromWorldName(world)), conquest.ConqueredAt),
+		conquest.NewOwnerName,
+		conquest.NewOwnerTribeName,
+		conquest.Village,
+		conquest.OldOwnerName,
+		conquest.OldOwnerTribeName)
 }
