@@ -5,11 +5,13 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	_cron "twdcbot/cron"
-	"twdcbot/discord"
-	"twdcbot/mode"
-	server_repository "twdcbot/server/repository"
-	tribe_repository "twdcbot/tribe/repository"
+
+	_cron "github.com/tribalwarshelp/dcbot/cron"
+	"github.com/tribalwarshelp/dcbot/discord"
+	server_repository "github.com/tribalwarshelp/dcbot/server/repository"
+	tribe_repository "github.com/tribalwarshelp/dcbot/tribe/repository"
+
+	"github.com/tribalwarshelp/shared/mode"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/joho/godotenv"
@@ -77,6 +79,4 @@ func main() {
 	<-channel
 
 	log.Print("shutting down")
-	os.Exit(0)
-
 }

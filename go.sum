@@ -120,6 +120,8 @@ github.com/temoto/robotstxt v1.1.1 h1:Gh8RCs8ouX3hRSxxK7B1mO5RFByQ4CmJZDwgom++Ja
 github.com/temoto/robotstxt v1.1.1/go.mod h1:+1AmkuG3IYkh1kv0d2qEB9Le88ehNO0zwOr3ujewlOo=
 github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc h1:9lRDQMhESg+zvGYmW5DyG0UqvY96Bu5QYsTLvCHdrgo=
 github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc/go.mod h1:bciPuU6GHm1iF1pBvUfxfsH0Wmnc2VbpgvbI9ZWuIRs=
+github.com/tribalwarshelp/shared v0.0.0-20200602060635-0b3cb090edc5 h1:LeReuMU2zNi7tftm8nytrmkuD4BtLFUYZ3nlSZLE6ow=
+github.com/tribalwarshelp/shared v0.0.0-20200602060635-0b3cb090edc5/go.mod h1:tf+2yTHasV6jAF3V2deZ9slNoCyBzC0fMdTjI7clf6Y=
 github.com/vmihailenco/bufpool v0.1.5/go.mod h1:fL9i/PRTuS7AELqAHwSU1Zf1c70xhkhGe/cD5ud9pJk=
 github.com/vmihailenco/bufpool v0.1.11 h1:gOq2WmBrq0i2yW5QJ16ykccQ4wH9UyEsgLm6czKAd94=
 github.com/vmihailenco/bufpool v0.1.11/go.mod h1:AFf/MOy3l2CFTKbxwt0mp2MwnqjNEs5H/UxrkA5jxTQ=

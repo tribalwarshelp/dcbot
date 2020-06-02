@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"twdcbot/models"
-	"twdcbot/server"
-	"twdcbot/tribe"
+
+	"github.com/tribalwarshelp/dcbot/models"
+	"github.com/tribalwarshelp/dcbot/server"
+	"github.com/tribalwarshelp/dcbot/tribe"
 
 	"github.com/bwmarrin/discordgo"
 )

@@ -2,8 +2,9 @@ package repository
 
 import (
 	"context"
-	"twdcbot/models"
-	"twdcbot/tribe"
+
+	"github.com/tribalwarshelp/dcbot/models"
+	"github.com/tribalwarshelp/dcbot/tribe"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"

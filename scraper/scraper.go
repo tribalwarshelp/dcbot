@@ -7,8 +7,9 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"twdcbot/tribalwars"
-	"twdcbot/utils"
+
+	"github.com/tribalwarshelp/dcbot/tribalwars"
+	"github.com/tribalwarshelp/dcbot/utils"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"

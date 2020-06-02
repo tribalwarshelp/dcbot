@@ -2,7 +2,8 @@ package server
 
 import (
 	"context"
-	"twdcbot/models"
+
+	"github.com/tribalwarshelp/dcbot/models"
 )
 
 type Repository interface {

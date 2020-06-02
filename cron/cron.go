@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log"
 	"time"
-	"twdcbot/discord"
-	"twdcbot/scraper"
-	"twdcbot/server"
-	"twdcbot/tribalwars"
-	"twdcbot/tribe"
-	"twdcbot/utils"
+
+	"github.com/tribalwarshelp/dcbot/discord"
+	"github.com/tribalwarshelp/dcbot/scraper"
+	"github.com/tribalwarshelp/dcbot/server"
+	"github.com/tribalwarshelp/dcbot/tribalwars"
+	"github.com/tribalwarshelp/dcbot/tribe"
+	"github.com/tribalwarshelp/dcbot/utils"
 
 	"github.com/robfig/cron/v3"
 )
