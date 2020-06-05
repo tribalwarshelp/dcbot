@@ -46,7 +46,7 @@ func newMessageData(world string, ennoblement *shared_models.Ennoblement) messag
 }
 
 func formatMsgAboutVillageLost(msgData messageData) string {
-	return fmt.Sprintf(`**%s** %s: Wioska %s gracza %s [%s] została stracona na rzecz %s (%s)`,
+	return fmt.Sprintf(`**%s** %s: Wioska **%s** gracza **%s** (**%s**) została stracona na rzecz **%s** (**%s**)`,
 		msgData.world,
 		msgData.date,
 		msgData.village,
@@ -57,7 +57,7 @@ func formatMsgAboutVillageLost(msgData messageData) string {
 }
 
 func formatMsgAboutVillageConquest(msgData messageData) string {
-	return fmt.Sprintf(`**%s** %s: Gracz %s (%s) podbił wioskę %s od gracza %s (%s)`,
+	return fmt.Sprintf(`**%s** %s: Gracz **%s** (**%s**) podbił wioskę **%s** od gracza **%s** (**%s**)`,
 		msgData.world,
 		msgData.date,
 		msgData.newOwnerName,
