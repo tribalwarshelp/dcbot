@@ -28,3 +28,7 @@ func isPlayerTribeNil(player *shared_models.Player) bool {
 func isVillageNil(village *shared_models.Village) bool {
 	return village == nil
 }
+
+func formatDateOfConquest(loc *time.Location, t time.Time) string {
+	return t.In(loc).Format("15:04:05")
+}
