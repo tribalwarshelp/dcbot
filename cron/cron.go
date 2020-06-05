@@ -31,7 +31,7 @@ type handler struct {
 
 func AttachHandlers(c *cron.Cron, cfg Config) {
 	h := &handler{
-		since:      time.Now().Add(-30 * time.Minute),
+		since:      time.Now(),
 		serverRepo: cfg.ServerRepo,
 		tribeRepo:  cfg.TribeRepo,
 		discord:    cfg.Discord,
