@@ -1,4 +1,4 @@
-package tribalwars
+package utils
 
 func LanguageCodeFromWorldName(world string) string {
 	if len(world) < 2 {
