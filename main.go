@@ -6,6 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/tribalwarshelp/golang-sdk/sdk"
+
 	_cron "github.com/tribalwarshelp/dcbot/cron"
 	"github.com/tribalwarshelp/dcbot/discord"
 	server_repository "github.com/tribalwarshelp/dcbot/server/repository"
@@ -27,6 +29,7 @@ func init() {
 }
 
 func main() {
+	api := sdk.New(os.Getenv("API_URI"))
 	//postgres
 	db := pg.Connect(&pg.Options{
 		User:     os.Getenv("DB_USER"),
@@ -53,6 +56,7 @@ func main() {
 		Status:           "Tribalwars | tw!help",
 		TribeRepository:  tribeRepo,
 		ServerRepository: serverRepo,
+		API:              api,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -66,6 +70,7 @@ func main() {
 		ServerRepo: serverRepo,
 		TribeRepo:  tribeRepo,
 		Discord:    sess,
+		API:        api,
 	})
 	go func() {
 		c.Run()
