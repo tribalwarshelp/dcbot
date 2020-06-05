@@ -19,7 +19,8 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/temoto/robotstxt v1.1.1 // indirect
-	github.com/tribalwarshelp/shared v0.0.0-20200602060635-0b3cb090edc5
+	github.com/tribalwarshelp/golang-sdk v0.0.0-20200604163817-64920bab73bb // indirect
+	github.com/tribalwarshelp/shared v0.0.0-20200604161459-deeeccf99815
 	golang.org/x/net v0.0.0-20200528225125-3c3fba18258b // indirect
 	google.golang.org/protobuf v1.24.0 // indirect
 )

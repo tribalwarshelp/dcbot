@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/tribalwarshelp/golang-sdk/sdk"
+
 	"github.com/tribalwarshelp/dcbot/discord"
 	"github.com/tribalwarshelp/dcbot/scraper"
 	"github.com/tribalwarshelp/dcbot/server"
@@ -20,6 +22,7 @@ type Config struct {
 	ServerRepo server.Repository
 	TribeRepo  tribe.Repository
 	Discord    *discord.Session
+	API        *sdk.SDK
 }
 
 type handler struct {
