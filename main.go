@@ -29,7 +29,7 @@ func init() {
 }
 
 func main() {
-	api := sdk.New(os.Getenv("API_URI"))
+	api := sdk.New(os.Getenv("API_URL"))
 	//postgres
 	db := pg.Connect(&pg.Options{
 		User:     os.Getenv("DB_USER"),

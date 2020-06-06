@@ -1,8 +1,12 @@
 package utils
 
-func LanguageCodeFromWorldName(world string) string {
+import (
+	"github.com/tribalwarshelp/shared/models"
+)
+
+func LanguageCodeFromWorldName(world string) models.LanguageTag {
 	if len(world) < 2 {
 		return ""
 	}
-	return world[0:2]
+	return models.LanguageTag(world[0:2])
 }

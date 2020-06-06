@@ -30,5 +30,13 @@ func isVillageNil(village *shared_models.Village) bool {
 }
 
 func formatDateOfConquest(loc *time.Location, t time.Time) string {
-	return t.In(loc).Format("15:04:05")
+	return t.In(loc).Format(time.RFC3339)
+}
+
+func getLocation(timezone string) *time.Location {
+	loc, err := time.LoadLocation(timezone)
+	if err != nil {
+		return time.UTC
+	}
+	return loc
 }
