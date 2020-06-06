@@ -32,7 +32,7 @@ type handler struct {
 	api        *sdk.SDK
 }
 
-func AttachHandlers(c *cron.Cron, cfg Config) {
+func Attach(c *cron.Cron, cfg Config) {
 	h := &handler{
 		since:      time.Now(),
 		serverRepo: cfg.ServerRepo,

@@ -66,7 +66,7 @@ func main() {
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cron.VerbosePrintfLogger(log.New(os.Stdout, "cron: ", log.LstdFlags))),
 	))
-	_cron.AttachHandlers(c, _cron.Config{
+	_cron.Attach(c, _cron.Config{
 		ServerRepo: serverRepo,
 		TribeRepo:  tribeRepo,
 		Discord:    sess,
