@@ -50,7 +50,7 @@ func newMessageData(cfg newMessageDataConfig) messageData {
 			cfg.ennoblement.Village.Name,
 			cfg.ennoblement.Village.X,
 			cfg.ennoblement.Village.Y)
-		data.villageURL = utils.FormatVillageURL(cfg.world, cfg.host, cfg.ennoblement.VillageID)
+		data.villageURL = utils.FormatVillageURL(cfg.world, cfg.host, cfg.ennoblement.Village.ID)
 	}
 	if !isPlayerNil(cfg.ennoblement.OldOwner) {
 		data.oldOwnerName = cfg.ennoblement.OldOwner.Name
