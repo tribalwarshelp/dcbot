@@ -95,6 +95,14 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 }
 
 func (s *Session) memberHasPermission(guildID string, userID string, permission int) (bool, error) {
+	member, err := s.dg.State.Member(guildID, userID)
+	if err != nil {
+		if member, err = s.dg.GuildMember(guildID, userID); err != nil {
+			return false, err
+		}
+	}
+
+	// check if a user is guild owner
 	guild, err := s.dg.State.Guild(guildID)
 	if err != nil {
 		if guild, err = s.dg.Guild(guildID); err != nil {
@@ -103,13 +111,6 @@ func (s *Session) memberHasPermission(guildID string, userID string, permission 
 	}
 	if guild.OwnerID == userID {
 		return true, nil
-	}
-
-	member, err := s.dg.State.Member(guildID, userID)
-	if err != nil {
-		if member, err = s.dg.GuildMember(guildID, userID); err != nil {
-			return false, err
-		}
 	}
 
 	// Iterate through the role IDs stored in member.Roles

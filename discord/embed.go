@@ -4,7 +4,7 @@ import "github.com/bwmarrin/discordgo"
 
 // Constants for message embed character limits
 const (
-	discordEmbedColor     = 0x00ff00
+	EmbedColor            = 0x00ff00
 	EmbedLimitTitle       = 256
 	EmbedLimitDescription = 2048
 	EmbedLimitFieldValue  = 1024
@@ -21,7 +21,7 @@ type Embed struct {
 //NewEmbed returns a new embed object
 func NewEmbed() *Embed {
 	return &Embed{&discordgo.MessageEmbed{
-		Color: discordEmbedColor,
+		Color: EmbedColor,
 	}}
 }
 
