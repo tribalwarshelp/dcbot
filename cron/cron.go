@@ -21,7 +21,7 @@ type Config struct {
 
 func Attach(c *cron.Cron, cfg Config) {
 	h := &handler{
-		since:      time.Now().Add(-45 * time.Minute),
+		since:      time.Now(),
 		serverRepo: cfg.ServerRepo,
 		tribeRepo:  cfg.TribeRepo,
 		discord:    cfg.Discord,
