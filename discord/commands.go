@@ -285,22 +285,32 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 		return
 	}
 
+	server, err := s.cfg.API.Servers.Read(world)
+	if err != nil || server == nil {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest nieobsługiwany.`, world))
+		return
+	}
+	if server.Status == shared_models.ServerStatusClosed {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest zamknięty.`, world))
+		return
+	}
+
 	tribe, err := s.cfg.API.Tribes.Read(world, id)
 	if err != nil || tribe == nil {
 		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Plemię o ID: %d nie istnieje na świecie %s.`, id, world))
 		return
 	}
 
-	server := &models.Server{
+	dcServer := &models.Server{
 		ID: m.GuildID,
 	}
-	err = s.cfg.ServerRepository.Store(context.Background(), server)
+	err = s.cfg.ServerRepository.Store(context.Background(), dcServer)
 	if err != nil {
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
 		return
 	}
 
-	if len(server.Tribes) >= TribesPerServer {
+	if len(dcServer.Tribes) >= TribesPerServer {
 		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion (%d/%d).`, TribesPerServer, TribesPerServer))
 		return
 	}
@@ -308,7 +318,7 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 	err = s.cfg.TribeRepository.Store(context.Background(), &models.Tribe{
 		World:    world,
 		TribeID:  id,
-		ServerID: server.ID,
+		ServerID: dcServer.ID,
 	})
 	if err != nil {
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)

@@ -46,10 +46,11 @@ func newMessageData(cfg newMessageDataConfig) messageData {
 		newOwnerTribeTag: "-",
 	}
 	if !isVillageNil(cfg.ennoblement.Village) {
-		data.village = fmt.Sprintf("%s (%d|%d)",
+		data.village = fmt.Sprintf("%s (%d|%d) %s",
 			cfg.ennoblement.Village.Name,
 			cfg.ennoblement.Village.X,
-			cfg.ennoblement.Village.Y)
+			cfg.ennoblement.Village.Y,
+			cfg.ennoblement.Village.Continent())
 		data.villageURL = utils.FormatVillageURL(cfg.world, cfg.host, cfg.ennoblement.Village.ID)
 	}
 	if !isPlayerNil(cfg.ennoblement.OldOwner) {
