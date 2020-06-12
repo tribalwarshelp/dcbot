@@ -15,11 +15,11 @@ import (
 )
 
 type handler struct {
-	since      time.Time
-	serverRepo server.Repository
-	tribeRepo  tribe.Repository
-	discord    *discord.Session
-	api        *sdk.SDK
+	lastEnnobledAt map[string]time.Time
+	serverRepo     server.Repository
+	tribeRepo      tribe.Repository
+	discord        *discord.Session
+	api            *sdk.SDK
 }
 
 func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
@@ -41,7 +41,19 @@ func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
 			log.Printf("%s: %s", w, err.Error())
 			continue
 		}
-		m[w] = filterEnnoblements(es, h.since)
+
+		lastEnnobledAt, ok := h.lastEnnobledAt[w]
+		if !ok {
+			lastEnnobledAt = time.Now()
+		}
+
+		m[w] = filterEnnoblements(es, lastEnnobledAt)
+
+		lastEnnoblement := m[w].getLastEnnoblement()
+		if lastEnnoblement != nil {
+			lastEnnobledAt = lastEnnoblement.EnnobledAt.In(time.UTC)
+		}
+		h.lastEnnobledAt[w] = lastEnnobledAt
 	}
 
 	return m
@@ -90,16 +102,15 @@ func (h *handler) checkLastEnnoblements() {
 
 	langVersions := h.loadLangVersions(worlds)
 
-	data := h.loadEnnoblements(worlds)
-	h.since = time.Now()
-	log.Println("checkLastEnnoblements: loaded ennoblements from", len(data), "tribalwars servers")
+	ennoblements := h.loadEnnoblements(worlds)
+	log.Println("checkLastEnnoblements: loaded ennoblements from", len(ennoblements), "tribalwars servers")
 
 	for _, server := range servers {
 		if server.ConqueredVillagesChannelID == "" && server.LostVillagesChannelID == "" {
 			continue
 		}
 		for _, tribe := range server.Tribes {
-			es, ok := data[tribe.World]
+			es, ok := ennoblements[tribe.World]
 			langVersion, ok2 := langVersions[utils.LanguageCodeFromWorldName(tribe.World)]
 			if ok && ok2 {
 				if server.LostVillagesChannelID != "" {
@@ -112,7 +123,6 @@ func (h *handler) checkLastEnnoblements() {
 							host:        langVersion.Host,
 							world:       tribe.World,
 							ennoblement: ennoblement,
-							timezone:    langVersion.Timezone,
 						}
 						msgData := newMessageData(newMsgDataConfig)
 						h.discord.SendEmbed(server.LostVillagesChannelID,
@@ -135,7 +145,6 @@ func (h *handler) checkLastEnnoblements() {
 							host:        langVersion.Host,
 							world:       tribe.World,
 							ennoblement: ennoblement,
-							timezone:    langVersion.Timezone,
 						}
 						msgData := newMessageData(newMsgDataConfig)
 						h.discord.SendEmbed(server.ConqueredVillagesChannelID,
