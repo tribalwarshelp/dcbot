@@ -32,12 +32,11 @@ type newMessageDataConfig struct {
 	host        string
 	world       string
 	ennoblement *shared_models.Ennoblement
-	timezone    string
 }
 
 func newMessageData(cfg newMessageDataConfig) messageData {
 	data := messageData{
-		date:             formatDateOfConquest(getLocation(cfg.timezone), cfg.ennoblement.EnnobledAt),
+		date:             formatDateOfConquest(cfg.ennoblement.EnnobledAt),
 		world:            cfg.world,
 		village:          "-",
 		oldOwnerName:     "-",

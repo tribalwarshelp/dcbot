@@ -21,11 +21,11 @@ type Config struct {
 
 func Attach(c *cron.Cron, cfg Config) {
 	h := &handler{
-		since:      time.Now(),
-		serverRepo: cfg.ServerRepo,
-		tribeRepo:  cfg.TribeRepo,
-		discord:    cfg.Discord,
-		api:        cfg.API,
+		lastEnnobledAt: make(map[string]time.Time),
+		serverRepo:     cfg.ServerRepo,
+		tribeRepo:      cfg.TribeRepo,
+		discord:        cfg.Discord,
+		api:            cfg.API,
 	}
 	c.AddFunc("@every 1m", h.checkLastEnnoblements)
 }

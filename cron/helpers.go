@@ -29,8 +29,8 @@ func isVillageNil(village *shared_models.Village) bool {
 	return village == nil
 }
 
-func formatDateOfConquest(loc *time.Location, t time.Time) string {
-	return t.In(loc).Format(time.RFC3339)
+func formatDateOfConquest(t time.Time) string {
+	return t.Format(time.RFC3339)
 }
 
 func getLocation(timezone string) *time.Location {

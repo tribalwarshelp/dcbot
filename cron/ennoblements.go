@@ -1,8 +1,18 @@
 package cron
 
-import shared_models "github.com/tribalwarshelp/shared/models"
+import (
+	shared_models "github.com/tribalwarshelp/shared/models"
+)
 
 type ennoblements []*shared_models.Ennoblement
+
+func (e ennoblements) getLastEnnoblement() *shared_models.Ennoblement {
+	length := len(e)
+	if length <= 0 {
+		return nil
+	}
+	return e[length-1]
+}
 
 func (e ennoblements) tribeLostVillages(tribeID int) ennoblements {
 	filtered := ennoblements{}
