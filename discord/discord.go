@@ -81,10 +81,10 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		s.handleHelpCommand(m)
 	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObserveCommand(m, args...)
-	case DeleteCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleDeleteCommand(m, args...)
-	case ListCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleListCommand(m)
+	case UnObserveCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleUnObserveCommand(m, args...)
+	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleObservationsCommand(m)
 	case LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleLostVillagesCommand(m)
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
