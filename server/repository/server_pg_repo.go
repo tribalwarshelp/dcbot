@@ -30,7 +30,7 @@ func (repo *pgRepo) Store(ctx context.Context, server *models.Server) error {
 		Where("id = ?id").
 		Returning("*").
 		Context(ctx).
-		Relation("Tribes").
+		Relation("Observations").
 		SelectOrInsert(); err != nil {
 		return err
 	}

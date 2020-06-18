@@ -6,6 +6,8 @@ import (
 	"math"
 	"strconv"
 
+	"log"
+
 	shared_models "github.com/tribalwarshelp/shared/models"
 
 	"github.com/bwmarrin/discordgo"
@@ -23,8 +25,8 @@ type Command string
 const (
 	HelpCommand              Command = "help"
 	ObserveCommand           Command = "observe"
-	ListCommand              Command = "list"
-	DeleteCommand            Command = "delete"
+	ObservationsCommand      Command = "observations"
+	UnObserveCommand         Command = "unobserve"
 	LostVillagesCommand      Command = "lostvillages"
 	ConqueredVillagesCommand Command = "conqueredvillages"
 	TribeCommand             Command = "tribe"
@@ -71,9 +73,9 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 - %s - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
 				`,
 		ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
-		ListCommand.WithPrefix(s.cfg.CommandPrefix),
-		DeleteCommand.WithPrefix(s.cfg.CommandPrefix),
-		ListCommand.WithPrefix(s.cfg.CommandPrefix),
+		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
+		UnObserveCommand.WithPrefix(s.cfg.CommandPrefix),
+		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 		ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix))
 
@@ -306,6 +308,7 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 	}
 	err = s.cfg.ServerRepository.Store(context.Background(), dcServer)
 	if err != nil {
+		log.Print(err)
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
 		return
 	}
@@ -321,6 +324,7 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 		ServerID: dcServer.ID,
 	})
 	if err != nil {
+		log.Print(err)
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
 		return
 	}
@@ -328,7 +332,7 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 	s.SendMessage(m.ChannelID, m.Author.Mention()+` Dodano.`)
 }
 
-func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleUnObserveCommand(m *discordgo.MessageCreate, args ...string) {
 	if m.GuildID == "" {
 		return
 	}
@@ -344,7 +348,7 @@ func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string
 		s.SendMessage(m.ChannelID,
 			fmt.Sprintf(`%s %s [id z tw!list]`,
 				m.Author.Mention(),
-				DeleteCommand.WithPrefix(s.cfg.CommandPrefix)))
+				UnObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
 
@@ -353,7 +357,7 @@ func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string
 		s.SendMessage(m.ChannelID,
 			fmt.Sprintf(`%s %s [id z tw!list]`,
 				m.Author.Mention(),
-				DeleteCommand.WithPrefix(s.cfg.CommandPrefix)))
+				UnObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
 
@@ -365,7 +369,7 @@ func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string
 	s.SendMessage(m.ChannelID, m.Author.Mention()+` Usunięto.`)
 }
 
-func (s *Session) handleListCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate) {
 	if m.GuildID == "" {
 		return
 	}
