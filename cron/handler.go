@@ -200,7 +200,7 @@ func (h *handler) deleteClosedTribalwarsWorlds() {
 	list, err := h.api.Servers.Browse(&shared_models.ServerFilter{
 		Key:    worlds,
 		Status: []shared_models.ServerStatus{shared_models.ServerStatusClosed},
-	})
+	}, nil)
 	if err != nil {
 		log.Print("deleteClosedTribalwarsWorlds: " + err.Error())
 		return
