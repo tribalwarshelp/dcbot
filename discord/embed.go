@@ -1,6 +1,10 @@
 package discord
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"sync"
+
+	"github.com/bwmarrin/discordgo"
+)
 
 // Constants for message embed character limits
 const (
@@ -251,10 +255,13 @@ func (e *Embed) TruncateFooter() *Embed {
 type EmbedMessage struct {
 	Chunks []string
 	Index  int
+	mutex  sync.Mutex
 }
 
 func (msg *EmbedMessage) Append(m string) {
-	if len(msg.Chunks) < msg.Index+1 {
+	msg.mutex.Lock()
+	defer msg.mutex.Unlock()
+	for len(msg.Chunks) < msg.Index+1 {
 		msg.Chunks = append(msg.Chunks, "")
 	}
 
@@ -268,6 +275,8 @@ func (msg *EmbedMessage) Append(m string) {
 }
 
 func (msg *EmbedMessage) ToMessageEmbedFields() []*discordgo.MessageEmbedField {
+	msg.mutex.Lock()
+	defer msg.mutex.Unlock()
 	fields := []*discordgo.MessageEmbedField{}
 	for _, chunk := range msg.Chunks {
 		fields = append(fields, &discordgo.MessageEmbedField{

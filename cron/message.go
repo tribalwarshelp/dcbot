@@ -75,7 +75,7 @@ func formatMsgLink(text string, url string) string {
 	if url == "" {
 		return text
 	}
-	return fmt.Sprintf("[%s](%s)", text, url)
+	return fmt.Sprintf("[``%s``](%s)", text, url)
 }
 
 func formatMsgAboutVillageLost(msgData messageData) string {
@@ -88,7 +88,7 @@ func formatMsgAboutVillageLost(msgData messageData) string {
 }
 
 func formatMsgAboutVillageConquest(msgData messageData) string {
-	return fmt.Sprintf(`Gracz %s (%s) podbił wioskę %s od gracza %s (%s)`,
+	return fmt.Sprintf("Gracz %s (%s) podbił wioskę %s od gracza %s (%s)",
 		formatMsgLink(msgData.newOwnerName, msgData.newOwnerURL),
 		formatMsgLink(msgData.newOwnerTribeTag, msgData.newOwnerTribeURL),
 		formatMsgLink(msgData.village, msgData.villageURL),

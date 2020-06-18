@@ -6,8 +6,6 @@ import (
 	"math"
 	"strconv"
 
-	"log"
-
 	shared_models "github.com/tribalwarshelp/shared/models"
 
 	"github.com/bwmarrin/discordgo"
@@ -107,7 +105,7 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 	ids := []int{}
 	for _, arg := range args[3:argsLength] {
 		id, err := strconv.Atoi(arg)
-		if err != nil {
+		if err != nil || id <= 0 {
 			continue
 		}
 		ids = append(ids, id)
@@ -160,22 +158,33 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 		Tribe: true,
 	})
 	if err != nil {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie udało się wygenerować listy.", m.Author.Mention()))
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s Wystąpił błąd podczas pobierania danych z API, prosimy spróbować później.", m.Author.Mention()))
 		return
 	}
-	if playersList.Total == 0 {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie znaleziono plemion o podanych ID.", m.Author.Mention()))
+	if playersList == nil || playersList.Total == 0 {
+		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie znaleziono graczy należących do plemion o podanych ID.", m.Author.Mention()))
+		return
+	}
+	totalPages := int(math.Ceil(float64(playersList.Total) / float64(limit)))
+	if page > totalPages {
+		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Przekroczyłeś limit stron (%d/%d).", m.Author.Mention(), page, totalPages))
 		return
 	}
 
-	langVersion, err := s.cfg.API.LangVersions.Read(utils.LanguageCodeFromWorldName(world))
-	if err != nil {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie udało się wygenerować listy.", m.Author.Mention()))
+	langTag := utils.LanguageCodeFromWorldName(world)
+	langVersion, err := s.cfg.API.LangVersions.Read(langTag)
+	if err != nil || langVersion == nil {
+		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie znaleziono wersji językowej: %s.", m.Author.Mention(), langTag))
 		return
 	}
 
 	msg := &EmbedMessage{}
 	for i, player := range playersList.Items {
+		if player == nil {
+			continue
+		}
+
 		rank := 0
 		score := 0
 		switch command {
@@ -196,17 +205,23 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 			score = player.Points
 		}
 
-		msg.Append(fmt.Sprintf("**%d**. [%s](%s) (Plemię: [%s](%s) | Ranking ogólny: **%d** | Wynik: **%d**)\n",
+		tribeTag := "-"
+		tribeURL := "-"
+		if player.Tribe != nil {
+			tribeTag = player.Tribe.Tag
+			tribeURL = utils.FormatTribeURL(world, langVersion.Host, player.Tribe.ID)
+		}
+
+		msg.Append(fmt.Sprintf("**%d**. [``%s``](%s) (Plemię: [``%s``](%s) | Ranking ogólny: **%d** | Wynik: **%d**)\n",
 			offset+i+1,
 			player.Name,
 			utils.FormatPlayerURL(world, langVersion.Host, player.ID),
-			player.Tribe.Tag,
-			utils.FormatTribeURL(world, langVersion.Host, player.Tribe.ID),
+			tribeTag,
+			tribeURL,
 			rank,
 			score))
 	}
 
-	totalPages := int(math.Round(float64(playersList.Total) / float64(limit)))
 	s.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle(title).
 		SetDescription("A oto lista!").
@@ -308,7 +323,6 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 	}
 	err = s.cfg.ServerRepository.Store(context.Background(), dcServer)
 	if err != nil {
-		log.Print(err)
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
 		return
 	}
@@ -324,7 +338,6 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 		ServerID: dcServer.ID,
 	})
 	if err != nil {
-		log.Print(err)
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
 		return
 	}
