@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/tribalwarshelp/dcbot/models"
-	"github.com/tribalwarshelp/dcbot/tribe"
+	"github.com/tribalwarshelp/dcbot/observation"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
@@ -15,33 +15,33 @@ type pgRepo struct {
 	*pg.DB
 }
 
-func NewPgRepo(db *pg.DB) (tribe.Repository, error) {
-	if err := db.CreateTable((*models.Tribe)(nil), &orm.CreateTableOptions{
+func NewPgRepo(db *pg.DB) (observation.Repository, error) {
+	if err := db.CreateTable((*models.Observation)(nil), &orm.CreateTableOptions{
 		IfNotExists:   true,
 		FKConstraints: true,
 	}); err != nil {
-		return nil, errors.Wrap(err, "Cannot create 'tribes' table")
+		return nil, errors.Wrap(err, "Cannot create 'observations' table")
 	}
 	return &pgRepo{db}, nil
 }
 
-func (repo *pgRepo) Store(ctx context.Context, tribe *models.Tribe) error {
-	if _, err := repo.Model(tribe).Returning("*").Context(ctx).Insert(); err != nil {
+func (repo *pgRepo) Store(ctx context.Context, observation *models.Observation) error {
+	if _, err := repo.Model(observation).Returning("*").Context(ctx).Insert(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *pgRepo) StoreMany(ctx context.Context, tribes []*models.Tribe) error {
-	if _, err := repo.Model(&tribes).Returning("*").Context(ctx).Insert(); err != nil {
+func (repo *pgRepo) StoreMany(ctx context.Context, observations []*models.Observation) error {
+	if _, err := repo.Model(&observations).Returning("*").Context(ctx).Insert(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *pgRepo) Update(ctx context.Context, tribe *models.Tribe) error {
+func (repo *pgRepo) Update(ctx context.Context, observation *models.Observation) error {
 	if _, err := repo.
-		Model(tribe).
+		Model(observation).
 		WherePK().
 		Returning("*").
 		Context(ctx).
@@ -51,9 +51,9 @@ func (repo *pgRepo) Update(ctx context.Context, tribe *models.Tribe) error {
 	return nil
 }
 
-func (repo *pgRepo) Fetch(ctx context.Context, f *models.TribeFilter) ([]*models.Tribe, int, error) {
+func (repo *pgRepo) Fetch(ctx context.Context, f *models.ObservationFilter) ([]*models.Observation, int, error) {
 	var err error
-	data := []*models.Tribe{}
+	data := []*models.Observation{}
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {
@@ -76,7 +76,7 @@ func (repo *pgRepo) Fetch(ctx context.Context, f *models.TribeFilter) ([]*models
 }
 
 func (repo *pgRepo) FetchWorlds(ctx context.Context) ([]string, error) {
-	data := []*models.Tribe{}
+	data := []*models.Observation{}
 	res := []string{}
 	err := repo.
 		Model(&data).
@@ -88,8 +88,8 @@ func (repo *pgRepo) FetchWorlds(ctx context.Context) ([]string, error) {
 	return res, err
 }
 
-func (repo *pgRepo) Delete(ctx context.Context, f *models.TribeFilter) ([]*models.Tribe, error) {
-	data := []*models.Tribe{}
+func (repo *pgRepo) Delete(ctx context.Context, f *models.ObservationFilter) ([]*models.Observation, error) {
+	data := []*models.Observation{}
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {

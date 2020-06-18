@@ -9,7 +9,8 @@ import (
 func filterEnnoblements(ennoblements []*shared_models.Ennoblement, t time.Time) []*shared_models.Ennoblement {
 	filtered := []*shared_models.Ennoblement{}
 	for _, ennoblement := range ennoblements {
-		if ennoblement.EnnobledAt.In(time.UTC).Before(t) {
+		utc := ennoblement.EnnobledAt.In(time.UTC)
+		if utc.Before(t) || utc.Equal(t) {
 			continue
 		}
 		filtered = append(filtered, ennoblement)

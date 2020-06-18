@@ -10,8 +10,8 @@ import (
 
 	_cron "github.com/tribalwarshelp/dcbot/cron"
 	"github.com/tribalwarshelp/dcbot/discord"
+	observation_repository "github.com/tribalwarshelp/dcbot/observation/repository"
 	server_repository "github.com/tribalwarshelp/dcbot/server/repository"
-	tribe_repository "github.com/tribalwarshelp/dcbot/tribe/repository"
 
 	"github.com/tribalwarshelp/shared/mode"
 
@@ -46,17 +46,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tribeRepo, err := tribe_repository.NewPgRepo(db)
+	observationRepo, err := observation_repository.NewPgRepo(db)
 	if err != nil {
 		log.Fatal(err)
 	}
 	sess, err := discord.New(discord.SessionConfig{
-		Token:            os.Getenv("BOT_TOKEN"),
-		CommandPrefix:    "tw!",
-		Status:           "Tribalwars | tw!help",
-		TribeRepository:  tribeRepo,
-		ServerRepository: serverRepo,
-		API:              api,
+		Token:                 os.Getenv("BOT_TOKEN"),
+		CommandPrefix:         "tw!",
+		Status:                "Tribalwars | tw!help",
+		ObservationRepository: observationRepo,
+		ServerRepository:      serverRepo,
+		API:                   api,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -67,10 +67,10 @@ func main() {
 		cron.SkipIfStillRunning(cron.VerbosePrintfLogger(log.New(os.Stdout, "cron: ", log.LstdFlags))),
 	))
 	_cron.Attach(c, _cron.Config{
-		ServerRepo: serverRepo,
-		TribeRepo:  tribeRepo,
-		Discord:    sess,
-		API:        api,
+		ServerRepo:      serverRepo,
+		ObservationRepo: observationRepo,
+		Discord:         sess,
+		API:             api,
 	})
 	go func() {
 		c.Run()

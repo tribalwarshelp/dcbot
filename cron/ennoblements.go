@@ -14,7 +14,7 @@ func (e ennoblements) getLastEnnoblement() *shared_models.Ennoblement {
 	return e[length-1]
 }
 
-func (e ennoblements) tribeLostVillages(tribeID int) ennoblements {
+func (e ennoblements) getLostVillagesByTribe(tribeID int) ennoblements {
 	filtered := ennoblements{}
 	for _, ennoblement := range e {
 		if (!isPlayerTribeNil(ennoblement.NewOwner) && ennoblement.NewOwner.Tribe.ID == tribeID) ||
@@ -27,7 +27,7 @@ func (e ennoblements) tribeLostVillages(tribeID int) ennoblements {
 	return filtered
 }
 
-func (e ennoblements) tribeConqueredVillages(tribeID int) ennoblements {
+func (e ennoblements) getConqueredVillagesByTribe(tribeID int) ennoblements {
 	filtered := ennoblements{}
 	for _, ennoblement := range e {
 		if isPlayerTribeNil(ennoblement.NewOwner) ||

@@ -15,14 +15,14 @@ import (
 )
 
 const (
-	TribesPerServer = 10
+	ObservationsPerServer = 10
 )
 
 type Command string
 
 const (
 	HelpCommand              Command = "help"
-	AddCommand               Command = "add"
+	ObserveCommand           Command = "observe"
 	ListCommand              Command = "list"
 	DeleteCommand            Command = "delete"
 	LostVillagesCommand      Command = "lostvillages"
@@ -70,7 +70,7 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 - %s - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
 - %s - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
 				`,
-		AddCommand.WithPrefix(s.cfg.CommandPrefix),
+		ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 		ListCommand.WithPrefix(s.cfg.CommandPrefix),
 		DeleteCommand.WithPrefix(s.cfg.CommandPrefix),
 		ListCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -255,7 +255,7 @@ func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate) {
 		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o podbitych wioskach.", m.Author.Mention()))
 }
 
-func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...string) {
 	if m.GuildID == "" {
 		return
 	}
@@ -271,7 +271,7 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 		s.SendMessage(m.ChannelID,
 			fmt.Sprintf("%s %s [świat] [id plemienia]",
 				m.Author.Mention(),
-				AddCommand.WithPrefix(s.cfg.CommandPrefix)))
+				ObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
 
@@ -281,7 +281,7 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 		s.SendMessage(m.ChannelID,
 			fmt.Sprintf("%s %s [świat] [id plemienia]",
 				m.Author.Mention(),
-				AddCommand.WithPrefix(s.cfg.CommandPrefix)))
+				ObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
 
@@ -310,12 +310,12 @@ func (s *Session) handleAddCommand(m *discordgo.MessageCreate, args ...string) {
 		return
 	}
 
-	if len(dcServer.Tribes) >= TribesPerServer {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion (%d/%d).`, TribesPerServer, TribesPerServer))
+	if len(dcServer.Observations) >= ObservationsPerServer {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion (%d/%d).`, ObservationsPerServer, ObservationsPerServer))
 		return
 	}
 
-	err = s.cfg.TribeRepository.Store(context.Background(), &models.Tribe{
+	err = s.cfg.ObservationRepository.Store(context.Background(), &models.Observation{
 		World:    world,
 		TribeID:  id,
 		ServerID: dcServer.ID,
@@ -357,7 +357,7 @@ func (s *Session) handleDeleteCommand(m *discordgo.MessageCreate, args ...string
 		return
 	}
 
-	go s.cfg.TribeRepository.Delete(context.Background(), &models.TribeFilter{
+	go s.cfg.ObservationRepository.Delete(context.Background(), &models.ObservationFilter{
 		ServerID: []string{m.GuildID},
 		ID:       []int{id},
 	})
@@ -373,7 +373,7 @@ func (s *Session) handleListCommand(m *discordgo.MessageCreate) {
 		return
 	}
 
-	tribes, _, err := s.cfg.TribeRepository.Fetch(context.Background(), &models.TribeFilter{
+	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &models.ObservationFilter{
 		ServerID: []string{m.GuildID},
 	})
 	if err != nil {
@@ -381,8 +381,8 @@ func (s *Session) handleListCommand(m *discordgo.MessageCreate) {
 	}
 
 	msg := ""
-	for i, tribe := range tribes {
-		msg += fmt.Sprintf("**%d**. %d - %s - %d\n", i+1, tribe.ID, tribe.World, tribe.TribeID)
+	for i, observation := range observations {
+		msg += fmt.Sprintf("**%d**. %d - %s - %d\n", i+1, observation.ID, observation.World, observation.TribeID)
 	}
 
 	s.SendEmbed(m.ChannelID, NewEmbed().
