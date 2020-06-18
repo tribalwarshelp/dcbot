@@ -1,6 +1,6 @@
 package models
 
-type Tribe struct {
+type Observation struct {
 	ID       int     `json:"id" gqlgen:"id"`
 	World    string  `pg:"unique:group_1" json:"world" gqlgen:"world"`
 	TribeID  int     `pg:"unique:group_1" json:"TribeID" gqlgen:"TribeID"`
@@ -8,19 +8,20 @@ type Tribe struct {
 	Server   *Server `json:"server,omitempty" gqlgen:"server"`
 }
 
-type Tribes []*Tribe
+type Observations []*Observation
 
-func (t Tribes) Contains(world string, id int) bool {
-	for _, tribe := range t {
-		if tribe.TribeID == id && tribe.World == world {
+func (o Observations) Contains(world string, id int) bool {
+	for _, observation := range o {
+		if observation.TribeID == id && observation.World == world {
 			return true
 		}
 	}
 	return false
 }
 
-type TribeFilter struct {
+type ObservationFilter struct {
 	ID       []int
+	World    []string
 	ServerID []string
 	Limit    int      `urlstruct:",nowhere"`
 	Offset   int      `urlstruct:",nowhere"`

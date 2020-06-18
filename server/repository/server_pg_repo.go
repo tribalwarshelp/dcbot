@@ -52,7 +52,7 @@ func (repo *pgRepo) Update(ctx context.Context, server *models.Server) error {
 func (repo *pgRepo) Fetch(ctx context.Context, f *models.ServerFilter) ([]*models.Server, int, error) {
 	var err error
 	data := []*models.Server{}
-	query := repo.Model(&data).Context(ctx).Relation("Tribes")
+	query := repo.Model(&data).Context(ctx).Relation("Observations")
 
 	if f != nil {
 		query = query.

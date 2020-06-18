@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
-	"github.com/tribalwarshelp/dcbot/tribe"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 type SessionConfig struct {
-	Token            string
-	CommandPrefix    string
-	Status           string
-	ServerRepository server.Repository
-	TribeRepository  tribe.Repository
-	API              *sdk.SDK
+	Token                 string
+	CommandPrefix         string
+	Status                string
+	ServerRepository      server.Repository
+	ObservationRepository observation.Repository
+	API                   *sdk.SDK
 }
 
 type Session struct {
@@ -79,8 +79,8 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	switch splitted[0] {
 	case HelpCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleHelpCommand(m)
-	case AddCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleAddCommand(m, args...)
+	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleObserveCommand(m, args...)
 	case DeleteCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleDeleteCommand(m, args...)
 	case ListCommand.WithPrefix(s.cfg.CommandPrefix):
@@ -130,4 +130,14 @@ func (s *Session) memberHasPermission(guildID string, userID string, permission 
 
 func (s *Session) sendUnknownCommandError(mention, channelID string, command ...string) {
 	s.SendMessage(channelID, mention+` Nieznana komenda: `+strings.Join(command, " "))
+}
+
+func (s *Session) IsGuildMember(guildID string) (bool, error) {
+	_, err := s.dg.State.Guild(guildID)
+	if err != nil {
+		if _, err = s.dg.Guild(guildID); err != nil {
+			return false, err
+		}
+	}
+	return true, nil
 }
