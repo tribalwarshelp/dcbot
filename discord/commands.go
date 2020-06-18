@@ -287,7 +287,7 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 		return
 	}
 
-	server, err := s.cfg.API.Servers.Read(world)
+	server, err := s.cfg.API.Servers.Read(world, nil)
 	if err != nil || server == nil {
 		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest nieobsługiwany.`, world))
 		return

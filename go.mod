@@ -9,8 +9,8 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/tribalwarshelp/golang-sdk v0.0.0-20200607150457-971c5e02b4df
-	github.com/tribalwarshelp/shared v0.0.0-20200607152914-8ab83c6d1364
+	github.com/tribalwarshelp/golang-sdk v0.0.0-20200618154823-9b569d862c4b
+	github.com/tribalwarshelp/shared v0.0.0-20200618150949-896cd6c98d06
 	golang.org/x/net v0.0.0-20200528225125-3c3fba18258b // indirect
 	google.golang.org/protobuf v1.24.0 // indirect
 )
