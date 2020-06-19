@@ -4,7 +4,7 @@ import (
 	"github.com/tribalwarshelp/shared/models"
 )
 
-func LanguageCodeFromWorldName(world string) models.LanguageTag {
+func LanguageTagFromWorldName(world string) models.LanguageTag {
 	if len(world) < 2 {
 		return ""
 	}

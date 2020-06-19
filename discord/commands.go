@@ -172,7 +172,7 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 		return
 	}
 
-	langTag := utils.LanguageCodeFromWorldName(world)
+	langTag := utils.LanguageTagFromWorldName(world)
 	langVersion, err := s.cfg.API.LangVersions.Read(langTag)
 	if err != nil || langVersion == nil {
 		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie znaleziono wersji językowej: %s.", m.Author.Mention(), langTag))
