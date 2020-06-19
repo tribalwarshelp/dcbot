@@ -64,7 +64,7 @@ func (h *handler) loadLangVersions(worlds []string) map[shared_models.LanguageTa
 	languageTags := []shared_models.LanguageTag{}
 	cache := make(map[shared_models.LanguageTag]bool)
 	for _, world := range worlds {
-		languageTag := utils.LanguageCodeFromWorldName(world)
+		languageTag := utils.LanguageTagFromWorldName(world)
 		if languageTag.IsValid() && !cache[languageTag] {
 			cache[languageTag] = true
 			languageTags = append(languageTags, languageTag)
@@ -112,7 +112,7 @@ func (h *handler) checkLastEnnoblements() {
 		}
 		for _, tribe := range server.Observations {
 			es, ok := ennoblements[tribe.World]
-			langVersion, ok2 := langVersions[utils.LanguageCodeFromWorldName(tribe.World)]
+			langVersion, ok2 := langVersions[utils.LanguageTagFromWorldName(tribe.World)]
 			if ok && ok2 {
 				if server.LostVillagesChannelID != "" {
 					for _, ennoblement := range es.getLostVillagesByTribe(tribe.TribeID) {
