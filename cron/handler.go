@@ -27,7 +27,7 @@ func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
 	m := make(map[string]ennoblements)
 
 	for _, w := range worlds {
-		es, err := h.api.Ennoblements.Browse(w, &sdk.EnnoblementInclude{
+		es, err := h.api.LiveEnnoblements.Browse(w, &sdk.LiveEnnoblementInclude{
 			NewOwner: true,
 			Village:  true,
 			NewOwnerInclude: sdk.PlayerInclude{

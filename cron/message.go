@@ -31,7 +31,7 @@ type messageData struct {
 type newMessageDataConfig struct {
 	host        string
 	world       string
-	ennoblement *shared_models.Ennoblement
+	ennoblement *shared_models.LiveEnnoblement
 }
 
 func newMessageData(cfg newMessageDataConfig) messageData {
