@@ -53,7 +53,7 @@ func main() {
 	sess, err := discord.New(discord.SessionConfig{
 		Token:                 os.Getenv("BOT_TOKEN"),
 		CommandPrefix:         "tw!",
-		Status:                "Tribalwars | tw!help",
+		Status:                "Tribal Wars | tw!help",
 		ObservationRepository: observationRepo,
 		ServerRepository:      serverRepo,
 		API:                   api,
