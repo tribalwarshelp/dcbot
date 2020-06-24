@@ -21,15 +21,17 @@ type Config struct {
 
 func Attach(c *cron.Cron, cfg Config) {
 	h := &handler{
-		lastEnnobledAt:  make(map[string]time.Time),
-		serverRepo:      cfg.ServerRepo,
-		observationRepo: cfg.ObservationRepo,
-		discord:         cfg.Discord,
-		api:             cfg.API,
+		lastEnnoblementAt: make(map[string]time.Time),
+		serverRepo:        cfg.ServerRepo,
+		observationRepo:   cfg.ObservationRepo,
+		discord:           cfg.Discord,
+		api:               cfg.API,
 	}
 	c.AddFunc("@every 1m", h.checkLastEnnoblements)
-	go h.checkBotMembershipOnServers()
 	c.AddFunc("@every 30m", h.checkBotMembershipOnServers)
-	go h.deleteClosedTribalwarsWorlds()
-	c.AddFunc("@every 2h", h.deleteClosedTribalwarsWorlds)
+	c.AddFunc("@every 2h", h.deleteClosedTribalWarsServers)
+	go func() {
+		h.checkBotMembershipOnServers()
+		h.deleteClosedTribalWarsServers()
+	}()
 }

@@ -16,11 +16,11 @@ import (
 )
 
 type handler struct {
-	lastEnnobledAt  map[string]time.Time
-	serverRepo      server.Repository
-	observationRepo observation.Repository
-	discord         *discord.Session
-	api             *sdk.SDK
+	lastEnnoblementAt map[string]time.Time
+	serverRepo        server.Repository
+	observationRepo   observation.Repository
+	discord           *discord.Session
+	api               *sdk.SDK
 }
 
 func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
@@ -43,18 +43,18 @@ func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
 			continue
 		}
 
-		lastEnnobledAt, ok := h.lastEnnobledAt[w]
+		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
 		if !ok {
-			lastEnnobledAt = time.Now().Add(-1 * time.Minute)
+			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
 		}
 
-		m[w] = filterEnnoblements(es, lastEnnobledAt)
+		m[w] = filterEnnoblements(es, lastEnnoblementAt)
 
 		lastEnnoblement := m[w].getLastEnnoblement()
 		if lastEnnoblement != nil {
-			lastEnnobledAt = lastEnnoblement.EnnobledAt.In(time.UTC)
+			lastEnnoblementAt = lastEnnoblement.EnnobledAt
 		}
-		h.lastEnnobledAt[w] = lastEnnobledAt
+		h.lastEnnoblementAt[w] = lastEnnoblementAt
 	}
 
 	return m
@@ -89,7 +89,7 @@ func (h *handler) loadLangVersions(worlds []string) map[shared_models.LanguageTa
 func (h *handler) checkLastEnnoblements() {
 	worlds, err := h.observationRepo.FetchWorlds(context.Background())
 	if err != nil {
-		log.Print("checkLastEnnoblements: " + err.Error())
+		log.Print("checkLastEnnoblements error: " + err.Error())
 		return
 	}
 	log.Print("checkLastEnnoblements: worlds: ", worlds)
@@ -99,23 +99,21 @@ func (h *handler) checkLastEnnoblements() {
 		log.Print("checkLastEnnoblements error: " + err.Error())
 		return
 	}
-	log.Print("checkLastEnnoblements: total number of loaded discord servers: ", total)
+	log.Print("checkLastEnnoblements: number of loaded discord servers: ", total)
 
 	langVersions := h.loadLangVersions(worlds)
-
-	ennoblements := h.loadEnnoblements(worlds)
-	log.Println("checkLastEnnoblements: loaded ennoblements from", len(ennoblements), "tribalwars servers")
+	ennoblementsByServerKey := h.loadEnnoblements(worlds)
 
 	for _, server := range servers {
 		if server.ConqueredVillagesChannelID == "" && server.LostVillagesChannelID == "" {
 			continue
 		}
 		for _, tribe := range server.Observations {
-			es, ok := ennoblements[tribe.World]
+			ennoblements, ok := ennoblementsByServerKey[tribe.World]
 			langVersion, ok2 := langVersions[utils.LanguageTagFromWorldName(tribe.World)]
 			if ok && ok2 {
 				if server.LostVillagesChannelID != "" {
-					for _, ennoblement := range es.getLostVillagesByTribe(tribe.TribeID) {
+					for _, ennoblement := range ennoblements.getLostVillagesByTribe(tribe.TribeID) {
 						if !isPlayerTribeNil(ennoblement.NewOwner) &&
 							server.Observations.Contains(tribe.World, ennoblement.NewOwner.Tribe.ID) {
 							continue
@@ -137,7 +135,7 @@ func (h *handler) checkLastEnnoblements() {
 				}
 
 				if server.ConqueredVillagesChannelID != "" {
-					for _, ennoblement := range es.getConqueredVillagesByTribe(tribe.TribeID) {
+					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(tribe.TribeID) {
 						if !isPlayerTribeNil(ennoblement.OldOwner) &&
 							server.Observations.Contains(tribe.World, ennoblement.OldOwner.Tribe.ID) {
 							continue
@@ -189,20 +187,20 @@ func (h *handler) checkBotMembershipOnServers() {
 	}
 }
 
-func (h *handler) deleteClosedTribalwarsWorlds() {
-	worlds, err := h.observationRepo.FetchWorlds(context.Background())
+func (h *handler) deleteClosedTribalWarsServers() {
+	servers, err := h.observationRepo.FetchWorlds(context.Background())
 	if err != nil {
-		log.Print("deleteClosedTribalwarsWorlds: " + err.Error())
+		log.Print("deleteClosedTribalWarsServers: " + err.Error())
 		return
 	}
-	log.Print("deleteClosedTribalwarsWorlds: worlds: ", worlds)
+	log.Print("deleteClosedTribalWarsServers: servers: ", servers)
 
 	list, err := h.api.Servers.Browse(&shared_models.ServerFilter{
-		Key:    worlds,
+		Key:    servers,
 		Status: []shared_models.ServerStatus{shared_models.ServerStatusClosed},
 	}, nil)
 	if err != nil {
-		log.Print("deleteClosedTribalwarsWorlds: " + err.Error())
+		log.Print("deleteClosedTribalWarsServers: " + err.Error())
 		return
 	}
 
@@ -216,9 +214,9 @@ func (h *handler) deleteClosedTribalwarsWorlds() {
 			World: keys,
 		})
 		if err != nil {
-			log.Print("deleteClosedTribalwarsWorlds error: " + err.Error())
+			log.Print("deleteClosedTribalWarsServers error: " + err.Error())
 		} else {
-			log.Printf("deleteClosedTribalwarsWorlds: total number of deleted observations: %d", len(deleted))
+			log.Printf("deleteClosedTribalWarsServers: total number of deleted observations: %d", len(deleted))
 		}
 	}
 }
