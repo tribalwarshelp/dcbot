@@ -115,11 +115,11 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 		return
 	}
 
-	exist := true
+	exists := true
 	limit := 10
 	offset := (page - 1) * limit
 	filter := &shared_models.PlayerFilter{
-		Exist:   &exist,
+		Exists:  &exists,
 		TribeID: ids,
 		Limit:   limit,
 		Offset:  offset,
