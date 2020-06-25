@@ -45,7 +45,7 @@ func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
 
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
 		if !ok {
-			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
+			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
 		}
 
 		m[w] = filterEnnoblements(es, lastEnnoblementAt)
@@ -201,6 +201,9 @@ func (h *handler) deleteClosedTribalWarsServers() {
 	}, nil)
 	if err != nil {
 		log.Print("deleteClosedTribalWarsServers: " + err.Error())
+		return
+	}
+	if list == nil || list.Items == nil {
 		return
 	}
 
