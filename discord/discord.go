@@ -79,16 +79,22 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	switch splitted[0] {
 	case HelpCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleHelpCommand(m)
+	case AuthorCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleAuthorCommand(m)
 	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObserveCommand(m, args...)
 	case UnObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleUnObserveCommand(m, args...)
 	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObservationsCommand(m)
-	case LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleLostVillagesCommand(m)
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleConqueredVillagesCommand(m)
+	case UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleUnObserveConqueredVillagesCommand(m)
+	case LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleLostVillagesCommand(m)
+	case UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleUnObserveLostVillagesCommand(m)
 	case TribeCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleTribeCommand(m, args...)
 	}
