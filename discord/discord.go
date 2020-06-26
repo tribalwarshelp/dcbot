@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/tribalwarshelp/dcbot/group"
 	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
@@ -16,6 +17,7 @@ type SessionConfig struct {
 	CommandPrefix         string
 	Status                string
 	ServerRepository      server.Repository
+	GroupRepository       group.Repository
 	ObservationRepository observation.Repository
 	API                   *sdk.SDK
 }
@@ -81,22 +83,31 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		s.handleHelpCommand(m)
 	case AuthorCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleAuthorCommand(m)
+	case TribeCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleTribeCommand(m, args...)
+
+	case AddGroupCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleAddGroupCommand(m)
+	case DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleDeleteGroupCommand(m, args...)
+	case GroupsCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleGroupsCommand(m)
+
 	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObserveCommand(m, args...)
 	case UnObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleUnObserveCommand(m, args...)
 	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleObservationsCommand(m)
+		s.handleObservationsCommand(m, args...)
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleConqueredVillagesCommand(m)
+		s.handleConqueredVillagesCommand(m, args...)
 	case UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleUnObserveConqueredVillagesCommand(m)
+		s.handleUnObserveConqueredVillagesCommand(m, args...)
 	case LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleLostVillagesCommand(m)
+		s.handleLostVillagesCommand(m, args...)
 	case UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleUnObserveLostVillagesCommand(m)
-	case TribeCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleTribeCommand(m, args...)
+		s.handleUnObserveLostVillagesCommand(m, args...)
+
 	}
 }
 

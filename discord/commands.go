@@ -15,13 +15,17 @@ import (
 )
 
 const (
-	ObservationsPerServer = 10
+	ObservationsPerGroup = 10
+	GroupsPerServer      = 5
 )
 
 type Command string
 
 const (
 	HelpCommand                       Command = "help"
+	AddGroupCommand                   Command = "addgroup"
+	DeleteGroupCommand                Command = "deletegroup"
+	GroupsCommand                     Command = "groups"
 	ObserveCommand                    Command = "observe"
 	ObservationsCommand               Command = "observations"
 	UnObserveCommand                  Command = "unobserve"
@@ -70,22 +74,35 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 	)
 
 	commandsForGuildAdmins := fmt.Sprintf(`
-- **%s** [świat] [id] - dodaje plemię z danego świata do obserwowanych
-- **%s** - wyświetla wszystkie obserwowane plemiona
-- **%s** [id z %s] - usuwa plemię z obserwowanych
-- **%s** - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
-- **%s** - informacje o podbitych wioskach na wybranym kanale nie będą się już pojawiały
-- **%s** - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
-- **%s** - informacje o straconych wioskach na wybranym kanale nie będą się już pojawiały
+- **%s** - tworzy nową grupę
+- **%s** - usuwa grupę
+- **%s** - lista grup
+- **%s** [id grupy z %s] [świat] [id plemienia] - dodaje plemię z danego świata do obserwowanych
+- **%s** [id grupy z %s] - wyświetla wszystkie obserwowane plemiona
+- **%s** [id grupy z %s] [id z %s] - usuwa plemię z obserwowanych
+- **%s** [id grupy z %s] - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
+- **%s** [id grupy z %s] - informacje o podbitych wioskach na wybranym kanale nie będą się już pojawiały
+- **%s** [id grupy z %s] - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
+- **%s** [id grupy z %s] - informacje o straconych wioskach na wybranym kanale nie będą się już pojawiały
 				`,
+		AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
+		DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		UnObserveCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 		ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 	)
 
 	s.SendEmbed(m.ChannelID, NewEmbed().
@@ -245,10 +262,11 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 		MessageEmbed)
 }
 
-func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleAddGroupCommand(m *discordgo.MessageCreate) {
 	if m.GuildID == "" {
 		return
 	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -256,17 +274,142 @@ func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate) {
 	server := &models.Server{
 		ID: m.GuildID,
 	}
-	err := s.cfg.ServerRepository.Store(context.Background(), server)
+	if err := s.cfg.ServerRepository.Store(context.Background(), server); err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s Nie udało się dodać grupy", m.Author.Mention()))
+		return
+	}
+	if len(server.Groups) >= GroupsPerServer {
+		s.SendMessage(m.ChannelID,
+			m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit grup na serwerze (%d/%d).`, GroupsPerServer, GroupsPerServer))
+		return
+	}
+
+	group := &models.Group{
+		ServerID: m.GuildID,
+	}
+	if err := s.cfg.GroupRepository.Store(context.Background(), group); err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s Nie udało się dodać grupy", m.Author.Mention()))
+		return
+	}
+
+	s.SendMessage(m.ChannelID,
+		fmt.Sprintf("%s Utworzono nową grupę o ID %d.", m.Author.Mention(), group.ID))
+}
+func (s *Session) handleDeleteGroupCommand(m *discordgo.MessageCreate, args ...string) {
+	if m.GuildID == "" {
+		return
+	}
+
+	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
+		return
+	}
+
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s %s [id grupy]",
+				m.Author.Mention(),
+				DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix)))
+		return
+	}
+
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s Niepoprawne ID grupy", m.Author.Mention()))
+		return
+	}
+
+	go s.cfg.GroupRepository.Delete(context.Background(), &models.GroupFilter{
+		ID:       []int{groupID},
+		ServerID: []string{m.GuildID},
+	})
+
+	s.SendMessage(m.ChannelID,
+		fmt.Sprintf("%s Usunięto grupę.", m.Author.Mention()))
+}
+
+func (s *Session) handleGroupsCommand(m *discordgo.MessageCreate) {
+	if m.GuildID == "" {
+		return
+	}
+	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
+		return
+	}
+
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+		ServerID: []string{m.GuildID},
+	})
 	if err != nil {
 		return
 	}
-	server.ConqueredVillagesChannelID = m.ChannelID
-	go s.cfg.ServerRepository.Update(context.Background(), server)
+
+	msg := ""
+	for i, groups := range groups {
+		msg += fmt.Sprintf("**%d**. %d\n", i+1, groups.ID)
+	}
+
+	if msg == "" {
+		msg = "Brak dodanych grup"
+	}
+
+	s.SendEmbed(m.ChannelID, NewEmbed().
+		SetTitle("Lista grup").
+		AddField("Indeks. ID", msg).
+		SetFooter("Strona 1 z 1").
+		MessageEmbed)
+}
+
+func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate, args ...string) {
+	if m.GuildID == "" {
+		return
+	}
+
+	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
+		return
+	}
+
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s %s [id grupy]",
+				m.Author.Mention(),
+				ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix)))
+		return
+	}
+
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s Niepoprawne ID grupy", m.Author.Mention()))
+		return
+	}
+
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+		ID:       []int{groupID},
+		ServerID: []string{m.GuildID},
+	})
+	if err != nil || len(groups) == 0 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s nie znaleziono grupy.", m.Author.Mention()))
+		return
+	}
+
+	groups[0].ConqueredVillagesChannelID = m.ChannelID
+	go s.cfg.GroupRepository.Update(context.Background(), groups[0])
 	s.SendMessage(m.ChannelID,
 		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o podbitych wioskach.", m.Author.Mention()))
 }
 
-func (s *Session) handleUnObserveConqueredVillagesCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleUnObserveConqueredVillagesCommand(m *discordgo.MessageCreate, args ...string) {
 	if m.GuildID == "" {
 		return
 	}
@@ -274,22 +417,44 @@ func (s *Session) handleUnObserveConqueredVillagesCommand(m *discordgo.MessageCr
 		return
 	}
 
-	server := &models.Server{
-		ID: m.GuildID,
-	}
-	err := s.cfg.ServerRepository.Store(context.Background(), server)
-	if err != nil {
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s %s [id grupy]",
+				m.Author.Mention(),
+				UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
-	if server.ConqueredVillagesChannelID != "" {
-		server.ConqueredVillagesChannelID = ""
-		go s.cfg.ServerRepository.Update(context.Background(), server)
+
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s Niepoprawne ID grupy", m.Author.Mention()))
+		return
+	}
+
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+		ID:       []int{groupID},
+		ServerID: []string{m.GuildID},
+	})
+	if err != nil || len(groups) == 0 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s nie znaleziono grupy.", m.Author.Mention()))
+		return
+	}
+
+	if groups[0].ConqueredVillagesChannelID != "" {
+		groups[0].ConqueredVillagesChannelID = ""
+		go s.cfg.GroupRepository.Update(context.Background(), groups[0])
 	}
 	s.SendMessage(m.ChannelID,
 		fmt.Sprintf("%s Informacje o podbitych wioskach nie będą się już pojawiały.", m.Author.Mention()))
 }
 
-func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate, args ...string) {
 	if m.GuildID == "" {
 		return
 	}
@@ -297,20 +462,42 @@ func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate) {
 		return
 	}
 
-	server := &models.Server{
-		ID: m.GuildID,
-	}
-	err := s.cfg.ServerRepository.Store(context.Background(), server)
-	if err != nil {
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s %s [id grupy]",
+				m.Author.Mention(),
+				LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
-	server.LostVillagesChannelID = m.ChannelID
-	go s.cfg.ServerRepository.Update(context.Background(), server)
+
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s Niepoprawne ID grupy", m.Author.Mention()))
+		return
+	}
+
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+		ID:       []int{groupID},
+		ServerID: []string{m.GuildID},
+	})
+	if err != nil || len(groups) == 0 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s nie znaleziono grupy.", m.Author.Mention()))
+		return
+	}
+	groups[0].LostVillagesChannelID = m.ChannelID
+	go s.cfg.GroupRepository.Update(context.Background(), groups[0])
+
 	s.SendMessage(m.ChannelID,
 		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o straconych wioskach.", m.Author.Mention()))
 }
 
-func (s *Session) handleUnObserveLostVillagesCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleUnObserveLostVillagesCommand(m *discordgo.MessageCreate, args ...string) {
 	if m.GuildID == "" {
 		return
 	}
@@ -318,17 +505,40 @@ func (s *Session) handleUnObserveLostVillagesCommand(m *discordgo.MessageCreate)
 		return
 	}
 
-	server := &models.Server{
-		ID: m.GuildID,
-	}
-	err := s.cfg.ServerRepository.Store(context.Background(), server)
-	if err != nil {
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s %s [id grupy]",
+				m.Author.Mention(),
+				UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
-	if server.LostVillagesChannelID != "" {
-		server.LostVillagesChannelID = ""
-		go s.cfg.ServerRepository.Update(context.Background(), server)
+
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s Niepoprawne ID grupy", m.Author.Mention()))
+		return
 	}
+
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+		ID:       []int{groupID},
+		ServerID: []string{m.GuildID},
+	})
+	if err != nil || len(groups) == 0 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s nie znaleziono grupy.", m.Author.Mention()))
+		return
+	}
+
+	if groups[0].LostVillagesChannelID != "" {
+		groups[0].LostVillagesChannelID = ""
+		go s.cfg.GroupRepository.Update(context.Background(), groups[0])
+	}
+
 	s.SendMessage(m.ChannelID,
 		fmt.Sprintf("%s Informacje o straconych wioskach nie będą się już pojawiały.", m.Author.Mention()))
 }
@@ -342,19 +552,27 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 	}
 
 	argsLength := len(args)
-	if argsLength > 2 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[2:argsLength]...)
+	if argsLength > 3 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[3:argsLength]...)
 		return
-	} else if argsLength < 2 {
+	} else if argsLength < 3 {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s %s [świat] [id plemienia]",
+			fmt.Sprintf("%s %s [id grupy] [świat] [id plemienia]",
 				m.Author.Mention(),
 				ObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
 
-	world := args[0]
-	id, err := strconv.Atoi(args[1])
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf("%s %s [id grupy] [świat] [id plemienia]",
+				m.Author.Mention(),
+				ObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
+		return
+	}
+	serverKey := args[1]
+	tribeID, err := strconv.Atoi(args[2])
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			fmt.Sprintf("%s %s [świat] [id plemienia]",
@@ -363,40 +581,38 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 		return
 	}
 
-	server, err := s.cfg.API.Servers.Read(world, nil)
+	server, err := s.cfg.API.Servers.Read(serverKey, nil)
 	if err != nil || server == nil {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest nieobsługiwany.`, world))
+		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest nieobsługiwany.`, serverKey))
 		return
 	}
 	if server.Status == shared_models.ServerStatusClosed {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest zamknięty.`, world))
+		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest zamknięty.`, serverKey))
 		return
 	}
 
-	tribe, err := s.cfg.API.Tribes.Read(world, id)
+	tribe, err := s.cfg.API.Tribes.Read(server.Key, tribeID)
 	if err != nil || tribe == nil {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Plemię o ID: %d nie istnieje na świecie %s.`, id, world))
+		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Plemię o ID: %d nie istnieje na świecie %s.`, tribeID, server.Key))
 		return
 	}
 
-	dcServer := &models.Server{
-		ID: m.GuildID,
-	}
-	err = s.cfg.ServerRepository.Store(context.Background(), dcServer)
-	if err != nil {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
+	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	if err != nil || group.ServerID != m.GuildID {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie znaleziono grupy.`)
 		return
 	}
 
-	if len(dcServer.Observations) >= ObservationsPerServer {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion (%d/%d).`, ObservationsPerServer, ObservationsPerServer))
+	if len(group.Observations) >= ObservationsPerGroup {
+		s.SendMessage(m.ChannelID,
+			m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion w grupie (%d/%d).`, ObservationsPerGroup, ObservationsPerGroup))
 		return
 	}
 
 	err = s.cfg.ObservationRepository.Store(context.Background(), &models.Observation{
-		World:    world,
-		TribeID:  id,
-		ServerID: dcServer.ID,
+		Server:  server.Key,
+		TribeID: tribeID,
+		GroupID: groupID,
 	})
 	if err != nil {
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
@@ -415,35 +631,49 @@ func (s *Session) handleUnObserveCommand(m *discordgo.MessageCreate, args ...str
 	}
 
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+	if argsLength > 2 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[2:argsLength]...)
 		return
-	} else if argsLength < 1 {
+	} else if argsLength < 2 {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf(`%s %s [id z tw!list]`,
+			fmt.Sprintf(`%s %s [id grupy] [id obserwacji]`,
 				m.Author.Mention(),
 				UnObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
 
-	id, err := strconv.Atoi(args[0])
+	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf(`%s %s [id z tw!list]`,
+			fmt.Sprintf(`%s %s [id grupy] [id obserwacji]`,
 				m.Author.Mention(),
 				UnObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
+		return
+	}
+	observationID, err := strconv.Atoi(args[1])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf(`%s %s [id grupy] [id obserwacji]`,
+				m.Author.Mention(),
+				UnObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
+		return
+	}
+
+	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	if err != nil || group.ServerID != m.GuildID {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie znaleziono grupy.`)
 		return
 	}
 
 	go s.cfg.ObservationRepository.Delete(context.Background(), &models.ObservationFilter{
-		ServerID: []string{m.GuildID},
-		ID:       []int{id},
+		GroupID: []int{groupID},
+		ID:      []int{observationID},
 	})
 
 	s.SendMessage(m.ChannelID, m.Author.Mention()+` Usunięto.`)
 }
 
-func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...string) {
 	if m.GuildID == "" {
 		return
 	}
@@ -451,8 +681,35 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate) {
 		return
 	}
 
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf(`%s %s [id grupy]`,
+				m.Author.Mention(),
+				ObservationsCommand.WithPrefix(s.cfg.CommandPrefix)))
+		return
+	}
+
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf(`%s %s [id grupy]`,
+				m.Author.Mention(),
+				ObservationsCommand.WithPrefix(s.cfg.CommandPrefix)))
+		return
+	}
+
+	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	if err != nil || group.ServerID != m.GuildID {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie znaleziono grupy.`)
+		return
+	}
+
 	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &models.ObservationFilter{
-		ServerID: []string{m.GuildID},
+		GroupID: []int{groupID},
 	})
 	if err != nil {
 		return
@@ -460,12 +717,16 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate) {
 
 	msg := ""
 	for i, observation := range observations {
-		msg += fmt.Sprintf("**%d**. %d - %s - %d\n", i+1, observation.ID, observation.World, observation.TribeID)
+		msg += fmt.Sprintf("**%d**. %d - %s - %d\n", i+1, observation.ID, observation.Server, observation.TribeID)
+	}
+
+	if msg == "" {
+		msg = "Brak dodanych obserwacji do tej grupy"
 	}
 
 	s.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle("Lista obserwowanych plemion").
-		AddField("Indeks. ID - świat - ID plemienia", msg).
+		AddField("Indeks. ID - Serwer - ID plemienia", msg).
 		SetFooter("Strona 1 z 1").
 		MessageEmbed)
 }

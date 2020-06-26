@@ -10,6 +10,7 @@ import (
 
 	_cron "github.com/tribalwarshelp/dcbot/cron"
 	"github.com/tribalwarshelp/dcbot/discord"
+	group_repository "github.com/tribalwarshelp/dcbot/group/repository"
 	observation_repository "github.com/tribalwarshelp/dcbot/observation/repository"
 	server_repository "github.com/tribalwarshelp/dcbot/server/repository"
 
@@ -46,6 +47,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	groupRepo, err := group_repository.NewPgRepo(db)
+	if err != nil {
+		log.Fatal(err)
+	}
 	observationRepo, err := observation_repository.NewPgRepo(db)
 	if err != nil {
 		log.Fatal(err)
@@ -56,6 +61,7 @@ func main() {
 		Status:                "Tribal Wars | tw!help",
 		ObservationRepository: observationRepo,
 		ServerRepository:      serverRepo,
+		GroupRepository:       groupRepo,
 		API:                   api,
 	})
 	if err != nil {
@@ -70,6 +76,7 @@ func main() {
 		ServerRepo:      serverRepo,
 		ObservationRepo: observationRepo,
 		Discord:         sess,
+		GroupRepo:       groupRepo,
 		API:             api,
 	})
 	go func() {
