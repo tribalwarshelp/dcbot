@@ -76,7 +76,7 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 - **%s** - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
 - **%s** - informacje o podbitych wioskach na wybranym kanale nie będą się już pojawiały
 - **%s** - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
-- **%s** - informacje o podbitych wioskach na wybranym kanale nie będą się już pojawiały
+- **%s** - informacje o straconych wioskach na wybranym kanale nie będą się już pojawiały
 				`,
 		ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
