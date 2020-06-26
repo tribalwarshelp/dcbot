@@ -43,7 +43,7 @@ func (repo *pgRepo) Update(ctx context.Context, server *models.Server) error {
 		WherePK().
 		Returning("*").
 		Context(ctx).
-		UpdateNotZero(); err != nil {
+		Update(); err != nil {
 		return err
 	}
 	return nil

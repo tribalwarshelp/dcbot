@@ -1,9 +1,11 @@
 package models
 
 type Server struct {
+	tableName struct{} `pg:",alias:server"`
+
 	ID                         string       `pg:",pk" json:"id" gqlgen:"id"`
-	ConqueredVillagesChannelID string       `json:"conqueredVillagesChannelID" gqlgen:"conqueredVillagesChannelID"`
-	LostVillagesChannelID      string       `json:"lostVillagesChannelID" gqlgen:"lostVillagesChannelID"`
+	ConqueredVillagesChannelID string       `pg:",use_zero" json:"conqueredVillagesChannelID" gqlgen:"conqueredVillagesChannelID"`
+	LostVillagesChannelID      string       `pg:",use_zero" json:"lostVillagesChannelID" gqlgen:"lostVillagesChannelID"`
 	Observations               Observations `json:"observation,omitempty" gqlgen:"observation"`
 }
 

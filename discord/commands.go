@@ -21,18 +21,21 @@ const (
 type Command string
 
 const (
-	HelpCommand              Command = "help"
-	ObserveCommand           Command = "observe"
-	ObservationsCommand      Command = "observations"
-	UnObserveCommand         Command = "unobserve"
-	LostVillagesCommand      Command = "lostvillages"
-	ConqueredVillagesCommand Command = "conqueredvillages"
-	TribeCommand             Command = "tribe"
-	TopAttCommand            Command = "topatt"
-	TopDefCommand            Command = "topdef"
-	TopSuppCommand           Command = "topsupp"
-	TopTotalCommand          Command = "toptotal"
-	TopPointsCommand         Command = "toppoints"
+	HelpCommand                       Command = "help"
+	ObserveCommand                    Command = "observe"
+	ObservationsCommand               Command = "observations"
+	UnObserveCommand                  Command = "unobserve"
+	LostVillagesCommand               Command = "lostvillages"
+	UnObserveLostVillagesCommand      Command = "unobservelostvillages"
+	ConqueredVillagesCommand          Command = "conqueredvillages"
+	UnObserveConqueredVillagesCommand Command = "unobserveconqueredvillages"
+	TribeCommand                      Command = "tribe"
+	TopAttCommand                     Command = "topatt"
+	TopDefCommand                     Command = "topdef"
+	TopSuppCommand                    Command = "topsupp"
+	TopTotalCommand                   Command = "toptotal"
+	TopPointsCommand                  Command = "toppoints"
+	AuthorCommand                     Command = "author"
 )
 
 func (cmd Command) String() string {
@@ -46,11 +49,12 @@ func (cmd Command) WithPrefix(prefix string) string {
 func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 	tribeCMDWithPrefix := TribeCommand.WithPrefix(s.cfg.CommandPrefix)
 	commandsForAll := fmt.Sprintf(`
-- %s %s [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RA z plemion o podanych id
-- %s %s [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RO z plemion o podanych id
-- %s %s [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RW z plemion o podanych id
-- %s %s [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największej liczbie pokonanych z plemion o podanych id
-- %s %s [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największej liczbie punktów z plemion o podanych id
+- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RA z plemion o podanych id
+- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RO z plemion o podanych id
+- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RW z plemion o podanych id
+- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największej liczbie pokonanych z plemion o podanych id
+- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największej liczbie punktów z plemion o podanych id
+- **%s** - kontakt z autorem bota
 				`,
 		tribeCMDWithPrefix,
 		TopAttCommand.String(),
@@ -61,21 +65,28 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 		tribeCMDWithPrefix,
 		TopTotalCommand.String(),
 		tribeCMDWithPrefix,
-		TopPointsCommand.String())
+		TopPointsCommand.String(),
+		AuthorCommand.WithPrefix(s.cfg.CommandPrefix),
+	)
 
 	commandsForGuildAdmins := fmt.Sprintf(`
-- %s [świat] [id] - dodaje plemię z danego świata do obserwowanych
-- %s - wyświetla wszystkie obserwowane plemiona
-- %s [id z %s] - usuwa plemię z obserwowanych
-- %s - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
-- %s - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
+- **%s** [świat] [id] - dodaje plemię z danego świata do obserwowanych
+- **%s** - wyświetla wszystkie obserwowane plemiona
+- **%s** [id z %s] - usuwa plemię z obserwowanych
+- **%s** - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
+- **%s** - informacje o podbitych wioskach na wybranym kanale nie będą się już pojawiały
+- **%s** - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
+- **%s** - informacje o podbitych wioskach na wybranym kanale nie będą się już pojawiały
 				`,
 		ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 		UnObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
+		ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+		UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix))
+		UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+	)
 
 	s.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle("Pomoc").
@@ -83,6 +94,10 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 		AddField("Dla wszystkich", commandsForAll).
 		AddField("Dla adminów", commandsForGuildAdmins).
 		MessageEmbed)
+}
+
+func (s *Session) handleAuthorCommand(m *discordgo.MessageCreate) {
+	s.SendMessage(m.ChannelID, fmt.Sprintf("%s Discord: Kichiyaki#2064.", m.Author.Mention()))
 }
 
 func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string) {
@@ -230,6 +245,50 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 		MessageEmbed)
 }
 
+func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate) {
+	if m.GuildID == "" {
+		return
+	}
+	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
+		return
+	}
+
+	server := &models.Server{
+		ID: m.GuildID,
+	}
+	err := s.cfg.ServerRepository.Store(context.Background(), server)
+	if err != nil {
+		return
+	}
+	server.ConqueredVillagesChannelID = m.ChannelID
+	go s.cfg.ServerRepository.Update(context.Background(), server)
+	s.SendMessage(m.ChannelID,
+		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o podbitych wioskach.", m.Author.Mention()))
+}
+
+func (s *Session) handleUnObserveConqueredVillagesCommand(m *discordgo.MessageCreate) {
+	if m.GuildID == "" {
+		return
+	}
+	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
+		return
+	}
+
+	server := &models.Server{
+		ID: m.GuildID,
+	}
+	err := s.cfg.ServerRepository.Store(context.Background(), server)
+	if err != nil {
+		return
+	}
+	if server.ConqueredVillagesChannelID != "" {
+		server.ConqueredVillagesChannelID = ""
+		go s.cfg.ServerRepository.Update(context.Background(), server)
+	}
+	s.SendMessage(m.ChannelID,
+		fmt.Sprintf("%s Informacje o podbitych wioskach nie będą się już pojawiały.", m.Author.Mention()))
+}
+
 func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate) {
 	if m.GuildID == "" {
 		return
@@ -251,7 +310,7 @@ func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate) {
 		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o straconych wioskach.", m.Author.Mention()))
 }
 
-func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleUnObserveLostVillagesCommand(m *discordgo.MessageCreate) {
 	if m.GuildID == "" {
 		return
 	}
@@ -266,10 +325,12 @@ func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate) {
 	if err != nil {
 		return
 	}
-	server.ConqueredVillagesChannelID = m.ChannelID
-	go s.cfg.ServerRepository.Update(context.Background(), server)
+	if server.LostVillagesChannelID != "" {
+		server.LostVillagesChannelID = ""
+		go s.cfg.ServerRepository.Update(context.Background(), server)
+	}
 	s.SendMessage(m.ChannelID,
-		fmt.Sprintf("%s Pomyślnie zmieniono kanał na którym będą się wyświetlać informacje o podbitych wioskach.", m.Author.Mention()))
+		fmt.Sprintf("%s Informacje o straconych wioskach nie będą się już pojawiały.", m.Author.Mention()))
 }
 
 func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...string) {
