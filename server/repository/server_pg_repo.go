@@ -30,7 +30,7 @@ func (repo *pgRepo) Store(ctx context.Context, server *models.Server) error {
 		Where("id = ?id").
 		Returning("*").
 		Context(ctx).
-		Relation("Observations").
+		Relation("Groups").
 		SelectOrInsert(); err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (repo *pgRepo) Update(ctx context.Context, server *models.Server) error {
 func (repo *pgRepo) Fetch(ctx context.Context, f *models.ServerFilter) ([]*models.Server, int, error) {
 	var err error
 	data := []*models.Server{}
-	query := repo.Model(&data).Context(ctx).Relation("Observations")
+	query := repo.Model(&data).Context(ctx).Relation("Groups")
 
 	if f != nil {
 		query = query.

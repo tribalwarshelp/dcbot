@@ -8,6 +8,7 @@ import (
 	shared_models "github.com/tribalwarshelp/shared/models"
 
 	"github.com/tribalwarshelp/dcbot/discord"
+	"github.com/tribalwarshelp/dcbot/group"
 	"github.com/tribalwarshelp/dcbot/models"
 	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
@@ -19,6 +20,7 @@ type handler struct {
 	lastEnnoblementAt map[string]time.Time
 	serverRepo        server.Repository
 	observationRepo   observation.Repository
+	groupRepo         group.Repository
 	discord           *discord.Session
 	api               *sdk.SDK
 }
@@ -87,44 +89,44 @@ func (h *handler) loadLangVersions(worlds []string) map[shared_models.LanguageTa
 }
 
 func (h *handler) checkLastEnnoblements() {
-	worlds, err := h.observationRepo.FetchWorlds(context.Background())
+	servers, err := h.observationRepo.FetchServers(context.Background())
 	if err != nil {
 		log.Print("checkLastEnnoblements error: " + err.Error())
 		return
 	}
-	log.Print("checkLastEnnoblements: worlds: ", worlds)
+	log.Print("checkLastEnnoblements: servers: ", servers)
 
-	servers, total, err := h.serverRepo.Fetch(context.Background(), nil)
+	groups, total, err := h.groupRepo.Fetch(context.Background(), nil)
 	if err != nil {
 		log.Print("checkLastEnnoblements error: " + err.Error())
 		return
 	}
-	log.Print("checkLastEnnoblements: number of loaded discord servers: ", total)
+	log.Print("checkLastEnnoblements: number of loaded groups: ", total)
 
-	langVersions := h.loadLangVersions(worlds)
-	ennoblementsByServerKey := h.loadEnnoblements(worlds)
+	langVersions := h.loadLangVersions(servers)
+	ennoblementsByServerKey := h.loadEnnoblements(servers)
 
-	for _, server := range servers {
-		if server.ConqueredVillagesChannelID == "" && server.LostVillagesChannelID == "" {
+	for _, group := range groups {
+		if group.ConqueredVillagesChannelID == "" && group.LostVillagesChannelID == "" {
 			continue
 		}
-		for _, tribe := range server.Observations {
-			ennoblements, ok := ennoblementsByServerKey[tribe.World]
-			langVersion, ok2 := langVersions[utils.LanguageTagFromWorldName(tribe.World)]
+		for _, observation := range group.Observations {
+			ennoblements, ok := ennoblementsByServerKey[observation.Server]
+			langVersion, ok2 := langVersions[utils.LanguageTagFromWorldName(observation.Server)]
 			if ok && ok2 {
-				if server.LostVillagesChannelID != "" {
-					for _, ennoblement := range ennoblements.getLostVillagesByTribe(tribe.TribeID) {
+				if group.LostVillagesChannelID != "" {
+					for _, ennoblement := range ennoblements.getLostVillagesByTribe(observation.TribeID) {
 						if !isPlayerTribeNil(ennoblement.NewOwner) &&
-							server.Observations.Contains(tribe.World, ennoblement.NewOwner.Tribe.ID) {
+							group.Observations.Contains(observation.Server, ennoblement.NewOwner.Tribe.ID) {
 							continue
 						}
 						newMsgDataConfig := newMessageDataConfig{
 							host:        langVersion.Host,
-							world:       tribe.World,
+							world:       observation.Server,
 							ennoblement: ennoblement,
 						}
 						msgData := newMessageData(newMsgDataConfig)
-						h.discord.SendEmbed(server.LostVillagesChannelID,
+						h.discord.SendEmbed(group.LostVillagesChannelID,
 							discord.
 								NewEmbed().
 								SetTitle("Stracona wioska").
@@ -134,19 +136,19 @@ func (h *handler) checkLastEnnoblements() {
 					}
 				}
 
-				if server.ConqueredVillagesChannelID != "" {
-					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(tribe.TribeID) {
+				if group.ConqueredVillagesChannelID != "" {
+					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID) {
 						if !isPlayerTribeNil(ennoblement.OldOwner) &&
-							server.Observations.Contains(tribe.World, ennoblement.OldOwner.Tribe.ID) {
+							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID) {
 							continue
 						}
 						newMsgDataConfig := newMessageDataConfig{
 							host:        langVersion.Host,
-							world:       tribe.World,
+							world:       observation.Server,
 							ennoblement: ennoblement,
 						}
 						msgData := newMessageData(newMsgDataConfig)
-						h.discord.SendEmbed(server.ConqueredVillagesChannelID,
+						h.discord.SendEmbed(group.ConqueredVillagesChannelID,
 							discord.
 								NewEmbed().
 								SetTitle("Podbita wioska").
@@ -188,7 +190,7 @@ func (h *handler) checkBotMembershipOnServers() {
 }
 
 func (h *handler) deleteClosedTribalWarsServers() {
-	servers, err := h.observationRepo.FetchWorlds(context.Background())
+	servers, err := h.observationRepo.FetchServers(context.Background())
 	if err != nil {
 		log.Print("deleteClosedTribalWarsServers: " + err.Error())
 		return
@@ -214,7 +216,7 @@ func (h *handler) deleteClosedTribalWarsServers() {
 
 	if len(keys) > 0 {
 		deleted, err := h.observationRepo.Delete(context.Background(), &models.ObservationFilter{
-			World: keys,
+			Server: keys,
 		})
 		if err != nil {
 			log.Print("deleteClosedTribalWarsServers error: " + err.Error())

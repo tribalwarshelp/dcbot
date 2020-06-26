@@ -3,10 +3,8 @@ package models
 type Server struct {
 	tableName struct{} `pg:",alias:server"`
 
-	ID                         string       `pg:",pk" json:"id" gqlgen:"id"`
-	ConqueredVillagesChannelID string       `pg:",use_zero" json:"conqueredVillagesChannelID" gqlgen:"conqueredVillagesChannelID"`
-	LostVillagesChannelID      string       `pg:",use_zero" json:"lostVillagesChannelID" gqlgen:"lostVillagesChannelID"`
-	Observations               Observations `json:"observation,omitempty" gqlgen:"observation"`
+	ID     string `pg:",pk" json:"id" gqlgen:"id"`
+	Groups []*Group
 }
 
 type ServerFilter struct {
