@@ -30,8 +30,6 @@ func init() {
 }
 
 func main() {
-	api := sdk.New(os.Getenv("API_URL"))
-	//postgres
 	db := pg.Connect(&pg.Options{
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
@@ -43,6 +41,7 @@ func main() {
 			log.Fatal(err)
 		}
 	}()
+
 	serverRepo, err := server_repository.NewPgRepo(db)
 	if err != nil {
 		log.Fatal(err)
@@ -55,6 +54,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	api := sdk.New(os.Getenv("API_URL"))
+
 	sess, err := discord.New(discord.SessionConfig{
 		Token:                 os.Getenv("BOT_TOKEN"),
 		CommandPrefix:         "tw!",
@@ -79,9 +81,7 @@ func main() {
 		GroupRepo:       groupRepo,
 		API:             api,
 	})
-	go func() {
-		c.Run()
-	}()
+	c.Start()
 	defer c.Stop()
 
 	log.Print("Bot is waiting for your actions!")

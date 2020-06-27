@@ -32,7 +32,7 @@ func Attach(c *cron.Cron, cfg Config) {
 	}
 	c.AddFunc("@every 1m", h.checkLastEnnoblements)
 	c.AddFunc("@every 30m", h.checkBotMembershipOnServers)
-	c.AddFunc("@every 2h", h.deleteClosedTribalWarsServers)
+	c.AddFunc("@every 2h10m", h.deleteClosedTribalWarsServers)
 	go func() {
 		h.checkBotMembershipOnServers()
 		h.deleteClosedTribalWarsServers()
