@@ -25,10 +25,10 @@ type handler struct {
 	api               *sdk.SDK
 }
 
-func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
+func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 	m := make(map[string]ennoblements)
 
-	for _, w := range worlds {
+	for _, w := range servers {
 		es, err := h.api.LiveEnnoblements.Browse(w, &sdk.LiveEnnoblementInclude{
 			NewOwner: true,
 			Village:  true,
@@ -47,7 +47,7 @@ func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
 
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
 		if !ok {
-			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
+			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
 		}
 
 		m[w] = filterEnnoblements(es, lastEnnoblementAt)
@@ -62,11 +62,11 @@ func (h *handler) loadEnnoblements(worlds []string) map[string]ennoblements {
 	return m
 }
 
-func (h *handler) loadLangVersions(worlds []string) map[shared_models.LanguageTag]*shared_models.LangVersion {
+func (h *handler) loadLangVersions(servers []string) map[shared_models.LanguageTag]*shared_models.LangVersion {
 	languageTags := []shared_models.LanguageTag{}
 	cache := make(map[shared_models.LanguageTag]bool)
-	for _, world := range worlds {
-		languageTag := utils.LanguageTagFromWorldName(world)
+	for _, server := range servers {
+		languageTag := utils.LanguageTagFromWorldName(server)
 		if languageTag.IsValid() && !cache[languageTag] {
 			cache[languageTag] = true
 			languageTags = append(languageTags, languageTag)
@@ -89,6 +89,8 @@ func (h *handler) loadLangVersions(worlds []string) map[shared_models.LanguageTa
 }
 
 func (h *handler) checkLastEnnoblements() {
+	start := time.Now()
+
 	servers, err := h.observationRepo.FetchServers(context.Background())
 	if err != nil {
 		log.Print("checkLastEnnoblements error: " + err.Error())
@@ -120,19 +122,14 @@ func (h *handler) checkLastEnnoblements() {
 							group.Observations.Contains(observation.Server, ennoblement.NewOwner.Tribe.ID) {
 							continue
 						}
-						newMsgDataConfig := newMessageDataConfig{
+						newMsgDataConfig := newMessageConfig{
 							host:        langVersion.Host,
-							world:       observation.Server,
+							server:      observation.Server,
 							ennoblement: ennoblement,
+							t:           messageTypeLost,
 						}
-						msgData := newMessageData(newMsgDataConfig)
-						h.discord.SendEmbed(group.LostVillagesChannelID,
-							discord.
-								NewEmbed().
-								SetTitle("Stracona wioska").
-								AddField(msgData.world, formatMsgAboutVillageLost(msgData)).
-								SetTimestamp(msgData.date).
-								MessageEmbed)
+						msg := newMessage(newMsgDataConfig)
+						h.discord.SendEmbed(group.LostVillagesChannelID, msg.toEmbed())
 					}
 				}
 
@@ -142,24 +139,21 @@ func (h *handler) checkLastEnnoblements() {
 							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID) {
 							continue
 						}
-						newMsgDataConfig := newMessageDataConfig{
+						newMsgDataConfig := newMessageConfig{
 							host:        langVersion.Host,
-							world:       observation.Server,
+							server:      observation.Server,
 							ennoblement: ennoblement,
+							t:           messageTypeConquer,
 						}
-						msgData := newMessageData(newMsgDataConfig)
-						h.discord.SendEmbed(group.ConqueredVillagesChannelID,
-							discord.
-								NewEmbed().
-								SetTitle("Podbita wioska").
-								AddField(msgData.world, formatMsgAboutVillageConquest(msgData)).
-								SetTimestamp(msgData.date).
-								MessageEmbed)
+						msg := newMessage(newMsgDataConfig)
+						h.discord.SendEmbed(group.ConqueredVillagesChannelID, msg.toEmbed())
 					}
 				}
 			}
 		}
 	}
+
+	log.Printf("checkLastEnnoblements: finished in %s", time.Since(start).String())
 }
 
 func (h *handler) checkBotMembershipOnServers() {
