@@ -10,6 +10,7 @@ import (
 
 	_cron "github.com/tribalwarshelp/dcbot/cron"
 	"github.com/tribalwarshelp/dcbot/discord"
+	group_repository "github.com/tribalwarshelp/dcbot/group/repository"
 	observation_repository "github.com/tribalwarshelp/dcbot/observation/repository"
 	server_repository "github.com/tribalwarshelp/dcbot/server/repository"
 
@@ -29,8 +30,6 @@ func init() {
 }
 
 func main() {
-	api := sdk.New(os.Getenv("API_URL"))
-	//postgres
 	db := pg.Connect(&pg.Options{
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
@@ -42,7 +41,12 @@ func main() {
 			log.Fatal(err)
 		}
 	}()
+
 	serverRepo, err := server_repository.NewPgRepo(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+	groupRepo, err := group_repository.NewPgRepo(db)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,12 +54,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	api := sdk.New(os.Getenv("API_URL"))
+
 	sess, err := discord.New(discord.SessionConfig{
 		Token:                 os.Getenv("BOT_TOKEN"),
 		CommandPrefix:         "tw!",
 		Status:                "Tribal Wars | tw!help",
 		ObservationRepository: observationRepo,
 		ServerRepository:      serverRepo,
+		GroupRepository:       groupRepo,
 		API:                   api,
 	})
 	if err != nil {
@@ -70,11 +78,10 @@ func main() {
 		ServerRepo:      serverRepo,
 		ObservationRepo: observationRepo,
 		Discord:         sess,
+		GroupRepo:       groupRepo,
 		API:             api,
 	})
-	go func() {
-		c.Run()
-	}()
+	c.Start()
 	defer c.Stop()
 
 	log.Print("Bot is waiting for your actions!")

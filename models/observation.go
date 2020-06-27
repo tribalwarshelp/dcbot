@@ -1,20 +1,23 @@
 package models
 
+import "time"
+
 type Observation struct {
 	tableName struct{} `pg:",alias:observation"`
 
-	ID       int     `json:"id" gqlgen:"id"`
-	World    string  `pg:"unique:group_1,use_zero" json:"world" gqlgen:"world"`
-	TribeID  int     `pg:"unique:group_1,use_zero" json:"tribeID" gqlgen:"tribeID"`
-	ServerID string  `pg:"on_delete:CASCADE,unique:group_1,use_zero" json:"serverID" gqlgen:"serverID"`
-	Server   *Server `json:"server,omitempty" gqlgen:"server"`
+	ID        int       `json:"id" gqlgen:"id"`
+	Server    string    `pg:"unique:group_1,use_zero" json:"server" gqlgen:"server"`
+	TribeID   int       `pg:"unique:group_1,use_zero" json:"tribeID" gqlgen:"tribeID"`
+	GroupID   int       `pg:"on_delete:CASCADE,unique:group_1,use_zero" json:"groupID" gqlgen:"groupID"`
+	Group     *Group    `json:"group,omitempty" gqlgen:"group"`
+	CreatedAt time.Time `pg:"default:now()" json:"createdAt" gqlgen:"createdAt" xml:"createdAt"`
 }
 
 type Observations []*Observation
 
-func (o Observations) Contains(world string, id int) bool {
+func (o Observations) Contains(server string, id int) bool {
 	for _, observation := range o {
-		if observation.TribeID == id && observation.World == world {
+		if observation.TribeID == id && observation.Server == server {
 			return true
 		}
 	}
@@ -22,10 +25,10 @@ func (o Observations) Contains(world string, id int) bool {
 }
 
 type ObservationFilter struct {
-	ID       []int
-	World    []string
-	ServerID []string
-	Limit    int      `urlstruct:",nowhere"`
-	Offset   int      `urlstruct:",nowhere"`
-	Order    []string `urlstruct:",nowhere"`
+	ID      []int
+	Server  []string
+	GroupID []int
+	Limit   int      `urlstruct:",nowhere"`
+	Offset  int      `urlstruct:",nowhere"`
+	Order   []string `urlstruct:",nowhere"`
 }

@@ -75,15 +75,15 @@ func (repo *pgRepo) Fetch(ctx context.Context, f *models.ObservationFilter) ([]*
 	return data, total, nil
 }
 
-func (repo *pgRepo) FetchWorlds(ctx context.Context) ([]string, error) {
+func (repo *pgRepo) FetchServers(ctx context.Context) ([]string, error) {
 	data := []*models.Observation{}
 	res := []string{}
 	err := repo.
 		Model(&data).
-		Column("world").
+		Column("server").
 		Context(ctx).
-		Group("world").
-		Order("world ASC").
+		Group("server").
+		Order("server ASC").
 		Select(&res)
 	return res, err
 }

@@ -12,5 +12,5 @@ type Repository interface {
 	Update(ctx context.Context, observation *models.Observation) error
 	Delete(ctx context.Context, filter *models.ObservationFilter) ([]*models.Observation, error)
 	Fetch(ctx context.Context, filter *models.ObservationFilter) ([]*models.Observation, int, error)
-	FetchWorlds(ctx context.Context) ([]string, error)
+	FetchServers(ctx context.Context) ([]string, error)
 }

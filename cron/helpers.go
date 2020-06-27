@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"fmt"
 	"time"
 
 	shared_models "github.com/tribalwarshelp/shared/models"
@@ -33,10 +34,9 @@ func formatDateOfConquest(t time.Time) string {
 	return t.Format(time.RFC3339)
 }
 
-func getLocation(timezone string) *time.Location {
-	loc, err := time.LoadLocation(timezone)
-	if err != nil {
-		return time.UTC
+func formatMsgLink(text string, url string) string {
+	if url == "" {
+		return text
 	}
-	return loc
+	return fmt.Sprintf("[``%s``](%s)", text, url)
 }
