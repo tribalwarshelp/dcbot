@@ -107,6 +107,8 @@ github.com/tribalwarshelp/golang-sdk v0.0.0-20200625131004-06b44e214642 h1:PD5bO
 github.com/tribalwarshelp/golang-sdk v0.0.0-20200625131004-06b44e214642/go.mod h1:dM2bGl7OxfsejbDu+TSFie8XS1XD1WBc1/dEqbIRLUk=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20200629130313-0880d8996ba6 h1:+C127PqJZY5xS1gyWQAaSblxnktBxnFISzHsnEjPj0s=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20200629130313-0880d8996ba6/go.mod h1:J1nwE1gYoP8LJkb1sbL3OGqTp7u8RJZGpsKHYjS3+0Y=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20200709112050-ba3a7ba145b1 h1:p+/OHcQQYXCmxjG+YTkXfeL4Oxku7t6sW0KK2Ne85V4=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20200709112050-ba3a7ba145b1/go.mod h1:jQWbuz96EMQTuxhanSY1imtK4zEjPrB1cM5wCKkk7l4=
 github.com/tribalwarshelp/shared v0.0.0-20200623144748-aa834a01dce6 h1:WZ1oxHysFtiPjHa2ADUqiGrzwcN3j0YpiVg/V2e/74o=
 github.com/tribalwarshelp/shared v0.0.0-20200623144748-aa834a01dce6/go.mod h1:tf+2yTHasV6jAF3V2deZ9slNoCyBzC0fMdTjI7clf6Y=
 github.com/tribalwarshelp/shared v0.0.0-20200625120510-6d18ee334662/go.mod h1:tf+2yTHasV6jAF3V2deZ9slNoCyBzC0fMdTjI7clf6Y=
@@ -114,6 +116,8 @@ github.com/tribalwarshelp/shared v0.0.0-20200625131045-74c5a9b3b4f0 h1:k1j0Nh2OI
 github.com/tribalwarshelp/shared v0.0.0-20200625131045-74c5a9b3b4f0/go.mod h1:tf+2yTHasV6jAF3V2deZ9slNoCyBzC0fMdTjI7clf6Y=
 github.com/tribalwarshelp/shared v0.0.0-20200629123803-0cd6cb6f1e87 h1:TMuZUk0wW+8dXSGVJVLRFFhLONKKYJRnLBFvbb9XTrE=
 github.com/tribalwarshelp/shared v0.0.0-20200629123803-0cd6cb6f1e87/go.mod h1:tf+2yTHasV6jAF3V2deZ9slNoCyBzC0fMdTjI7clf6Y=
+github.com/tribalwarshelp/shared v0.0.0-20200707075151-722e4a520a3c h1:wenSReGHPux51q5s+9Ji0TOHCt8Zx6whxsjx8Iv7aZg=
+github.com/tribalwarshelp/shared v0.0.0-20200707075151-722e4a520a3c/go.mod h1:tf+2yTHasV6jAF3V2deZ9slNoCyBzC0fMdTjI7clf6Y=
 github.com/vmihailenco/bufpool v0.1.5/go.mod h1:fL9i/PRTuS7AELqAHwSU1Zf1c70xhkhGe/cD5ud9pJk=
 github.com/vmihailenco/bufpool v0.1.11 h1:gOq2WmBrq0i2yW5QJ16ykccQ4wH9UyEsgLm6czKAd94=
 github.com/vmihailenco/bufpool v0.1.11/go.mod h1:AFf/MOy3l2CFTKbxwt0mp2MwnqjNEs5H/UxrkA5jxTQ=

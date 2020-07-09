@@ -258,6 +258,10 @@ type EmbedMessage struct {
 	mutex  sync.Mutex
 }
 
+func (msg *EmbedMessage) IsEmpty() bool {
+	return len(msg.Chunks) == 0
+}
+
 func (msg *EmbedMessage) Append(m string) {
 	msg.mutex.Lock()
 	defer msg.mutex.Unlock()

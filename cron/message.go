@@ -98,13 +98,20 @@ func (msg message) formatMsgAboutVillageConquest() string {
 		formatMsgLink(msg.oldOwnerTribeTag, msg.oldOwnerTribeURL))
 }
 
+func (msg message) String() string {
+	fieldContent := msg.formatMsgAboutVillageConquest()
+	if msg.t == messageTypeLost {
+		fieldContent = msg.formatMsgAboutVillageLost()
+	}
+	return fieldContent + "\n"
+}
+
 func (msg message) toEmbed() *discordgo.MessageEmbed {
 	title := "Podbita wioska"
-	fieldContent := msg.formatMsgAboutVillageConquest()
+	fieldContent := msg.String()
 	color := colorConqueredVillage
 	if msg.t == messageTypeLost {
 		title = "Stracona wioska"
-		fieldContent = msg.formatMsgAboutVillageLost()
 		color = colorLostVillage
 	}
 
