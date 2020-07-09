@@ -7,6 +7,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/tribalwarshelp/dcbot/models"
+	"github.com/tribalwarshelp/dcbot/utils"
 	shared_models "github.com/tribalwarshelp/shared/models"
 )
 
@@ -467,32 +468,75 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 				m.Author.Mention()))
 		return
 	}
-
 	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie znaleziono grupy.`)
 		return
 	}
-
 	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &models.ObservationFilter{
 		GroupID: []int{groupID},
 	})
 	if err != nil {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+` Wystąpił błąd wewnętrzny, prosimy spróbować później.`)
 		return
 	}
 
-	msg := ""
+	tribeIDsByServer := make(map[string][]int)
+	observationIndexByTribeID := make(map[int]int)
+	langTags := []shared_models.LanguageTag{}
 	for i, observation := range observations {
-		msg += fmt.Sprintf("**%d** | %d - %s - %d\n", i+1, observation.ID, observation.Server, observation.TribeID)
+		tribeIDsByServer[observation.Server] = append(tribeIDsByServer[observation.Server], observation.TribeID)
+		observationIndexByTribeID[observation.TribeID] = i
+		currentLangTag := utils.LanguageTagFromWorldName(observation.Server)
+		unique := true
+		for _, langTag := range langTags {
+			if langTag == currentLangTag {
+				unique = false
+				break
+			}
+		}
+		if unique {
+			langTags = append(langTags, currentLangTag)
+		}
 	}
-
-	if msg == "" {
-		msg = "Brak dodanych obserwacji do tej grupy"
+	for server, tribeIDs := range tribeIDsByServer {
+		list, err := s.cfg.API.Tribes.Browse(server, &shared_models.TribeFilter{
+			ID: tribeIDs,
+		})
+		if err != nil {
+			s.SendMessage(m.ChannelID, m.Author.Mention()+` Wystąpił błąd wewnętrzny, prosimy spróbować później.`)
+			return
+		}
+		for _, tribe := range list.Items {
+			observations[observationIndexByTribeID[tribe.ID]].Tribe = tribe
+		}
 	}
+	langVersionList, err := s.cfg.API.LangVersions.Browse(&shared_models.LangVersionFilter{
+		Tag: langTags,
+	})
 
+	msg := &EmbedMessage{}
+	if len(observations) <= 0 {
+		msg.Append("Brak")
+	}
+	for i, observation := range observations {
+		tag := "Unknown"
+		if observation.Tribe != nil {
+			tag = observation.Tribe.Tag
+		}
+		lv := utils.FindLangVersionByTag(langVersionList.Items, utils.LanguageTagFromWorldName(observation.Server))
+		tribeURL := ""
+		if lv != nil {
+			tribeURL = utils.FormatTribeURL(observation.Server, lv.Host, observation.TribeID)
+		}
+		msg.Append(fmt.Sprintf("**%d** | %d - %s - [``%s``](%s)\n", i+1, observation.ID,
+			observation.Server,
+			tag,
+			tribeURL))
+	}
 	s.SendEmbed(m.ChannelID, NewEmbed().
-		SetTitle("Lista obserwowanych plemion").
-		AddField("Indeks | ID - Serwer - ID plemienia", msg).
+		SetTitle("Lista obserwowanych plemion\nIndeks | ID - Serwer - Plemię").
+		SetFields(msg.ToMessageEmbedFields()).
 		SetFooter("Strona 1 z 1").
 		MessageEmbed)
 }

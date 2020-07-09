@@ -1,16 +1,21 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	shared_models "github.com/tribalwarshelp/shared/models"
+)
 
 type Observation struct {
 	tableName struct{} `pg:",alias:observation"`
 
-	ID        int       `json:"id" gqlgen:"id"`
-	Server    string    `pg:"unique:group_1,use_zero" json:"server" gqlgen:"server"`
-	TribeID   int       `pg:"unique:group_1,use_zero" json:"tribeID" gqlgen:"tribeID"`
-	GroupID   int       `pg:"on_delete:CASCADE,unique:group_1,use_zero" json:"groupID" gqlgen:"groupID"`
-	Group     *Group    `json:"group,omitempty" gqlgen:"group"`
-	CreatedAt time.Time `pg:"default:now()" json:"createdAt" gqlgen:"createdAt" xml:"createdAt"`
+	ID        int                  `json:"id" gqlgen:"id"`
+	Server    string               `pg:"unique:group_1,use_zero" json:"server" gqlgen:"server"`
+	TribeID   int                  `pg:"unique:group_1,use_zero" json:"tribeID" gqlgen:"tribeID"`
+	Tribe     *shared_models.Tribe `pg:"-"`
+	GroupID   int                  `pg:"on_delete:CASCADE,unique:group_1,use_zero" json:"groupID" gqlgen:"groupID"`
+	Group     *Group               `json:"group,omitempty" gqlgen:"group"`
+	CreatedAt time.Time            `pg:"default:now()" json:"createdAt" gqlgen:"createdAt" xml:"createdAt"`
 }
 
 type Observations []*Observation

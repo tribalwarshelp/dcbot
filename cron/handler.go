@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/pkg/errors"
 	shared_models "github.com/tribalwarshelp/shared/models"
 
 	"github.com/tribalwarshelp/dcbot/discord"
@@ -62,7 +63,7 @@ func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 	return m
 }
 
-func (h *handler) loadLangVersions(servers []string) map[shared_models.LanguageTag]*shared_models.LangVersion {
+func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersion, error) {
 	languageTags := []shared_models.LanguageTag{}
 	cache := make(map[shared_models.LanguageTag]bool)
 	for _, server := range servers {
@@ -73,19 +74,14 @@ func (h *handler) loadLangVersions(servers []string) map[shared_models.LanguageT
 		}
 	}
 
-	langVersions := make(map[shared_models.LanguageTag]*shared_models.LangVersion)
-	langVersionsList, err := h.api.LangVersions.Browse(&shared_models.LangVersionFilter{
+	langVersionList, err := h.api.LangVersions.Browse(&shared_models.LangVersionFilter{
 		Tag: languageTags,
 	})
-	if err == nil {
-		for _, langVersion := range langVersionsList.Items {
-			langVersions[langVersion.Tag] = langVersion
-		}
-	} else {
-		log.Printf("Cannot load lang versions: %s", err.Error())
+	if err != nil {
+		return nil, errors.Wrap(err, "Cannot load lang versions")
 	}
 
-	return langVersions
+	return langVersionList.Items, nil
 }
 
 func (h *handler) checkLastEnnoblements() {
@@ -105,7 +101,11 @@ func (h *handler) checkLastEnnoblements() {
 	}
 	log.Print("checkLastEnnoblements: number of loaded groups: ", total)
 
-	langVersions := h.loadLangVersions(servers)
+	langVersions, err := h.loadLangVersions(servers)
+	if err != nil {
+		log.Print(err)
+		return
+	}
 	ennoblementsByServerKey := h.loadEnnoblements(servers)
 
 	for _, group := range groups {
@@ -114,9 +114,10 @@ func (h *handler) checkLastEnnoblements() {
 		}
 		for _, observation := range group.Observations {
 			ennoblements, ok := ennoblementsByServerKey[observation.Server]
-			langVersion, ok2 := langVersions[utils.LanguageTagFromWorldName(observation.Server)]
-			if ok && ok2 {
+			langVersion := utils.FindLangVersionByTag(langVersions, utils.LanguageTagFromWorldName(observation.Server))
+			if ok && langVersion != nil && langVersion.Host != "" {
 				if group.LostVillagesChannelID != "" {
+					msg := &discord.EmbedMessage{}
 					for _, ennoblement := range ennoblements.getLostVillagesByTribe(observation.TribeID) {
 						if !isPlayerTribeNil(ennoblement.NewOwner) &&
 							group.Observations.Contains(observation.Server, ennoblement.NewOwner.Tribe.ID) {
@@ -128,12 +129,22 @@ func (h *handler) checkLastEnnoblements() {
 							ennoblement: ennoblement,
 							t:           messageTypeLost,
 						}
-						msg := newMessage(newMsgDataConfig)
-						h.discord.SendEmbed(group.LostVillagesChannelID, msg.toEmbed())
+						msg.Append(newMessage(newMsgDataConfig).String())
+					}
+					if !msg.IsEmpty() {
+						h.discord.SendEmbed(group.LostVillagesChannelID,
+							discord.
+								NewEmbed().
+								SetTitle("Stracone wioski").
+								SetColor(colorLostVillage).
+								SetFields(msg.ToMessageEmbedFields()).
+								SetTimestamp(formatDateOfConquest(time.Now())).
+								MessageEmbed)
 					}
 				}
 
 				if group.ConqueredVillagesChannelID != "" {
+					msg := &discord.EmbedMessage{}
 					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID) {
 						if !isPlayerTribeNil(ennoblement.OldOwner) &&
 							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID) {
@@ -145,8 +156,17 @@ func (h *handler) checkLastEnnoblements() {
 							ennoblement: ennoblement,
 							t:           messageTypeConquer,
 						}
-						msg := newMessage(newMsgDataConfig)
-						h.discord.SendEmbed(group.ConqueredVillagesChannelID, msg.toEmbed())
+						msg.Append(newMessage(newMsgDataConfig).String())
+					}
+					if !msg.IsEmpty() {
+						h.discord.SendEmbed(group.ConqueredVillagesChannelID,
+							discord.
+								NewEmbed().
+								SetTitle("Podbite wioski").
+								SetColor(colorConqueredVillage).
+								SetFields(msg.ToMessageEmbedFields()).
+								SetTimestamp(formatDateOfConquest(time.Now())).
+								MessageEmbed)
 					}
 				}
 			}
