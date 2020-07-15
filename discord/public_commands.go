@@ -50,6 +50,7 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 - **%s** - tworzy nową grupę
 - **%s** - lista grup
 - **%s** [id grupy z %s] - usuwa grupę
+- **%s** [id grupy z %s] - włącza/wyłącza wyświetlanie powiadomień o podbitych wioskach barbarzyńskich
 - **%s** [id grupy z %s] [świat] [id plemienia] - dodaje plemię z danego świata do obserwowanych
 - **%s** [id grupy z %s] - wyświetla wszystkie obserwowane plemiona
 - **%s** [id grupy z %s] [id z %s] - usuwa plemię z obserwowanych
@@ -61,6 +62,8 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 		AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+		ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -88,7 +91,7 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 }
 
 func (s *Session) handleAuthorCommand(m *discordgo.MessageCreate) {
-	s.SendMessage(m.ChannelID, fmt.Sprintf("%s Discord: Kichiyaki#2064.", m.Author.Mention()))
+	s.SendMessage(m.ChannelID, fmt.Sprintf("%s Discord: Kichiyaki#2064 | https://dawid-wysokinski.pl/#contact.", m.Author.Mention()))
 }
 
 func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string) {
