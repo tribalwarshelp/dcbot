@@ -48,7 +48,7 @@ func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
 		if !ok {
-			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
+			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
 		}
 
 		m[w] = filterEnnoblements(es, lastEnnoblementAt)
@@ -146,8 +146,10 @@ func (h *handler) checkLastEnnoblements() {
 				if group.ConqueredVillagesChannelID != "" {
 					msg := &discord.EmbedMessage{}
 					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID) {
-						if !isPlayerTribeNil(ennoblement.OldOwner) &&
-							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID) {
+						isBarbarian := isPlayerNil(ennoblement.OldOwner) || ennoblement.OldOwner.ID == 0
+						if (!isPlayerTribeNil(ennoblement.OldOwner) &&
+							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID)) ||
+							(!group.ShowEnnobledBarbarians && isBarbarian) {
 							continue
 						}
 						newMsgDataConfig := newMessageConfig{

@@ -20,6 +20,7 @@ const (
 	AddGroupCommand                   Command = "addgroup"
 	DeleteGroupCommand                Command = "deletegroup"
 	GroupsCommand                     Command = "groups"
+	ShowEnnobledBarbariansCommand     Command = "showennobledbarbs"
 	ObserveCommand                    Command = "observe"
 	ObservationsCommand               Command = "observations"
 	UnObserveCommand                  Command = "unobserve"
@@ -53,7 +54,8 @@ func (s *Session) handleAddGroupCommand(m *discordgo.MessageCreate) {
 	}
 
 	group := &models.Group{
-		ServerID: m.GuildID,
+		ServerID:               m.GuildID,
+		ShowEnnobledBarbarians: true,
 	}
 	if err := s.cfg.GroupRepository.Store(context.Background(), group); err != nil {
 		s.SendMessage(m.ChannelID,
@@ -111,6 +113,7 @@ func (s *Session) handleGroupsCommand(m *discordgo.MessageCreate) {
 
 	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
 		ServerID: []string{m.GuildID},
+		Order:    []string{"id ASC"},
 	})
 	if err != nil {
 		return
@@ -475,6 +478,7 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 	}
 	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &models.ObservationFilter{
 		GroupID: []int{groupID},
+		Order:   []string{"id ASC"},
 	})
 	if err != nil {
 		s.SendMessage(m.ChannelID, m.Author.Mention()+` Wystąpił błąd wewnętrzny, prosimy spróbować później.`)
@@ -539,4 +543,53 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 		SetFields(msg.ToMessageEmbedFields()).
 		SetFooter("Strona 1 z 1").
 		MessageEmbed)
+}
+
+func (s *Session) handleShowEnnobledBarbariansCommand(m *discordgo.MessageCreate, args ...string) {
+	if m.GuildID == "" {
+		return
+	}
+	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
+		return
+	}
+
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf(`%s %s [id grupy]`,
+				m.Author.Mention(),
+				ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix)))
+		return
+	}
+
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil {
+		s.SendMessage(m.ChannelID,
+			fmt.Sprintf(`%s ID grupy powinno być liczbą całkowitą większą od 0.`,
+				m.Author.Mention()))
+		return
+	}
+	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	if err != nil || group.ServerID != m.GuildID {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie znaleziono grupy.`)
+		return
+	}
+
+	oldValue := group.ShowEnnobledBarbarians
+	group.ShowEnnobledBarbarians = !oldValue
+	if err := s.cfg.GroupRepository.Update(context.Background(), group); err != nil {
+		s.SendMessage(m.ChannelID, m.Author.Mention()+` Wewnętrzny błąd serwera.`)
+		return
+	}
+
+	if oldValue {
+		s.SendMessage(m.ChannelID,
+			m.Author.Mention()+` Informacje o podbitych wioskach barbarzyńskich nie będą się już pojawiały.`)
+	} else {
+		s.SendMessage(m.ChannelID,
+			m.Author.Mention()+` Włączono wyświetlanie informacji o podbitych wioskach barbarzyńskich.`)
+	}
 }
