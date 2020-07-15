@@ -19,6 +19,7 @@ type Config struct {
 	Discord         *discord.Session
 	GroupRepo       group.Repository
 	API             *sdk.SDK
+	Status          string
 }
 
 func Attach(c *cron.Cron, cfg Config) {
@@ -29,12 +30,15 @@ func Attach(c *cron.Cron, cfg Config) {
 		groupRepo:         cfg.GroupRepo,
 		discord:           cfg.Discord,
 		api:               cfg.API,
+		status:            cfg.Status,
 	}
 	c.AddFunc("@every 1m", h.checkLastEnnoblements)
 	c.AddFunc("@every 30m", h.checkBotMembershipOnServers)
 	c.AddFunc("@every 2h10m", h.deleteClosedTribalWarsServers)
+	c.AddFunc("@every 6h", h.updateBotStatus)
 	go func() {
 		h.checkBotMembershipOnServers()
 		h.deleteClosedTribalWarsServers()
+		h.updateBotStatus()
 	}()
 }

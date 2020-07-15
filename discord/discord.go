@@ -50,7 +50,7 @@ func (s *Session) init() error {
 		return fmt.Errorf("error opening ws connection: %s", err.Error())
 	}
 
-	if err := s.dg.UpdateStatus(0, s.cfg.Status); err != nil {
+	if err := s.UpdateStatus(s.cfg.Status); err != nil {
 		return err
 	}
 	return nil
@@ -68,6 +68,13 @@ func (s *Session) SendMessage(channelID, message string) error {
 func (s *Session) SendEmbed(channelID string, message *discordgo.MessageEmbed) error {
 	_, err := s.dg.ChannelMessageSendEmbed(channelID, message)
 	return err
+}
+
+func (s *Session) UpdateStatus(status string) error {
+	if err := s.dg.UpdateStatus(0, status); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCreate) {

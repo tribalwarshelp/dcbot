@@ -24,6 +24,7 @@ type handler struct {
 	groupRepo         group.Repository
 	discord           *discord.Session
 	api               *sdk.SDK
+	status            string
 }
 
 func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
@@ -48,7 +49,7 @@ func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
 		if !ok {
-			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
+			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
 		}
 
 		m[w] = filterEnnoblements(es, lastEnnoblementAt)
@@ -239,5 +240,11 @@ func (h *handler) deleteClosedTribalWarsServers() {
 		} else {
 			log.Printf("deleteClosedTribalWarsServers: total number of deleted observations: %d", len(deleted))
 		}
+	}
+}
+
+func (h *handler) updateBotStatus() {
+	if err := h.discord.UpdateStatus(h.status); err != nil {
+		log.Print("updateBotStatus: " + err.Error())
 	}
 }

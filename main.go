@@ -21,6 +21,11 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+const (
+	status        = "Tribal Wars | tw!help"
+	commandPrefix = "tw!"
+)
+
 func init() {
 	os.Setenv("TZ", "UTC")
 
@@ -59,8 +64,8 @@ func main() {
 
 	sess, err := discord.New(discord.SessionConfig{
 		Token:                 os.Getenv("BOT_TOKEN"),
-		CommandPrefix:         "tw!",
-		Status:                "Tribal Wars | tw!help",
+		CommandPrefix:         commandPrefix,
+		Status:                status,
 		ObservationRepository: observationRepo,
 		ServerRepository:      serverRepo,
 		GroupRepository:       groupRepo,
@@ -80,6 +85,7 @@ func main() {
 		Discord:         sess,
 		GroupRepo:       groupRepo,
 		API:             api,
+		Status:          status,
 	})
 	c.Start()
 	defer c.Stop()
