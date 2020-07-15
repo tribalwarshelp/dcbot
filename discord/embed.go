@@ -253,36 +253,36 @@ func (e *Embed) TruncateFooter() *Embed {
 }
 
 type EmbedMessage struct {
-	Chunks []string
-	Index  int
+	chunks []string
+	index  int
 	mutex  sync.Mutex
 }
 
 func (msg *EmbedMessage) IsEmpty() bool {
-	return len(msg.Chunks) == 0
+	return len(msg.chunks) == 0
 }
 
 func (msg *EmbedMessage) Append(m string) {
 	msg.mutex.Lock()
 	defer msg.mutex.Unlock()
-	for len(msg.Chunks) < msg.Index+1 {
-		msg.Chunks = append(msg.Chunks, "")
+	for len(msg.chunks) < msg.index+1 {
+		msg.chunks = append(msg.chunks, "")
 	}
 
-	if len(m)+len(msg.Chunks[msg.Index]) > EmbedLimitFieldValue {
-		msg.Chunks = append(msg.Chunks, m)
-		msg.Index++
+	if len(m)+len(msg.chunks[msg.index]) > EmbedLimitFieldValue {
+		msg.chunks = append(msg.chunks, m)
+		msg.index++
 		return
 	}
 
-	msg.Chunks[msg.Index] += m
+	msg.chunks[msg.index] += m
 }
 
 func (msg *EmbedMessage) ToMessageEmbedFields() []*discordgo.MessageEmbedField {
 	msg.mutex.Lock()
 	defer msg.mutex.Unlock()
 	fields := []*discordgo.MessageEmbedField{}
-	for _, chunk := range msg.Chunks {
+	for _, chunk := range msg.chunks {
 		fields = append(fields, &discordgo.MessageEmbedField{
 			Name:  "-",
 			Value: chunk,
