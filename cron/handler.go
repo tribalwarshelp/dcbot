@@ -113,12 +113,13 @@ func (h *handler) checkLastEnnoblements() {
 		if group.ConqueredVillagesChannelID == "" && group.LostVillagesChannelID == "" {
 			continue
 		}
+		lostVillagesMsg := &discord.EmbedMessage{}
+		conqueredVillagesMsg := &discord.EmbedMessage{}
 		for _, observation := range group.Observations {
 			ennoblements, ok := ennoblementsByServerKey[observation.Server]
 			langVersion := utils.FindLangVersionByTag(langVersions, utils.LanguageTagFromWorldName(observation.Server))
 			if ok && langVersion != nil && langVersion.Host != "" {
 				if group.LostVillagesChannelID != "" {
-					msg := &discord.EmbedMessage{}
 					for _, ennoblement := range ennoblements.getLostVillagesByTribe(observation.TribeID) {
 						if !isPlayerTribeNil(ennoblement.NewOwner) &&
 							group.Observations.Contains(observation.Server, ennoblement.NewOwner.Tribe.ID) {
@@ -130,22 +131,11 @@ func (h *handler) checkLastEnnoblements() {
 							ennoblement: ennoblement,
 							t:           messageTypeLost,
 						}
-						msg.Append(newMessage(newMsgDataConfig).String())
-					}
-					if !msg.IsEmpty() {
-						h.discord.SendEmbed(group.LostVillagesChannelID,
-							discord.
-								NewEmbed().
-								SetTitle("Stracone wioski").
-								SetColor(colorLostVillage).
-								SetFields(msg.ToMessageEmbedFields()).
-								SetTimestamp(formatDateOfConquest(time.Now())).
-								MessageEmbed)
+						lostVillagesMsg.Append(newMessage(newMsgDataConfig).String())
 					}
 				}
 
 				if group.ConqueredVillagesChannelID != "" {
-					msg := &discord.EmbedMessage{}
 					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID) {
 						isBarbarian := isPlayerNil(ennoblement.OldOwner) || ennoblement.OldOwner.ID == 0
 						if (!isPlayerTribeNil(ennoblement.OldOwner) &&
@@ -159,20 +149,31 @@ func (h *handler) checkLastEnnoblements() {
 							ennoblement: ennoblement,
 							t:           messageTypeConquer,
 						}
-						msg.Append(newMessage(newMsgDataConfig).String())
-					}
-					if !msg.IsEmpty() {
-						h.discord.SendEmbed(group.ConqueredVillagesChannelID,
-							discord.
-								NewEmbed().
-								SetTitle("Podbite wioski").
-								SetColor(colorConqueredVillage).
-								SetFields(msg.ToMessageEmbedFields()).
-								SetTimestamp(formatDateOfConquest(time.Now())).
-								MessageEmbed)
+						conqueredVillagesMsg.Append(newMessage(newMsgDataConfig).String())
 					}
 				}
 			}
+		}
+
+		if group.ConqueredVillagesChannelID != "" && !conqueredVillagesMsg.IsEmpty() {
+			h.discord.SendEmbed(group.ConqueredVillagesChannelID,
+				discord.
+					NewEmbed().
+					SetTitle("Stracone wioski").
+					SetColor(colorLostVillage).
+					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
+					SetTimestamp(formatDateOfConquest(time.Now())).
+					MessageEmbed)
+		}
+		if group.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
+			h.discord.SendEmbed(group.LostVillagesChannelID,
+				discord.
+					NewEmbed().
+					SetTitle("Stracone wioski").
+					SetColor(colorLostVillage).
+					SetFields(lostVillagesMsg.ToMessageEmbedFields()).
+					SetTimestamp(formatDateOfConquest(time.Now())).
+					MessageEmbed)
 		}
 	}
 
