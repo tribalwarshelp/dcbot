@@ -55,9 +55,8 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 - **%s** [id grupy z %s] - wyświetla wszystkie obserwowane plemiona
 - **%s** [id grupy z %s] [id z %s] - usuwa plemię z obserwowanych
 - **%s** [id grupy z %s] - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
-- **%s** [id grupy z %s] - informacje o podbitych wioskach na wybranym kanale nie będą się już pojawiały
+- **%s** [id grupy z %s] - informacje o podbitych wioskach nie będą się już pojawiały
 - **%s** [id grupy z %s] - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
-- **%s** [id grupy z %s] - informacje o straconych wioskach na wybranym kanale nie będą się już pojawiały
 				`,
 		AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -78,6 +77,11 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+	)
+
+	commandsForGuildAdmins2 := fmt.Sprintf(`
+- **%s** [id grupy z %s] - informacje o straconych wioskach nie będą się już pojawiały
+				`,
 		UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 	)
@@ -87,6 +91,7 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 		SetDescription("Komendy oferowane przez bota").
 		AddField("Dla wszystkich", commandsForAll).
 		AddField("Dla adminów", commandsForGuildAdmins).
+		AddField("Dla adminów 2", commandsForGuildAdmins2).
 		MessageEmbed)
 }
 
