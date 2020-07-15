@@ -159,8 +159,8 @@ func (h *handler) checkLastEnnoblements() {
 			h.discord.SendEmbed(group.ConqueredVillagesChannelID,
 				discord.
 					NewEmbed().
-					SetTitle("Stracone wioski").
-					SetColor(colorLostVillage).
+					SetTitle("Podbite wioski").
+					SetColor(colorConqueredVillage).
 					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
 					SetTimestamp(formatDateOfConquest(time.Now())).
 					MessageEmbed)
