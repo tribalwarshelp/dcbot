@@ -30,6 +30,8 @@ func (o Observations) Contains(server string, id int) bool {
 }
 
 type ObservationFilter struct {
+	tableName struct{} `urlstruct:"observation"`
+
 	ID      []int
 	Server  []string
 	GroupID []int

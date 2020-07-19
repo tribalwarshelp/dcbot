@@ -3,6 +3,7 @@ package discord
 import (
 	"context"
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/bwmarrin/discordgo"
@@ -346,6 +347,7 @@ func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.Message
 		ServerID: []string{m.GuildID},
 	})
 	if err != nil || len(groups) == 0 {
+		log.Print(groups)
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "lostVillages.groupNotFound",

@@ -70,7 +70,7 @@ func (repo *pgRepo) GetByID(ctx context.Context, id int) (*models.Group, error) 
 func (repo *pgRepo) Fetch(ctx context.Context, f *models.GroupFilter) ([]*models.Group, int, error) {
 	var err error
 	data := []*models.Group{}
-	query := repo.Model(&data).Relation("Observations").Context(ctx)
+	query := repo.Model(&data).Relation("Server").Relation("Observations").Context(ctx)
 
 	if f != nil {
 		query = query.

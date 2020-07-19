@@ -8,6 +8,8 @@ type Server struct {
 	Groups []*Group
 }
 type ServerFilter struct {
+	tableName struct{} `urlstruct:"server"`
+
 	ID     []string
 	Limit  int      `urlstruct:",nowhere"`
 	Offset int      `urlstruct:",nowhere"`
