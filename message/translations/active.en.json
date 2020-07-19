@@ -39,6 +39,25 @@
   "deleteGroup.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
   "deleteGroup.success": "{{.Mention}} The group has been deleted.",
 
+  "groups.noGroupsAdded": "No groups added.",
+  "groups.title": "Group list",
+
+  "conqueredVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "conqueredVillages.groupNotFound": "{{.Mention}} Group not found.",
+  "conqueredVillages.success": "{{.Mention}} Channel changed successfully.",
+
+  "unObserveConqueredVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "unObserveConqueredVillages.groupNotFound": "{{.Mention}} Group not found.",
+  "unObserveConqueredVillages.success": "{{.Mention}} Notifications about conquered villages will no longer show up.",
+
+  "lostVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "lostVillages.groupNotFound": "{{.Mention}} Group not found.",
+  "lostVillages.success": "{{.Mention}} Channel changed successfully.",
+
+  "unObserveLostVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "unObserveLostVillages.groupNotFound": "{{.Mention}} Group not found.",
+  "unObserveLostVillages.success": "{{.Mention}} Notifications about lost villages will no longer show up.",
+
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
   "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
