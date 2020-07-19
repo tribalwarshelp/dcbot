@@ -1,6 +1,6 @@
 {
   "help.title": "Pomoc",
-  "help.description": "Komendy oferowane przez bota",
+  "help.description": "Komendy oferowane przez bota.",
   "help.footer": "",
   "help.forAllUsers": "Dla wszystkich",
   "help.forAdmins": "Dla adminów",
@@ -21,6 +21,7 @@
   "help.disableconqueredvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o podbitych wioskach w danej grupie.",
   "help.lostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - zmienia kanał na którym będą się pojawiać informację o straconych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
   "help.disablelostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o straconych wioskach w danej grupie.",
+  "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - zmień język.",
 
   "tribe.invalidPage": "{{.Mention}} Strona musi być liczbą większą od 0.",
   "tribe.noTribeID": "{{.Mention}} Nie wprowadziłeś ID plemienia.",
@@ -80,6 +81,9 @@
   "showEnnobledBarbs.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
   "showEnnobledBarbs.success_1": "{{.Mention}} Powiadomienia o podbitych barbarkach nie będą się już dłużej pokazywały.",
   "showEnnobledBarbs.success_2": "{{.Mention}} Włączono powiadomienia o podbitych barbarkach.",
+
+  "changeLanguage.languageNotSupported": "{{.Mention}} Język nie jest obsługiwany.",
+  "changeLanguage.success": "{{.Mention}} Język został zmieniony.",
 
   "cron.lostVillages.title": "Stracone wioski",
   "cron.conqueredVillages.title": "Podbite wioski",

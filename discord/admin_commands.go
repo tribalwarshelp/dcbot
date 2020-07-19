@@ -31,6 +31,7 @@ const (
 	DisableLostVillagesCommand      Command = "disablelostvillages"
 	ConqueredVillagesCommand        Command = "conqueredvillages"
 	DisableConqueredVillagesCommand Command = "disableconqueredvillages"
+	ChangeLanguageCommand           Command = "changelanguage"
 )
 
 func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCreate) {
@@ -82,6 +83,7 @@ func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCrea
 			},
 		}))
 }
+
 func (s *Session) handleDeleteGroupCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
@@ -890,4 +892,73 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 				},
 			}))
 	}
+}
+
+func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
+	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
+		return
+	}
+
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "help.changelanguage",
+				DefaultMessage: message.FallbackMsg("help.changelanguage",
+					"**{{.Command}}** [{{.Languages}}] - change language."),
+				TemplateData: map[string]interface{}{
+					"Command":   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Languages": getAvailableLanguages(),
+				},
+			}))
+		return
+	}
+
+	lang := args[0]
+	valid := false
+	for _, langTag := range message.LanguageTags() {
+		if langTag.String() == lang {
+			valid = true
+			break
+		}
+	}
+	if !valid {
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "changeLanguage.languageNotSupported",
+				DefaultMessage: message.FallbackMsg("changeLanguage.languageNotSupported",
+					"{{.Mention}} Language not supported."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
+		return
+	}
+
+	ctx.server.Lang = lang
+	if err := s.cfg.ServerRepository.Update(context.Background(), ctx.server); err != nil {
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "internalServerError",
+				DefaultMessage: message.FallbackMsg("internalServerError",
+					"{{.Mention}} Internal server error occurred, please try again later."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
+		return
+	}
+
+	s.SendMessage(m.ChannelID,
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "changeLanguage.success",
+			DefaultMessage: message.FallbackMsg("changeLanguage.success",
+				"{{.Mention}} The language has been changed."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 }
