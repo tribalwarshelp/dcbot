@@ -5,6 +5,9 @@ import (
 	"math"
 	"strconv"
 
+	"github.com/tribalwarshelp/dcbot/message"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	shared_models "github.com/tribalwarshelp/shared/models"
 
 	"github.com/bwmarrin/discordgo"
@@ -23,15 +26,15 @@ const (
 	AuthorCommand    Command = "author"
 )
 
-func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) {
 	tribeCMDWithPrefix := TribeCommand.WithPrefix(s.cfg.CommandPrefix)
 	commandsForAll := fmt.Sprintf(`
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RA z plemion o podanych id
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RO z plemion o podanych id
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RW z plemion o podanych id
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największej liczbie pokonanych z plemion o podanych id
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największej liczbie punktów z plemion o podanych id
-- **%s** - kontakt z autorem bota
+- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA.
+- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD.
+- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS.
+- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD.
+- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points.
+- **%s** - shows how to contact the author
 				`,
 		tribeCMDWithPrefix,
 		TopAttCommand.String(),
@@ -47,16 +50,15 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 	)
 
 	commandsForGuildAdmins := fmt.Sprintf(`
-- **%s** - tworzy nową grupę
-- **%s** - lista grup
-- **%s** [id grupy z %s] - usuwa grupę
-- **%s** [id grupy z %s] - włącza/wyłącza wyświetlanie powiadomień o podbitych wioskach barbarzyńskich
-- **%s** [id grupy z %s] [świat] [id plemienia] - dodaje plemię z danego świata do obserwowanych
-- **%s** [id grupy z %s] - wyświetla wszystkie obserwowane plemiona
-- **%s** [id grupy z %s] [id z %s] - usuwa plemię z obserwowanych
-- **%s** [id grupy z %s] - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
-- **%s** [id grupy z %s] - informacje o podbitych wioskach nie będą się już pojawiały
-- **%s** [id grupy z %s] - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
+- **%s** - adds a new observation group.
+- **%s** - shows you a list of groups created by this guild.
+- **%s** [group id from %s] - deletes an observation group.
+- **%s** [group id from %s] - enables/disables notifications about ennobling barbarian villages.
+- **%s** [group id from %s] [server] [tribe id] - command adds a tribe to the observation group.
+- **%s** [group id from %s] - shows a list of observed tribes by this group.
+- **%s** [group id from %s] [id from %s] - removes a tribe to the observation group.
+- **%s** [group id from %s] - changes the channel on which notifications about conquered village will show. IMPORTANT! Call this command on the channel you want to display these notifications.
+- **%s** [group id from %s] - disable notifications about conquered villages.
 				`,
 		AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -75,23 +77,42 @@ func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 	)
 
 	commandsForGuildAdmins2 := fmt.Sprintf(`
-- **%s** [id grupy z %s] - informacje o straconych wioskach nie będą się już pojawiały
+- **%s** [group id from %s] - changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications.
+- **%s** [group id from %s] - Disable notifications about lost villages.
 				`,
+		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 		UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 	)
 
+	forAdmins := ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+		MessageID:      "help.forAdmins",
+		DefaultMessage: message.FallbackMsg("help.forAdmins", "For admins"),
+	})
+
 	s.SendEmbed(m.ChannelID, NewEmbed().
-		SetTitle("Pomoc").
-		SetDescription("Komendy oferowane przez bota").
-		AddField("Dla wszystkich", commandsForAll).
-		AddField("Dla adminów", commandsForGuildAdmins).
-		AddField("Dla adminów 2", commandsForGuildAdmins2).
+		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.title",
+			DefaultMessage: message.FallbackMsg("help.title", "Help"),
+		})).
+		SetDescription(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.description",
+			DefaultMessage: message.FallbackMsg("help.description", "Commands offered by bot"),
+		})).
+		SetFooter(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.footer",
+			DefaultMessage: message.FallbackMsg("help.footer", "Check bot website -> https://dcbot.tribalwarshelp.com/."),
+		})).
+		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.forAllUsers",
+			DefaultMessage: message.FallbackMsg("help.forAllUsers", "For all guild members."),
+		}), commandsForAll).
+		AddField(forAdmins, commandsForGuildAdmins).
+		AddField(forAdmins+" 2", commandsForGuildAdmins2).
 		MessageEmbed)
 }
 
