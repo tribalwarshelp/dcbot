@@ -15,10 +15,10 @@
   "help.deletegroup": "**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group.",
   "help.showennobledbarbs": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages.",
   "help.observe": "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group.",
-  "help.observations": "**{{.Command}}** [group id from {{.GroupsCommand}}] shows a list of observed tribes by this group.",
-  "help.unobserve": "**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe to the observation group.",
-  "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. IMPORTANT! Call this command on the channel you want to display these notifications.",
+  "help.observations": "**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group.",
+  "help.unobserve": "**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group.",
+  "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
   "help.unobserveconqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages.",
-  "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications.",
+  "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
   "help.unobservelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages."
 }
