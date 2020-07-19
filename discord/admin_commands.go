@@ -6,14 +6,16 @@ import (
 	"strconv"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/tribalwarshelp/dcbot/message"
 	"github.com/tribalwarshelp/dcbot/models"
 	"github.com/tribalwarshelp/dcbot/utils"
 	shared_models "github.com/tribalwarshelp/shared/models"
 )
 
 const (
-	ObservationsPerGroup = 10
-	GroupsPerServer      = 5
+	observationsPerGroup = 10
+	groupsPerServer      = 5
 )
 
 const (
@@ -30,22 +32,22 @@ const (
 	UnObserveConqueredVillagesCommand Command = "unobserveconqueredvillages"
 )
 
-func (s *Session) handleAddGroupCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCreate) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
 
-	server := &models.Server{
-		ID: m.GuildID,
-	}
-	if err := s.cfg.ServerRepository.Store(context.Background(), server); err != nil {
+	if len(ctx.server.Groups) >= groupsPerServer {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Nie udało się dodać grupy", m.Author.Mention()))
-		return
-	}
-	if len(server.Groups) >= GroupsPerServer {
-		s.SendMessage(m.ChannelID,
-			m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit grup na serwerze (%d/%d).`, GroupsPerServer, GroupsPerServer))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "addGroup.groupLimitHasBeenReached",
+				DefaultMessage: message.FallbackMsg("addGroup.groupLimitHasBeenReached", "{{.Mention}} The group limit has been reached ({{.Total}}/{{.Limit}})."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+					"Total":   len(ctx.server.Groups),
+					"Limit":   groupsPerServer,
+				},
+			}))
 		return
 	}
 
@@ -53,17 +55,30 @@ func (s *Session) handleAddGroupCommand(m *discordgo.MessageCreate) {
 		ServerID:               m.GuildID,
 		ShowEnnobledBarbarians: true,
 	}
+
 	if err := s.cfg.GroupRepository.Store(context.Background(), group); err != nil {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Nie udało się dodać grupy", m.Author.Mention()))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "internalServerError",
+				DefaultMessage: message.FallbackMsg("internalServerError", "{{.Mention}} Internal server error occurred, please try again later."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
 	s.SendMessage(m.ChannelID,
-		fmt.Sprintf("%s Utworzono nową grupę o ID %d.", m.Author.Mention(), group.ID))
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "addGroup.success",
+			DefaultMessage: message.FallbackMsg("addGroup.success", "{{.Mention}} A new group has been created (ID: {{.ID}})."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+				"ID":      group.ID,
+			},
+		}))
 }
 func (s *Session) handleDeleteGroupCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -356,9 +371,9 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 		return
 	}
 
-	if len(group.Observations) >= ObservationsPerGroup {
+	if len(group.Observations) >= observationsPerGroup {
 		s.SendMessage(m.ChannelID,
-			m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion w grupie (%d/%d).`, ObservationsPerGroup, ObservationsPerGroup))
+			m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion w grupie (%d/%d).`, observationsPerGroup, observationsPerGroup))
 		return
 	}
 
