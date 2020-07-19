@@ -36,6 +36,9 @@
   "addGroup.groupLimitHasBeenReached": "{{.Mention}} The group limit has been reached ({{.Total}}/{{.Limit}}).",
   "addGroup.success": "{{.Mention}} A new group has been created (ID: {{.ID}}).",
 
+  "deleteGroup.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "deleteGroup.success": "{{.Mention}} The group has been deleted.",
+
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
   "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
