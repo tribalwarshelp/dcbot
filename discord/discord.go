@@ -113,7 +113,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	case DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleDeleteGroupCommand(ctx, m, args...)
 	case GroupsCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleGroupsCommand(m)
+		s.handleGroupsCommand(ctx, m)
 
 	case ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleShowEnnobledBarbariansCommand(m, args...)
@@ -124,13 +124,13 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObservationsCommand(m, args...)
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleConqueredVillagesCommand(m, args...)
+		s.handleConqueredVillagesCommand(ctx, m, args...)
 	case UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleUnObserveConqueredVillagesCommand(m, args...)
+		s.handleUnObserveConqueredVillagesCommand(ctx, m, args...)
 	case LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleLostVillagesCommand(m, args...)
+		s.handleLostVillagesCommand(ctx, m, args...)
 	case UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleUnObserveLostVillagesCommand(m, args...)
+		s.handleUnObserveLostVillagesCommand(ctx, m, args...)
 
 	}
 }
