@@ -31,10 +31,6 @@ const (
 )
 
 func (s *Session) handleAddGroupCommand(m *discordgo.MessageCreate) {
-	if m.GuildID == "" {
-		return
-	}
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -67,9 +63,6 @@ func (s *Session) handleAddGroupCommand(m *discordgo.MessageCreate) {
 		fmt.Sprintf("%s Utworzono nową grupę o ID %d.", m.Author.Mention(), group.ID))
 }
 func (s *Session) handleDeleteGroupCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
 
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
@@ -104,9 +97,7 @@ func (s *Session) handleDeleteGroupCommand(m *discordgo.MessageCreate, args ...s
 }
 
 func (s *Session) handleGroupsCommand(m *discordgo.MessageCreate) {
-	if m.GuildID == "" {
-		return
-	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -136,9 +127,6 @@ func (s *Session) handleGroupsCommand(m *discordgo.MessageCreate) {
 }
 
 func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
 
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
@@ -181,9 +169,7 @@ func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate, arg
 }
 
 func (s *Session) handleUnObserveConqueredVillagesCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -226,9 +212,7 @@ func (s *Session) handleUnObserveConqueredVillagesCommand(m *discordgo.MessageCr
 }
 
 func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -271,9 +255,7 @@ func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate, args ...
 }
 
 func (s *Session) handleUnObserveLostVillagesCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -319,9 +301,7 @@ func (s *Session) handleUnObserveLostVillagesCommand(m *discordgo.MessageCreate,
 }
 
 func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -396,9 +376,7 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 }
 
 func (s *Session) handleUnObserveCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -445,9 +423,7 @@ func (s *Session) handleUnObserveCommand(m *discordgo.MessageCreate, args ...str
 }
 
 func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -546,9 +522,7 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 }
 
 func (s *Session) handleShowEnnobledBarbariansCommand(m *discordgo.MessageCreate, args ...string) {
-	if m.GuildID == "" {
-		return
-	}
+
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}

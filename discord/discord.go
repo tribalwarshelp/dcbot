@@ -1,10 +1,14 @@
 package discord
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
+	"github.com/tribalwarshelp/dcbot/message"
+
 	"github.com/tribalwarshelp/dcbot/group"
+	"github.com/tribalwarshelp/dcbot/models"
 	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
@@ -78,16 +82,27 @@ func (s *Session) UpdateStatus(status string) error {
 }
 
 func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.dg.State.User.ID || m.Author.Bot {
+	if m.Author.ID == s.dg.State.User.ID || m.Author.Bot || m.GuildID == "" {
 		return
 	}
 
 	splitted := strings.Split(m.Content, " ")
 	argsLength := len(splitted) - 1
 	args := splitted[1 : argsLength+1]
+	server := &models.Server{
+		ID:   m.GuildID,
+		Lang: message.GetDefaultLanguage().String(),
+	}
+	if err := s.cfg.ServerRepository.Store(context.Background(), server); err != nil {
+		return
+	}
+	ctx := commandCtx{
+		server:    server,
+		localizer: message.NewLocalizer(server.Lang),
+	}
 	switch splitted[0] {
 	case HelpCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleHelpCommand(m)
+		s.handleHelpCommand(ctx, m)
 	case AuthorCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleAuthorCommand(m)
 	case TribeCommand.WithPrefix(s.cfg.CommandPrefix):
@@ -155,7 +170,7 @@ func (s *Session) memberHasPermission(guildID string, userID string, permission 
 }
 
 func (s *Session) sendUnknownCommandError(mention, channelID string, command ...string) {
-	s.SendMessage(channelID, mention+` Nieznana komenda: `+strings.Join(command, " "))
+	s.SendMessage(channelID, mention+` Unknown command: `+strings.Join(command, " "))
 }
 
 func (s *Session) IsGuildMember(guildID string) (bool, error) {

@@ -4,7 +4,10 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
+
+	"github.com/tribalwarshelp/dcbot/message"
 
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 
@@ -35,6 +38,14 @@ func init() {
 }
 
 func main() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := message.LoadMessageFiles(path.Join(dir, "message", "translations")); err != nil {
+		log.Fatal(err)
+	}
+
 	db := pg.Connect(&pg.Options{
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
