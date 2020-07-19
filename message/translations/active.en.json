@@ -33,6 +33,9 @@
   "tribe.exceededMaximumNumberOfPages": "{{.Mention}} You have exceeded the maximum number of pages ({{.Page}}/{{.MaxPage}}).",
   "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Tribe: [``{{.TribeTag}}``]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n",
 
+  "addGroup.groupLimitHasBeenReached": "{{.Mention}} The group limit has been reached ({{.Total}}/{{.Limit}}).",
+  "addGroup.success": "{{.Mention}} A new group has been created (ID: {{.ID}}).",
+
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
   "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
