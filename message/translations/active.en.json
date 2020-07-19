@@ -1,0 +1,97 @@
+{
+  "help.title": "Help",
+  "help.description": "Commands offered by the bot.",
+  "help.footer": "",
+  "help.forAllUsers": "For all users",
+  "help.forAdmins": "For admins",
+  "help.tribe.topatt": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA.",
+  "help.tribe.topdef": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD.",
+  "help.tribe.topsupp": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS.",
+  "help.tribe.toptotal": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD.",
+  "help.tribe.toppoints": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points.",
+  "help.author": "**{{.Command}}** - shows how to contact the author.",
+  "help.addgroup": "**{{.Command}}** - adds a new observation group.",
+  "help.groups": "**{{.Command}}** - shows you a list of groups created by this guild.",
+  "help.deletegroup": "**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group.",
+  "help.showennobledbarbs": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages.",
+  "help.observe": "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group.",
+  "help.observations": "**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group.",
+  "help.deleteobservation": "**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group.",
+  "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
+  "help.disableconqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages.",
+  "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
+  "help.disablelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages.",
+  "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - change language.",
+
+  "tribe.invalidPage": "{{.Mention}} The page must be a number greater than 0.",
+  "tribe.noTribeID": "{{.Mention}} You haven't entered the tribe ID.",
+  "tribe.title.sortedByOD": "Ordered by OD",
+  "tribe.title.sortedByODA": "Ordered by ODA",
+  "tribe.title.sortedByODD": "Ordered by ODD",
+  "tribe.title.sortedByODS": "Ordered by ODS",
+  "tribe.title.sortedByPoints": "Ordered by points",
+  "tribe.tribesNotFound": "{{.Mention}} Tribes not found.",
+  "tribe.exceededMaximumNumberOfPages": "{{.Mention}} You have exceeded the maximum number of pages ({{.Page}}/{{.MaxPage}}).",
+  "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Tribe: [``{{.TribeTag}}``]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n",
+
+  "addGroup.groupLimitHasBeenReached": "{{.Mention}} The group limit has been reached ({{.Total}}/{{.Limit}}).",
+  "addGroup.success": "{{.Mention}} A new group has been created (ID: {{.ID}}).",
+
+  "deleteGroup.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "deleteGroup.success": "{{.Mention}} The group has been deleted.",
+
+  "groups.noGroupsAdded": "No groups added.",
+  "groups.title": "Group list",
+
+  "conqueredVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "conqueredVillages.groupNotFound": "{{.Mention}} Group not found.",
+  "conqueredVillages.success": "{{.Mention}} Channel changed successfully.",
+
+  "disableConqueredVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "disableConqueredVillages.groupNotFound": "{{.Mention}} Group not found.",
+  "disableConqueredVillages.success": "{{.Mention}} Notifications about conquered villages will no longer show up.",
+
+  "lostVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "lostVillages.groupNotFound": "{{.Mention}} Group not found.",
+  "lostVillages.success": "{{.Mention}} Channel changed successfully.",
+
+  "disableLostVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "disableLostVillages.groupNotFound": "{{.Mention}} Group not found.",
+  "disableLostVillages.success": "{{.Mention}} Notifications about lost villages will no longer show up.",
+
+  "observe.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "observe.invalidTribeID": "{{.Mention}} The tribe ID must be a number greater than 0.",
+  "observe.serverIsClosed": "{{.Mention}} Server is closed.",
+  "observe.serverNotFound": "{{.Mention}} Server not found.",
+  "observe.groupNotFound": "{{.Mention}} Group not found.",
+  "observe.tribeNotFound": "{{.Mention}} Tribe not found.",
+  "observe.observationLimitHasBeenReached": "{{.Mention}} The observation limit for this group has been reached ({{.Total}}/{{.Limit}}).",
+  "observe.success": "{{.Mention}} Added.",
+
+  "deleteObservation.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "deleteObservation.invalidObservationID": "{{.Mention}} The observation ID must be a number greater than 0.",
+  "deleteObservation.groupNotFound": "{{.Mention}} Group not found.",
+  "deleteObservation.success": "{{.Mention}} Deleted.",
+
+  "observations.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "observations.groupNotFound": "{{.Mention}} Group not found.",
+  "observations.title": "Observed tribes\nIndex | ID - Server - Tribe",
+
+  "showEnnobledBarbs.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "showEnnobledBarbs.groupNotFound": "{{.Mention}} Group not found.",
+  "showEnnobledBarbs.success_1": "{{.Mention}} Notifications about conquered barbarian villages will no longer show up.",
+  "showEnnobledBarbs.success_2": "{{.Mention}} Enabled notifications about conquered barbarian villages.",
+
+  "changeLanguage.languageNotSupported": "{{.Mention}} Language not supported.",
+  "changeLanguage.success": "{{.Mention}} The language has been changed.",
+
+  "cron.lostVillages.title": "Lost villages",
+  "cron.conqueredVillages.title": "Conquered villages",
+  "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] has conquered the village {{.Village}} (Old owner: {{.OldOwner}} [{{.OldOwnerTribe}}])",
+
+  "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
+
+  "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
+
+  "internalServerError": "{{.Mention}} Internal server error occurred, please try again later."
+}

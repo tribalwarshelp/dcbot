@@ -5,6 +5,9 @@ import (
 	"math"
 	"strconv"
 
+	"github.com/tribalwarshelp/dcbot/message"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	shared_models "github.com/tribalwarshelp/shared/models"
 
 	"github.com/bwmarrin/discordgo"
@@ -23,89 +26,226 @@ const (
 	AuthorCommand    Command = "author"
 )
 
-func (s *Session) handleHelpCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) {
 	tribeCMDWithPrefix := TribeCommand.WithPrefix(s.cfg.CommandPrefix)
 	commandsForAll := fmt.Sprintf(`
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RA z plemion o podanych id
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RO z plemion o podanych id
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największym RW z plemion o podanych id
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największej liczbie pokonanych z plemion o podanych id
-- **%s %s** [serwer] [strona] [id1] [id2] [id3] [n id] - wyświetla graczy o największej liczbie punktów z plemion o podanych id
-- **%s** - kontakt z autorem bota
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
 				`,
-		tribeCMDWithPrefix,
-		TopAttCommand.String(),
-		tribeCMDWithPrefix,
-		TopDefCommand.String(),
-		tribeCMDWithPrefix,
-		TopSuppCommand.String(),
-		tribeCMDWithPrefix,
-		TopTotalCommand.String(),
-		tribeCMDWithPrefix,
-		TopPointsCommand.String(),
-		AuthorCommand.WithPrefix(s.cfg.CommandPrefix),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.tribe.topatt",
+			DefaultMessage: message.FallbackMsg("help.tribe.topatt",
+				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopAttCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.tribe.topdef",
+			DefaultMessage: message.FallbackMsg("help.tribe.topdef",
+				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopDefCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.tribe.topsupp",
+			DefaultMessage: message.FallbackMsg("help.tribe.topsupp",
+				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopSuppCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.tribe.toptotal",
+			DefaultMessage: message.FallbackMsg("help.tribe.toptotal",
+				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopTotalCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.tribe.toppoints",
+			DefaultMessage: message.FallbackMsg("help.tribe.toppoints",
+				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopPointsCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.author",
+			DefaultMessage: message.FallbackMsg("help.author",
+				"**{{.Command}}** - shows how to contact the author."),
+			TemplateData: map[string]interface{}{
+				"Command": AuthorCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
 	)
 
 	commandsForGuildAdmins := fmt.Sprintf(`
-- **%s** - tworzy nową grupę
-- **%s** - lista grup
-- **%s** [id grupy z %s] - usuwa grupę
-- **%s** [id grupy z %s] - włącza/wyłącza wyświetlanie powiadomień o podbitych wioskach barbarzyńskich
-- **%s** [id grupy z %s] [świat] [id plemienia] - dodaje plemię z danego świata do obserwowanych
-- **%s** [id grupy z %s] - wyświetla wszystkie obserwowane plemiona
-- **%s** [id grupy z %s] [id z %s] - usuwa plemię z obserwowanych
-- **%s** [id grupy z %s] - ustawia kanał na którym będą wyświetlać się informacje o podbitych wioskach
-- **%s** [id grupy z %s] - informacje o podbitych wioskach nie będą się już pojawiały
-- **%s** [id grupy z %s] - ustawia kanał na którym będą wyświetlać się informacje o straconych wioskach
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
 				`,
-		AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		UnObserveCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.addgroup",
+			DefaultMessage: message.FallbackMsg("help.addgroup",
+				"**{{.Command}}** - adds a new observation group."),
+			TemplateData: map[string]interface{}{
+				"Command": AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.groups",
+			DefaultMessage: message.FallbackMsg("help.groups",
+				"**{{.Command}}** - shows you a list of groups created by this guild."),
+			TemplateData: map[string]interface{}{
+				"Command": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.deletegroup",
+			DefaultMessage: message.FallbackMsg("help.deletegroup",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group."),
+			TemplateData: map[string]interface{}{
+				"Command":       DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.showennobledbarbs",
+			DefaultMessage: message.FallbackMsg("help.showennobledbarbs",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages."),
+			TemplateData: map[string]interface{}{
+				"Command":       ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.observe",
+			DefaultMessage: message.FallbackMsg("help.observe",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group."),
+			TemplateData: map[string]interface{}{
+				"Command":       ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.observations",
+			DefaultMessage: message.FallbackMsg("help.observations",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] shows a list of observed tribes by this group."),
+			TemplateData: map[string]interface{}{
+				"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.deleteobservation",
+			DefaultMessage: message.FallbackMsg("help.deleteobservation",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group."),
+			TemplateData: map[string]interface{}{
+				"Command":             DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix),
+				"ObservationsCommand": ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand":       GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.conqueredvillages",
+			DefaultMessage: message.FallbackMsg("help.conqueredvillages",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+			TemplateData: map[string]interface{}{
+				"Command":       ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.disableconqueredvillages",
+			DefaultMessage: message.FallbackMsg("help.disableconqueredvillages",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages."),
+			TemplateData: map[string]interface{}{
+				"Command":       DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
 	)
 
 	commandsForGuildAdmins2 := fmt.Sprintf(`
-- **%s** [id grupy z %s] - informacje o straconych wioskach nie będą się już pojawiały
+- %s
+- %s
+- %s
 				`,
-		UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.lostvillages",
+			DefaultMessage: message.FallbackMsg("help.lostvillages",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+			TemplateData: map[string]interface{}{
+				"Command":       LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.disablelostvillages",
+			DefaultMessage: message.FallbackMsg("help.disablelostvillages",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+			TemplateData: map[string]interface{}{
+				"Command":       DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.changelanguage",
+			DefaultMessage: message.FallbackMsg("help.changelanguage",
+				"**{{.Command}}** [{{.Languages}}] - change language."),
+			TemplateData: map[string]interface{}{
+				"Command":   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
+				"Languages": getAvailableLanguages(),
+			},
+		}),
 	)
 
+	forAdmins := ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+		MessageID:      "help.forAdmins",
+		DefaultMessage: message.FallbackMsg("help.forAdmins", "For admins"),
+	})
+
 	s.SendEmbed(m.ChannelID, NewEmbed().
-		SetTitle("Pomoc").
-		SetDescription("Komendy oferowane przez bota").
-		AddField("Dla wszystkich", commandsForAll).
-		AddField("Dla adminów", commandsForGuildAdmins).
-		AddField("Dla adminów 2", commandsForGuildAdmins2).
+		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.title",
+			DefaultMessage: message.FallbackMsg("help.title", "Help"),
+		})).
+		SetURL("https://dcbot.tribalwarshelp.com/").
+		SetDescription(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.description",
+			DefaultMessage: message.FallbackMsg("help.description", "Commands offered by bot"),
+		})).
+		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.forAllUsers",
+			DefaultMessage: message.FallbackMsg("help.forAllUsers", "For all guild members."),
+		}), commandsForAll).
+		AddField(forAdmins, commandsForGuildAdmins).
+		AddField(forAdmins+" 2", commandsForGuildAdmins2).
 		MessageEmbed)
 }
 
 func (s *Session) handleAuthorCommand(m *discordgo.MessageCreate) {
-	s.SendMessage(m.ChannelID, fmt.Sprintf("%s Discord: Kichiyaki#2064 | https://dawid-wysokinski.pl/#contact.", m.Author.Mention()))
+	s.SendMessage(m.ChannelID,
+		fmt.Sprintf("%s Discord: Kichiyaki#2064 | https://dawid-wysokinski.pl/#contact.",
+			m.Author.Mention()))
 }
 
-func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleTribeCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength < 4 {
-		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Niepoprawna komenda (sprawdź %s)",
-				m.Author.Mention(),
-				HelpCommand.WithPrefix(s.cfg.CommandPrefix)))
+	if argsLength < 3 {
 		return
 	}
 
@@ -113,7 +253,13 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 	world := args[1]
 	page, err := strconv.Atoi(args[2])
 	if err != nil || page <= 0 {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s 3 argument musi być liczbą większą od 0.", m.Author.Mention()))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.invalidPage",
+			DefaultMessage: message.FallbackMsg("tribe.invalidPage", "{{.Mention}} The page must be a number greater than 0."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 		return
 	}
 	ids := []int{}
@@ -125,7 +271,13 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 		ids = append(ids, id)
 	}
 	if len(ids) == 0 {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie wprowadziłeś ID plemion.", m.Author.Mention()))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.noTribeID",
+			DefaultMessage: message.FallbackMsg("tribe.noTribeID", "{{.Mention}} You haven't entered the tribe ID."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 		return
 	}
 
@@ -143,28 +295,38 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 	case TopAttCommand:
 		filter.RankAttGTE = 1
 		filter.Sort = "rankAtt ASC"
-		title = "Top pokonani w ataku"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByODA",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODA", "Ordered by ODA"),
+		})
 	case TopDefCommand:
 		filter.RankDefGTE = 1
 		filter.Sort = "rankDef ASC"
-		title = "Top pokonani w obronie"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByODD",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODD", "Ordered by ODD"),
+		})
 	case TopSuppCommand:
 		filter.RankSupGTE = 1
 		filter.Sort = "rankSup ASC"
-		title = "Top pokonani jako wspierający"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByODS",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODS", "Ordered by ODS"),
+		})
 	case TopTotalCommand:
 		filter.RankTotalGTE = 1
 		filter.Sort = "rankTotal ASC"
-		title = "Top pokonani ogólnie"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByOD",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByOD", "Ordered by OD"),
+		})
 	case TopPointsCommand:
 		filter.Sort = "rank ASC"
-		title = "Najwięcej punktów"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByPoints",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByPoints", "Ordered by points"),
+		})
 	default:
-		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Nieznana komenda %s (sprawdź %s)",
-				m.Author.Mention(),
-				command.String(),
-				HelpCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
 
@@ -173,23 +335,53 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 	})
 	if err != nil {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Wystąpił błąd podczas pobierania danych z API, prosimy spróbować później.", m.Author.Mention()))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "api.defaultError",
+				DefaultMessage: message.FallbackMsg("api.defaultError",
+					"{{.Mention}} There was an error fetching data from the API, please try again later."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 	if playersList == nil || playersList.Total == 0 {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie znaleziono graczy należących do plemion o podanych ID.", m.Author.Mention()))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "tribe.tribesNotFound",
+			DefaultMessage: message.FallbackMsg("tribe.tribesNotFound",
+				"{{.Mention}} There was an error fetching data from the API, please try again later."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 		return
 	}
 	totalPages := int(math.Ceil(float64(playersList.Total) / float64(limit)))
 	if page > totalPages {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Przekroczyłeś limit stron (%d/%d).", m.Author.Mention(), page, totalPages))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "tribe.exceededMaximumNumberOfPages",
+			DefaultMessage: message.FallbackMsg("tribe.exceededMaximumNumberOfPages",
+				"{{.Mention}} You have exceeded the maximum number of pages ({{.Page}}/{{.MaxPage}})."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+				"Page":    page,
+				"MaxPage": totalPages,
+			},
+		}))
 		return
 	}
 
 	langTag := utils.LanguageTagFromWorldName(world)
 	langVersion, err := s.cfg.API.LangVersions.Read(langTag)
 	if err != nil || langVersion == nil {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie znaleziono wersji językowej: %s.", m.Author.Mention(), langTag))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "internalServerError",
+			DefaultMessage: message.FallbackMsg("internalServerError",
+				"{{.Mention}} Internal server error occurred, please try again later."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 		return
 	}
 
@@ -226,20 +418,32 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 			tribeURL = utils.FormatTribeURL(world, langVersion.Host, player.Tribe.ID)
 		}
 
-		msg.Append(fmt.Sprintf("**%d**. [``%s``](%s) (Plemię: [``%s``](%s) | Ranking ogólny: **%d** | Wynik: **%d**)\n",
-			offset+i+1,
-			player.Name,
-			utils.FormatPlayerURL(world, langVersion.Host, player.ID),
-			tribeTag,
-			tribeURL,
-			rank,
-			score))
+		msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "tribe.messageLine",
+			DefaultMessage: message.FallbackMsg("tribe.messageLine",
+				"**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Tribe: [``{{.TribeTag}}``]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n"),
+			TemplateData: map[string]interface{}{
+				"Index":      offset + i + 1,
+				"PlayerName": player.Name,
+				"PlayerURL":  utils.FormatPlayerURL(world, langVersion.Host, player.ID),
+				"TribeTag":   tribeTag,
+				"TribeURL":   tribeURL,
+				"Rank":       rank,
+				"Score":      score,
+			},
+		}))
 	}
 
 	s.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle(title).
-		SetDescription("A oto lista!").
 		SetFields(msg.ToMessageEmbedFields()).
-		SetFooter(fmt.Sprintf("Strona %d z %d", page, totalPages)).
+		SetFooter(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "pagination.labelDisplayedPage",
+			DefaultMessage: message.FallbackMsg("pagination.labelDisplayedPage", "{{.Page}} from {{.MaxPage}}"),
+			TemplateData: map[string]interface{}{
+				"Page":    page,
+				"MaxPage": totalPages,
+			},
+		})).
 		MessageEmbed)
 }

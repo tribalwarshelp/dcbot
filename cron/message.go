@@ -3,8 +3,8 @@ package cron
 import (
 	"fmt"
 
-	"github.com/bwmarrin/discordgo"
-	"github.com/tribalwarshelp/dcbot/discord"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/tribalwarshelp/dcbot/message"
 	"github.com/tribalwarshelp/dcbot/utils"
 	shared_models "github.com/tribalwarshelp/shared/models"
 )
@@ -18,7 +18,7 @@ const (
 	colorConqueredVillage             = 0x00ff00
 )
 
-type message struct {
+type checkEnnoblementsMsg struct {
 	t                messageType
 	server           string
 	date             string
@@ -32,6 +32,7 @@ type message struct {
 	newOwnerName     string
 	newOwnerTribeURL string
 	newOwnerTribeTag string
+	localizer        *i18n.Localizer
 }
 
 type newMessageConfig struct {
@@ -39,10 +40,11 @@ type newMessageConfig struct {
 	host        string
 	server      string
 	ennoblement *shared_models.LiveEnnoblement
+	localizer   *i18n.Localizer
 }
 
-func newMessage(cfg newMessageConfig) message {
-	data := message{
+func newMessage(cfg newMessageConfig) checkEnnoblementsMsg {
+	data := checkEnnoblementsMsg{
 		t:                cfg.t,
 		date:             formatDateOfConquest(cfg.ennoblement.EnnobledAt),
 		server:           cfg.server,
@@ -51,6 +53,7 @@ func newMessage(cfg newMessageConfig) message {
 		oldOwnerTribeTag: "-",
 		newOwnerName:     "-",
 		newOwnerTribeTag: "-",
+		localizer:        cfg.localizer,
 	}
 	if !isVillageNil(cfg.ennoblement.Village) {
 		data.village = fmt.Sprintf("%s (%d|%d) %s",
@@ -80,46 +83,17 @@ func newMessage(cfg newMessageConfig) message {
 	return data
 }
 
-func (msg message) formatMsgAboutVillageLost() string {
-	return fmt.Sprintf(`Wioska %s gracza %s (%s) została stracona na rzecz %s (%s)`,
-		formatMsgLink(msg.village, msg.villageURL),
-		formatMsgLink(msg.oldOwnerName, msg.oldOwnerURL),
-		formatMsgLink(msg.oldOwnerTribeTag, msg.oldOwnerTribeURL),
-		formatMsgLink(msg.newOwnerName, msg.newOwnerURL),
-		formatMsgLink(msg.newOwnerTribeTag, msg.newOwnerTribeURL))
-}
-
-func (msg message) formatMsgAboutVillageConquest() string {
-	return fmt.Sprintf("Gracz %s (%s) podbił wioskę %s od gracza %s (%s)",
-		formatMsgLink(msg.newOwnerName, msg.newOwnerURL),
-		formatMsgLink(msg.newOwnerTribeTag, msg.newOwnerTribeURL),
-		formatMsgLink(msg.village, msg.villageURL),
-		formatMsgLink(msg.oldOwnerName, msg.oldOwnerURL),
-		formatMsgLink(msg.oldOwnerTribeTag, msg.oldOwnerTribeURL))
-}
-
-func (msg message) String() string {
-	fieldContent := msg.formatMsgAboutVillageConquest()
-	if msg.t == messageTypeLost {
-		fieldContent = msg.formatMsgAboutVillageLost()
-	}
-	return fieldContent + "\n"
-}
-
-func (msg message) toEmbed() *discordgo.MessageEmbed {
-	title := "Podbita wioska"
-	fieldContent := msg.String()
-	color := colorConqueredVillage
-	if msg.t == messageTypeLost {
-		title = "Stracona wioska"
-		color = colorLostVillage
-	}
-
-	return discord.
-		NewEmbed().
-		SetTitle(title).
-		AddField(msg.server, fieldContent).
-		SetTimestamp(msg.date).
-		SetColor(color).
-		MessageEmbed
+func (msg checkEnnoblementsMsg) String() string {
+	return msg.localizer.MustLocalize(&i18n.LocalizeConfig{
+		MessageID: "cron.checkEnnoblements.msgLine",
+		DefaultMessage: message.FallbackMsg("cron.checkEnnoblements.msgLine",
+			"{{.NewOwner}} ({{.NewOwnerTribe}}) has conquered the village {{.Village}} (Old owner: {{.OldOwner}} ({{.OldOwnerTribe}}))"),
+		TemplateData: map[string]interface{}{
+			"NewOwner":      formatMsgLink(msg.newOwnerName, msg.newOwnerURL),
+			"NewOwnerTribe": formatMsgLink(msg.newOwnerTribeTag, msg.newOwnerTribeURL),
+			"Village":       formatMsgLink(msg.village, msg.villageURL),
+			"OldOwner":      formatMsgLink(msg.oldOwnerName, msg.oldOwnerURL),
+			"OldOwnerTribe": formatMsgLink(msg.oldOwnerTribeTag, msg.oldOwnerTribeURL),
+		},
+	}) + "\n"
 }

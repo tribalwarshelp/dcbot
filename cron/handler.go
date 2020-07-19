@@ -5,6 +5,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/tribalwarshelp/dcbot/message"
+
 	"github.com/pkg/errors"
 	shared_models "github.com/tribalwarshelp/shared/models"
 
@@ -85,22 +88,22 @@ func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersi
 	return langVersionList.Items, nil
 }
 
-func (h *handler) checkLastEnnoblements() {
+func (h *handler) checkEnnoblements() {
 	start := time.Now()
 
 	servers, err := h.observationRepo.FetchServers(context.Background())
 	if err != nil {
-		log.Print("checkLastEnnoblements error: " + err.Error())
+		log.Print("checkEnnoblements error: " + err.Error())
 		return
 	}
-	log.Print("checkLastEnnoblements: servers: ", servers)
+	log.Print("checkEnnoblements: servers: ", servers)
 
 	groups, total, err := h.groupRepo.Fetch(context.Background(), nil)
 	if err != nil {
-		log.Print("checkLastEnnoblements error: " + err.Error())
+		log.Print("checkEnnoblements error: " + err.Error())
 		return
 	}
-	log.Print("checkLastEnnoblements: number of loaded groups: ", total)
+	log.Print("checkEnnoblements: number of loaded groups: ", total)
 
 	langVersions, err := h.loadLangVersions(servers)
 	if err != nil {
@@ -113,6 +116,7 @@ func (h *handler) checkLastEnnoblements() {
 		if group.ConqueredVillagesChannelID == "" && group.LostVillagesChannelID == "" {
 			continue
 		}
+		localizer := message.NewLocalizer(group.Server.Lang)
 		lostVillagesMsg := &discord.EmbedMessage{}
 		conqueredVillagesMsg := &discord.EmbedMessage{}
 		for _, observation := range group.Observations {
@@ -130,6 +134,7 @@ func (h *handler) checkLastEnnoblements() {
 							server:      observation.Server,
 							ennoblement: ennoblement,
 							t:           messageTypeLost,
+							localizer:   localizer,
 						}
 						lostVillagesMsg.Append(newMessage(newMsgDataConfig).String())
 					}
@@ -148,6 +153,7 @@ func (h *handler) checkLastEnnoblements() {
 							server:      observation.Server,
 							ennoblement: ennoblement,
 							t:           messageTypeConquer,
+							localizer:   localizer,
 						}
 						conqueredVillagesMsg.Append(newMessage(newMsgDataConfig).String())
 					}
@@ -159,7 +165,11 @@ func (h *handler) checkLastEnnoblements() {
 			h.discord.SendEmbed(group.ConqueredVillagesChannelID,
 				discord.
 					NewEmbed().
-					SetTitle("Podbite wioski").
+					SetTitle(localizer.MustLocalize(&i18n.LocalizeConfig{
+						MessageID: "cron.conqueredVillages.title",
+						DefaultMessage: message.FallbackMsg("cron.conqueredVillages.title",
+							"Conquered villages"),
+					})).
 					SetColor(colorConqueredVillage).
 					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
 					SetTimestamp(formatDateOfConquest(time.Now())).
@@ -169,7 +179,11 @@ func (h *handler) checkLastEnnoblements() {
 			h.discord.SendEmbed(group.LostVillagesChannelID,
 				discord.
 					NewEmbed().
-					SetTitle("Stracone wioski").
+					SetTitle(localizer.MustLocalize(&i18n.LocalizeConfig{
+						MessageID: "cron.lostVillages.title",
+						DefaultMessage: message.FallbackMsg("cron.lostVillages.title",
+							"Lost villages"),
+					})).
 					SetColor(colorLostVillage).
 					SetFields(lostVillagesMsg.ToMessageEmbedFields()).
 					SetTimestamp(formatDateOfConquest(time.Now())).
@@ -177,16 +191,16 @@ func (h *handler) checkLastEnnoblements() {
 		}
 	}
 
-	log.Printf("checkLastEnnoblements: finished in %s", time.Since(start).String())
+	log.Printf("checkEnnoblements: finished in %s", time.Since(start).String())
 }
 
-func (h *handler) checkBotMembershipOnServers() {
+func (h *handler) checkBotServers() {
 	servers, total, err := h.serverRepo.Fetch(context.Background(), nil)
 	if err != nil {
-		log.Print("checkBotMembershipOnServers error: " + err.Error())
+		log.Print("checkBotServers error: " + err.Error())
 		return
 	}
-	log.Print("checkBotMembershipOnServers: total number of loaded discord servers: ", total)
+	log.Print("checkBotServers: total number of loaded discord servers: ", total)
 
 	idsToDelete := []string{}
 	for _, server := range servers {
@@ -200,9 +214,9 @@ func (h *handler) checkBotMembershipOnServers() {
 			ID: idsToDelete,
 		})
 		if err != nil {
-			log.Print("checkBotMembershipOnServers error: " + err.Error())
+			log.Print("checkBotServers error: " + err.Error())
 		} else {
-			log.Printf("checkBotMembershipOnServers: total number of deleted discord servers: %d", len(deleted))
+			log.Printf("checkBotServers: total number of deleted discord servers: %d", len(deleted))
 		}
 	}
 }
