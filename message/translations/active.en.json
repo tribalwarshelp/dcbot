@@ -20,5 +20,22 @@
   "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
   "help.unobserveconqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages.",
   "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
-  "help.unobservelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages."
+  "help.unobservelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages.",
+
+  "tribe.invalidPage": "{{.Mention}} The page must be a number greater than 0.",
+  "tribe.noTribeID": "{{.Mention}} You haven't entered the tribe ID.",
+  "tribe.title.sortedByOD": "Sorted by OD",
+  "tribe.title.sortedByODA": "Sorted by ODA",
+  "tribe.title.sortedByODD": "Sorted by ODD",
+  "tribe.title.sortedByODS": "Sorted by ODS",
+  "tribe.title.sortedByPoints": "Sorted by points",
+  "tribe.tribesNotFound": "{{.Mention}} Tribes not found.",
+  "tribe.exceededMaximumNumberOfPages": "{{.Mention}} You have exceeded the maximum number of pages ({{.Page}}/{{.MaxPage}}).",
+  "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Tribe: [``{{.TribeTag}}``]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n",
+
+  "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
+
+  "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
+
+  "internalServerError": "{{.Mention}} Internal server error occurred, please try again later."
 }
