@@ -78,7 +78,7 @@ func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCrea
 			},
 		}))
 }
-func (s *Session) handleDeleteGroupCommand(m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleDeleteGroupCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -89,16 +89,27 @@ func (s *Session) handleDeleteGroupCommand(m *discordgo.MessageCreate, args ...s
 		return
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s %s [id grupy]",
-				m.Author.Mention(),
-				DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix)))
+			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "help.deletegroup",
+				DefaultMessage: message.FallbackMsg("help.deletegroup", "**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group."),
+				TemplateData: map[string]interface{}{
+					"Command":       DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
+					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+				},
+			}))
 		return
 	}
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Niepoprawne ID grupy (powinna to być liczba całkowita większa od 1).", m.Author.Mention()))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "deleteGroup.invalidID",
+				DefaultMessage: message.FallbackMsg("deleteGroup.invalidID", "{{.Mention}} The group ID must be a number greater than 0."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
@@ -108,11 +119,16 @@ func (s *Session) handleDeleteGroupCommand(m *discordgo.MessageCreate, args ...s
 	})
 
 	s.SendMessage(m.ChannelID,
-		fmt.Sprintf("%s Usunięto grupę.", m.Author.Mention()))
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "deleteGroup.success",
+			DefaultMessage: message.FallbackMsg("deleteGroup.success", "{{.Mention}} The group has been deleted."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 }
 
 func (s *Session) handleGroupsCommand(m *discordgo.MessageCreate) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -142,7 +158,6 @@ func (s *Session) handleGroupsCommand(m *discordgo.MessageCreate) {
 }
 
 func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -184,7 +199,6 @@ func (s *Session) handleConqueredVillagesCommand(m *discordgo.MessageCreate, arg
 }
 
 func (s *Session) handleUnObserveConqueredVillagesCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -227,7 +241,6 @@ func (s *Session) handleUnObserveConqueredVillagesCommand(m *discordgo.MessageCr
 }
 
 func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -270,7 +283,6 @@ func (s *Session) handleLostVillagesCommand(m *discordgo.MessageCreate, args ...
 }
 
 func (s *Session) handleUnObserveLostVillagesCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -316,7 +328,6 @@ func (s *Session) handleUnObserveLostVillagesCommand(m *discordgo.MessageCreate,
 }
 
 func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -391,7 +402,6 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 }
 
 func (s *Session) handleUnObserveCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -438,7 +448,6 @@ func (s *Session) handleUnObserveCommand(m *discordgo.MessageCreate, args ...str
 }
 
 func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -537,7 +546,6 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 }
 
 func (s *Session) handleShowEnnobledBarbariansCommand(m *discordgo.MessageCreate, args ...string) {
-
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}

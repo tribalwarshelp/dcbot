@@ -111,7 +111,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	case AddGroupCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleAddGroupCommand(ctx, m)
 	case DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleDeleteGroupCommand(m, args...)
+		s.handleDeleteGroupCommand(ctx, m, args...)
 	case GroupsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleGroupsCommand(m)
 
