@@ -182,11 +182,12 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 	commandsForGuildAdmins2 := fmt.Sprintf(`
 - %s
 - %s
+- %s
 				`,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.lostvillages",
 			DefaultMessage: message.FallbackMsg("help.lostvillages",
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
 			TemplateData: map[string]interface{}{
 				"Command":       LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -195,10 +196,19 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.disablelostvillages",
 			DefaultMessage: message.FallbackMsg("help.disablelostvillages",
-				"*{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
 			TemplateData: map[string]interface{}{
 				"Command":       DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.changelanguage",
+			DefaultMessage: message.FallbackMsg("help.changelanguage",
+				"**{{.Command}}** [{{.Languages}}] - change language."),
+			TemplateData: map[string]interface{}{
+				"Command":   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
+				"Languages": getAvailableLanguages(),
 			},
 		}),
 	)
@@ -287,34 +297,34 @@ func (s *Session) handleTribeCommand(ctx commandCtx, m *discordgo.MessageCreate,
 		filter.Sort = "rankAtt ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "tribe.title.sortedByODA",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODA", "Sorted by ODA"),
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODA", "Ordered by ODA"),
 		})
 	case TopDefCommand:
 		filter.RankDefGTE = 1
 		filter.Sort = "rankDef ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "tribe.title.sortedByODD",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODD", "Sorted by ODD"),
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODD", "Ordered by ODD"),
 		})
 	case TopSuppCommand:
 		filter.RankSupGTE = 1
 		filter.Sort = "rankSup ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "tribe.title.sortedByODS",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODS", "Sorted by ODS"),
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODS", "Ordered by ODS"),
 		})
 	case TopTotalCommand:
 		filter.RankTotalGTE = 1
 		filter.Sort = "rankTotal ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "tribe.title.sortedByOD",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByOD", "Sorted by OD"),
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByOD", "Ordered by OD"),
 		})
 	case TopPointsCommand:
 		filter.Sort = "rank ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "tribe.title.sortedByPoints",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByPoints", "Sorted by points"),
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByPoints", "Ordered by points"),
 		})
 	default:
 		return

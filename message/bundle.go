@@ -25,6 +25,10 @@ func NewLocalizer(l ...string) *i18n.Localizer {
 	return i18n.NewLocalizer(bundle, append(l, lang.String())...)
 }
 
+func LanguageTags() []language.Tag {
+	return bundle.LanguageTags()
+}
+
 func LoadMessageFiles(root string) error {
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if path != root {

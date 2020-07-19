@@ -1,6 +1,6 @@
 {
   "help.title": "Help",
-  "help.description": "Commands offered by the bot",
+  "help.description": "Commands offered by the bot.",
   "help.footer": "",
   "help.forAllUsers": "For all users",
   "help.forAdmins": "For admins",
@@ -21,14 +21,15 @@
   "help.disableconqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages.",
   "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
   "help.disablelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages.",
+  "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - change language.",
 
   "tribe.invalidPage": "{{.Mention}} The page must be a number greater than 0.",
   "tribe.noTribeID": "{{.Mention}} You haven't entered the tribe ID.",
-  "tribe.title.sortedByOD": "Sorted by OD",
-  "tribe.title.sortedByODA": "Sorted by ODA",
-  "tribe.title.sortedByODD": "Sorted by ODD",
-  "tribe.title.sortedByODS": "Sorted by ODS",
-  "tribe.title.sortedByPoints": "Sorted by points",
+  "tribe.title.sortedByOD": "Ordered by OD",
+  "tribe.title.sortedByODA": "Ordered by ODA",
+  "tribe.title.sortedByODD": "Ordered by ODD",
+  "tribe.title.sortedByODS": "Ordered by ODS",
+  "tribe.title.sortedByPoints": "Ordered by points",
   "tribe.tribesNotFound": "{{.Mention}} Tribes not found.",
   "tribe.exceededMaximumNumberOfPages": "{{.Mention}} You have exceeded the maximum number of pages ({{.Page}}/{{.MaxPage}}).",
   "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Tribe: [``{{.TribeTag}}``]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n",
@@ -80,6 +81,9 @@
   "showEnnobledBarbs.groupNotFound": "{{.Mention}} Group not found.",
   "showEnnobledBarbs.success_1": "{{.Mention}} Notifications about conquered barbarian villages will no longer show up.",
   "showEnnobledBarbs.success_2": "{{.Mention}} Enabled notifications about conquered barbarian villages.",
+
+  "changeLanguage.languageNotSupported": "{{.Mention}} Language not supported.",
+  "changeLanguage.success": "{{.Mention}} The language has been changed.",
 
   "cron.lostVillages.title": "Lost villages",
   "cron.conqueredVillages.title": "Conquered villages",
