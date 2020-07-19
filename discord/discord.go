@@ -119,18 +119,18 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		s.handleShowEnnobledBarbariansCommand(ctx, m, args...)
 	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObserveCommand(ctx, m, args...)
-	case UnObserveCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleUnObserveCommand(ctx, m, args...)
+	case DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleDeleteObservationCommand(ctx, m, args...)
 	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObservationsCommand(ctx, m, args...)
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleConqueredVillagesCommand(ctx, m, args...)
-	case UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleUnObserveConqueredVillagesCommand(ctx, m, args...)
+	case DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleDisableConqueredVillagesCommand(ctx, m, args...)
 	case LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleLostVillagesCommand(ctx, m, args...)
-	case UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleUnObserveLostVillagesCommand(ctx, m, args...)
+	case DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleDisableLostVillagesCommand(ctx, m, args...)
 
 	}
 }

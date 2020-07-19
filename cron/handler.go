@@ -52,7 +52,7 @@ func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
 		if !ok {
-			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
+			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
 		}
 
 		m[w] = filterEnnoblements(es, lastEnnoblementAt)

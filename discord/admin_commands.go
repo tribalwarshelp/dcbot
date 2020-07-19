@@ -20,17 +20,17 @@ const (
 )
 
 const (
-	AddGroupCommand                   Command = "addgroup"
-	DeleteGroupCommand                Command = "deletegroup"
-	GroupsCommand                     Command = "groups"
-	ShowEnnobledBarbariansCommand     Command = "showennobledbarbs"
-	ObserveCommand                    Command = "observe"
-	ObservationsCommand               Command = "observations"
-	UnObserveCommand                  Command = "unobserve"
-	LostVillagesCommand               Command = "lostvillages"
-	UnObserveLostVillagesCommand      Command = "unobservelostvillages"
-	ConqueredVillagesCommand          Command = "conqueredvillages"
-	UnObserveConqueredVillagesCommand Command = "unobserveconqueredvillages"
+	AddGroupCommand                 Command = "addgroup"
+	DeleteGroupCommand              Command = "deletegroup"
+	GroupsCommand                   Command = "groups"
+	ShowEnnobledBarbariansCommand   Command = "showennobledbarbs"
+	ObserveCommand                  Command = "observe"
+	ObservationsCommand             Command = "observations"
+	DeleteObservationCommand        Command = "deleteobservation"
+	LostVillagesCommand             Command = "lostvillages"
+	DisableLostVillagesCommand      Command = "disablelostvillages"
+	ConqueredVillagesCommand        Command = "conqueredvillages"
+	DisableConqueredVillagesCommand Command = "disableconqueredvillages"
 )
 
 func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCreate) {
@@ -236,7 +236,7 @@ func (s *Session) handleConqueredVillagesCommand(ctx commandCtx, m *discordgo.Me
 		}))
 }
 
-func (s *Session) handleUnObserveConqueredVillagesCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleDisableConqueredVillagesCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -248,11 +248,11 @@ func (s *Session) handleUnObserveConqueredVillagesCommand(ctx commandCtx, m *dis
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.unobserveconqueredvillages",
-				DefaultMessage: message.FallbackMsg("help.unobserveconqueredvillages",
+				MessageID: "help.disableconqueredvillages",
+				DefaultMessage: message.FallbackMsg("help.disableconqueredvillages",
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages."),
 				TemplateData: map[string]interface{}{
-					"Command":       UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 				},
 			}))
@@ -263,8 +263,8 @@ func (s *Session) handleUnObserveConqueredVillagesCommand(ctx commandCtx, m *dis
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "unObserveConqueredVillages.invalidID",
-				DefaultMessage: message.FallbackMsg("unObserveConqueredVillages.invalidID",
+				MessageID: "disableConqueredVillages.invalidID",
+				DefaultMessage: message.FallbackMsg("disableConqueredVillages.invalidID",
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -280,8 +280,8 @@ func (s *Session) handleUnObserveConqueredVillagesCommand(ctx commandCtx, m *dis
 	if err != nil || len(groups) == 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "unObserveConqueredVillages.groupNotFound",
-				DefaultMessage: message.FallbackMsg("unObserveConqueredVillages.groupNotFound",
+				MessageID: "disableConqueredVillages.groupNotFound",
+				DefaultMessage: message.FallbackMsg("disableConqueredVillages.groupNotFound",
 					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -296,8 +296,8 @@ func (s *Session) handleUnObserveConqueredVillagesCommand(ctx commandCtx, m *dis
 	}
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "unObserveConqueredVillages.success",
-			DefaultMessage: message.FallbackMsg("unObserveConqueredVillages.success",
+			MessageID: "disableConqueredVillages.success",
+			DefaultMessage: message.FallbackMsg("disableConqueredVillages.success",
 				"{{.Mention}} Notifications about conquered villages will no longer show up."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
@@ -374,7 +374,7 @@ func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.Message
 		}))
 }
 
-func (s *Session) handleUnObserveLostVillagesCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleDisableLostVillagesCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -386,11 +386,11 @@ func (s *Session) handleUnObserveLostVillagesCommand(ctx commandCtx, m *discordg
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.unobservelostvillages",
-				DefaultMessage: message.FallbackMsg("help.unobservelostvillages",
+				MessageID: "help.disablelostvillages",
+				DefaultMessage: message.FallbackMsg("help.disablelostvillages",
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages."),
 				TemplateData: map[string]interface{}{
-					"Command":       UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 				},
 			}))
@@ -401,8 +401,8 @@ func (s *Session) handleUnObserveLostVillagesCommand(ctx commandCtx, m *discordg
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "unObserveLostVillages.invalidID",
-				DefaultMessage: message.FallbackMsg("unObserveLostVillages.invalidID",
+				MessageID: "disableLostVillages.invalidID",
+				DefaultMessage: message.FallbackMsg("disableLostVillages.invalidID",
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -418,8 +418,8 @@ func (s *Session) handleUnObserveLostVillagesCommand(ctx commandCtx, m *discordg
 	if err != nil || len(groups) == 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "unObserveLostVillages.groupNotFound",
-				DefaultMessage: message.FallbackMsg("unObserveLostVillages.groupNotFound",
+				MessageID: "disableLostVillages.groupNotFound",
+				DefaultMessage: message.FallbackMsg("disableLostVillages.groupNotFound",
 					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -435,8 +435,8 @@ func (s *Session) handleUnObserveLostVillagesCommand(ctx commandCtx, m *discordg
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "unObserveLostVillages.success",
-			DefaultMessage: message.FallbackMsg("unObserveLostVillages.success",
+			MessageID: "disableLostVillages.success",
+			DefaultMessage: message.FallbackMsg("disableLostVillages.success",
 				"{{.Mention}} Notifications about lost villages will no longer show up."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
@@ -587,7 +587,7 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	}))
 }
 
-func (s *Session) handleUnObserveCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleDeleteObservationCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -599,11 +599,11 @@ func (s *Session) handleUnObserveCommand(ctx commandCtx, m *discordgo.MessageCre
 	} else if argsLength < 2 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.unobserve",
-				DefaultMessage: message.FallbackMsg("help.unobserve",
+				MessageID: "help.deleteobservation",
+				DefaultMessage: message.FallbackMsg("help.deleteobservation",
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group."),
 				TemplateData: map[string]interface{}{
-					"Command":             UnObserveCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":             DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix),
 					"ObservationsCommand": ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand":       GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 				},
@@ -615,8 +615,8 @@ func (s *Session) handleUnObserveCommand(ctx commandCtx, m *discordgo.MessageCre
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "unObserve.invalidGroupID",
-				DefaultMessage: message.FallbackMsg("unObserve.invalidGroupID",
+				MessageID: "deleteObservation.invalidGroupID",
+				DefaultMessage: message.FallbackMsg("deleteObservation.invalidGroupID",
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -628,8 +628,8 @@ func (s *Session) handleUnObserveCommand(ctx commandCtx, m *discordgo.MessageCre
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "unObserve.invalidTribeID",
-				DefaultMessage: message.FallbackMsg("unObserve.invalidTribeID",
+				MessageID: "deleteObservation.invalidTribeID",
+				DefaultMessage: message.FallbackMsg("deleteObservation.invalidTribeID",
 					"{{.Mention}} The tribe ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -642,8 +642,8 @@ func (s *Session) handleUnObserveCommand(ctx commandCtx, m *discordgo.MessageCre
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "unObserve.groupNotFound",
-				DefaultMessage: message.FallbackMsg("unObserve.groupNotFound", "{{.Mention}} Group not found."),
+				MessageID:      "deleteObservation.groupNotFound",
+				DefaultMessage: message.FallbackMsg("deleteObservation.groupNotFound", "{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
