@@ -420,7 +420,7 @@ func (s *Session) handleUnObserveLostVillagesCommand(ctx commandCtx, m *discordg
 		}))
 }
 
-func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -431,53 +431,104 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 		return
 	} else if argsLength < 3 {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s %s [id grupy] [świat] [id plemienia]",
-				m.Author.Mention(),
-				ObserveCommand.WithPrefix(s.cfg.CommandPrefix)))
+			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "help.observe",
+				DefaultMessage: message.FallbackMsg("help.observe", "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group."),
+				TemplateData: map[string]interface{}{
+					"Command":       ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
+					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+				},
+			}))
 		return
 	}
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s ID grupy powinno być liczbą całkowitą większą od 0.",
-				m.Author.Mention()))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observe.invalidGroupID",
+				DefaultMessage: message.FallbackMsg("observe.invalidGroupID", "{{.Mention}} The group ID must be a number greater than 0."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 	serverKey := args[1]
 	tribeID, err := strconv.Atoi(args[2])
 	if err != nil || tribeID <= 0 {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s ID plemienia powinno być liczbą całkowitą większą od 0.",
-				m.Author.Mention()))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observe.invalidTribeID",
+				DefaultMessage: message.FallbackMsg("observe.invalidTribeID", "{{.Mention}} The tribe ID must be a number greater than 0."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
 	server, err := s.cfg.API.Servers.Read(serverKey, nil)
 	if err != nil || server == nil {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest nieobsługiwany.`, serverKey))
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observe.serverNotFound",
+				DefaultMessage: message.FallbackMsg("observe.serverNotFound", "{{.Mention}} Server not found."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 	if server.Status == shared_models.ServerStatusClosed {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` świat %s jest zamknięty.`, serverKey))
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observe.serverIsClosed",
+				DefaultMessage: message.FallbackMsg("observe.serverIsClosed", "{{.Mention}} Server is closed."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
 	tribe, err := s.cfg.API.Tribes.Read(server.Key, tribeID)
 	if err != nil || tribe == nil {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+fmt.Sprintf(` Plemię o ID: %d nie istnieje na świecie %s.`, tribeID, server.Key))
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observe.tribeNotFound",
+				DefaultMessage: message.FallbackMsg("observe.tribeNotFound", "{{.Mention}} Tribe not found."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
 	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie znaleziono grupy.`)
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observe.groupNotFound",
+				DefaultMessage: message.FallbackMsg("observe.groupNotFound", "{{.Mention}} Group not found."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
 	if len(group.Observations) >= observationsPerGroup {
 		s.SendMessage(m.ChannelID,
-			m.Author.Mention()+fmt.Sprintf(` Osiągnięto limit plemion w grupie (%d/%d).`, observationsPerGroup, observationsPerGroup))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observe.observationLimitHasBeenReached",
+				DefaultMessage: message.FallbackMsg("observe.observationLimitHasBeenReached", "{{.Mention}} The observation limit for this group has been reached ({{.Total}}/{{.Limit}})."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+					"Total":   len(group.Observations),
+					"Limit":   observationsPerGroup,
+				},
+			}))
 		return
 	}
 
@@ -487,11 +538,24 @@ func (s *Session) handleObserveCommand(m *discordgo.MessageCreate, args ...strin
 		GroupID: groupID,
 	})
 	if err != nil {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie udało się dodać plemienia do obserwowanych.`)
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "internalServerError",
+				DefaultMessage: message.FallbackMsg("internalServerError", "{{.Mention}} Internal server error occurred, please try again later."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
-	s.SendMessage(m.ChannelID, m.Author.Mention()+` Dodano.`)
+	s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+		MessageID:      "observe.success",
+		DefaultMessage: message.FallbackMsg("observe.success", "{{.Mention}} Added."),
+		TemplateData: map[string]interface{}{
+			"Mention": m.Author.Mention(),
+		},
+	}))
 }
 
 func (s *Session) handleUnObserveCommand(m *discordgo.MessageCreate, args ...string) {
