@@ -803,7 +803,7 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 		MessageEmbed)
 }
 
-func (s *Session) handleShowEnnobledBarbariansCommand(m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -814,37 +814,78 @@ func (s *Session) handleShowEnnobledBarbariansCommand(m *discordgo.MessageCreate
 		return
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf(`%s %s [id grupy]`,
-				m.Author.Mention(),
-				ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix)))
+			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "help.showennobledbarbs",
+				DefaultMessage: message.FallbackMsg("help.showennobledbarbs",
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages."),
+				TemplateData: map[string]interface{}{
+					"Command":       ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
+					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+				},
+			}))
 		return
 	}
 
 	groupID, err := strconv.Atoi(args[0])
-	if err != nil {
+	if err != nil || groupID <= 0 {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf(`%s ID grupy powinno być liczbą całkowitą większą od 0.`,
-				m.Author.Mention()))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "showEnnobledBarbs.invalidGroupID",
+				DefaultMessage: message.FallbackMsg("showEnnobledBarbs.invalidGroupID",
+					"{{.Mention}} The group ID must be a number greater than 0."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie znaleziono grupy.`)
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observations.groupNotFound",
+				DefaultMessage: message.FallbackMsg("observations.groupNotFound", "{{.Mention}} Group not found."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
 	oldValue := group.ShowEnnobledBarbarians
 	group.ShowEnnobledBarbarians = !oldValue
 	if err := s.cfg.GroupRepository.Update(context.Background(), group); err != nil {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+` Wewnętrzny błąd serwera.`)
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "internalServerError",
+				DefaultMessage: message.FallbackMsg("internalServerError",
+					"{{.Mention}} Internal server error occurred, please try again later."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
 	if oldValue {
 		s.SendMessage(m.ChannelID,
-			m.Author.Mention()+` Informacje o podbitych wioskach barbarzyńskich nie będą się już pojawiały.`)
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "showEnnobledBarbs.success_1",
+				DefaultMessage: message.FallbackMsg("showEnnobledBarbs.success_1",
+					"{{.Mention}} Notifications about conquered barbarian villages will no longer show up."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 	} else {
 		s.SendMessage(m.ChannelID,
-			m.Author.Mention()+` Włączono wyświetlanie informacji o podbitych wioskach barbarzyńskich.`)
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "showEnnobledBarbs.success_2",
+				DefaultMessage: message.FallbackMsg("showEnnobledBarbs.success_2",
+					"{{.Mention}} Enabled notifications about conquered barbarian villages."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 	}
 }
