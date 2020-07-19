@@ -663,7 +663,7 @@ func (s *Session) handleUnObserveCommand(ctx commandCtx, m *discordgo.MessageCre
 	}))
 }
 
-func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -674,22 +674,41 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 		return
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf(`%s %s [id grupy]`,
-				m.Author.Mention(),
-				ObservationsCommand.WithPrefix(s.cfg.CommandPrefix)))
+			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "help.observations",
+				DefaultMessage: message.FallbackMsg("help.observations",
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] shows a list of observed tribes by this group."),
+				TemplateData: map[string]interface{}{
+					"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+				},
+			}))
 		return
 	}
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf(`%s ID grupy powinno być liczbą całkowitą większą od 0.`,
-				m.Author.Mention()))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "observations.invalidGroupID",
+				DefaultMessage: message.FallbackMsg("observations.invalidGroupID",
+					"{{.Mention}} The group ID must be a number greater than 0."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+` Nie znaleziono grupy.`)
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "observations.groupNotFound",
+				DefaultMessage: message.FallbackMsg("observations.groupNotFound", "{{.Mention}} Group not found."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &models.ObservationFilter{
@@ -697,7 +716,15 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 		Order:   []string{"id ASC"},
 	})
 	if err != nil {
-		s.SendMessage(m.ChannelID, m.Author.Mention()+` Wystąpił błąd wewnętrzny, prosimy spróbować później.`)
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "internalServerError",
+				DefaultMessage: message.FallbackMsg("internalServerError",
+					"{{.Mention}} Internal server error occurred, please try again later."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 
@@ -722,7 +749,15 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 			ID: tribeIDs,
 		})
 		if err != nil {
-			s.SendMessage(m.ChannelID, m.Author.Mention()+` Wystąpił błąd wewnętrzny, prosimy spróbować później.`)
+			s.SendMessage(m.ChannelID,
+				ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+					MessageID: "internalServerError",
+					DefaultMessage: message.FallbackMsg("internalServerError",
+						"{{.Mention}} Internal server error occurred, please try again later."),
+					TemplateData: map[string]interface{}{
+						"Mention": m.Author.Mention(),
+					},
+				}))
 			return
 		}
 		for _, tribe := range list.Items {
@@ -759,9 +794,12 @@ func (s *Session) handleObservationsCommand(m *discordgo.MessageCreate, args ...
 		}
 	}
 	s.SendEmbed(m.ChannelID, NewEmbed().
-		SetTitle("Lista obserwowanych plemion\nIndeks | ID - Serwer - Plemię").
+		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "observations.title",
+			DefaultMessage: message.FallbackMsg("observations.title",
+				"Observed tribes\nIndex | ID - Server - Tribe"),
+		})).
 		SetFields(msg.ToMessageEmbedFields()).
-		SetFooter("Strona 1 z 1").
 		MessageEmbed)
 }
 

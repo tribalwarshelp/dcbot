@@ -72,6 +72,10 @@
   "unObserve.groupNotFound": "{{.Mention}} Group not found.",
   "unObserve.success": "{{.Mention}} Deleted.",
 
+  "observations.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "observations.groupNotFound": "{{.Mention}} Group not found.",
+  "observations.title": "Observed tribes\nIndex | ID - Server - Tribe",
+
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
   "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
