@@ -120,7 +120,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObserveCommand(ctx, m, args...)
 	case UnObserveCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleUnObserveCommand(m, args...)
+		s.handleUnObserveCommand(ctx, m, args...)
 	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObservationsCommand(m, args...)
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
