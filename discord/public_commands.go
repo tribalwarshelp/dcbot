@@ -29,64 +29,161 @@ const (
 func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) {
 	tribeCMDWithPrefix := TribeCommand.WithPrefix(s.cfg.CommandPrefix)
 	commandsForAll := fmt.Sprintf(`
-- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA.
-- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD.
-- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS.
-- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD.
-- **%s %s** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points.
-- **%s** - shows how to contact the author
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
 				`,
-		tribeCMDWithPrefix,
-		TopAttCommand.String(),
-		tribeCMDWithPrefix,
-		TopDefCommand.String(),
-		tribeCMDWithPrefix,
-		TopSuppCommand.String(),
-		tribeCMDWithPrefix,
-		TopTotalCommand.String(),
-		tribeCMDWithPrefix,
-		TopPointsCommand.String(),
-		AuthorCommand.WithPrefix(s.cfg.CommandPrefix),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.tribe.topatt",
+			DefaultMessage: message.FallbackMsg("help.tribe.topatt", "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopAttCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.tribe.topdef",
+			DefaultMessage: message.FallbackMsg("help.tribe.topdef", "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopDefCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.tribe.topsupp",
+			DefaultMessage: message.FallbackMsg("help.tribe.topsupp", "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopSuppCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.tribe.toptotal",
+			DefaultMessage: message.FallbackMsg("help.tribe.toptotal", "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopTotalCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.tribe.toppoints",
+			DefaultMessage: message.FallbackMsg("help.tribe.toppoints", "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points."),
+			TemplateData: map[string]interface{}{
+				"Command": tribeCMDWithPrefix + " " + TopPointsCommand.String(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.author",
+			DefaultMessage: message.FallbackMsg("help.author", "**{{.Command}}** - shows how to contact the author."),
+			TemplateData: map[string]interface{}{
+				"Command": AuthorCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
 	)
 
 	commandsForGuildAdmins := fmt.Sprintf(`
-- **%s** - adds a new observation group.
-- **%s** - shows you a list of groups created by this guild.
-- **%s** [group id from %s] - deletes an observation group.
-- **%s** [group id from %s] - enables/disables notifications about ennobling barbarian villages.
-- **%s** [group id from %s] [server] [tribe id] - command adds a tribe to the observation group.
-- **%s** [group id from %s] - shows a list of observed tribes by this group.
-- **%s** [group id from %s] [id from %s] - removes a tribe to the observation group.
-- **%s** [group id from %s] - changes the channel on which notifications about conquered village will show. IMPORTANT! Call this command on the channel you want to display these notifications.
-- **%s** [group id from %s] - disable notifications about conquered villages.
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
+- %s
 				`,
-		AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		UnObserveCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
-		ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.addgroup",
+			DefaultMessage: message.FallbackMsg("help.addgroup", "**{{.Command}}** - adds a new observation group."),
+			TemplateData: map[string]interface{}{
+				"Command": AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.groups",
+			DefaultMessage: message.FallbackMsg("help.groups", "**{{.Command}}** - shows you a list of groups created by this guild."),
+			TemplateData: map[string]interface{}{
+				"Command": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.deletegroup",
+			DefaultMessage: message.FallbackMsg("help.deletegroup", "**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group."),
+			TemplateData: map[string]interface{}{
+				"Command":       DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.showennobledbarbs",
+			DefaultMessage: message.FallbackMsg("help.showennobledbarbs", "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages."),
+			TemplateData: map[string]interface{}{
+				"Command":       ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.observe",
+			DefaultMessage: message.FallbackMsg("help.observe", "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group."),
+			TemplateData: map[string]interface{}{
+				"Command":       ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.observations",
+			DefaultMessage: message.FallbackMsg("help.observations", "**{{.Command}}** [group id from {{.GroupsCommand}}] shows a list of observed tribes by this group."),
+			TemplateData: map[string]interface{}{
+				"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.unobserve",
+			DefaultMessage: message.FallbackMsg("help.unobserve", "**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe to the observation group."),
+			TemplateData: map[string]interface{}{
+				"Command":             UnObserveCommand.WithPrefix(s.cfg.CommandPrefix),
+				"ObservationsCommand": ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand":       GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.conqueredvillages",
+			DefaultMessage: message.FallbackMsg("help.conqueredvillages", "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+			TemplateData: map[string]interface{}{
+				"Command":       ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.unobserveconqueredvillages",
+			DefaultMessage: message.FallbackMsg("help.unobserveconqueredvillages", "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages."),
+			TemplateData: map[string]interface{}{
+				"Command":       UnObserveConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
 	)
 
 	commandsForGuildAdmins2 := fmt.Sprintf(`
-- **%s** [group id from %s] - changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications.
-- **%s** [group id from %s] - Disable notifications about lost villages.
+- %s
+- %s
 				`,
-		LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-		UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-		GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.lostvillages",
+			DefaultMessage: message.FallbackMsg("help.lostvillages", "**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+			TemplateData: map[string]interface{}{
+				"Command":       LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "help.unobservelostvillages",
+			DefaultMessage: message.FallbackMsg("help.unobservelostvillages", "*{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+			TemplateData: map[string]interface{}{
+				"Command":       UnObserveLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
 	)
 
 	forAdmins := ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
