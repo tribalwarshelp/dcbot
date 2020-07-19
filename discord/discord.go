@@ -118,7 +118,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	case ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleShowEnnobledBarbariansCommand(m, args...)
 	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleObserveCommand(m, args...)
+		s.handleObserveCommand(ctx, m, args...)
 	case UnObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleUnObserveCommand(m, args...)
 	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):

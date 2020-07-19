@@ -58,6 +58,15 @@
   "unObserveLostVillages.groupNotFound": "{{.Mention}} Group not found.",
   "unObserveLostVillages.success": "{{.Mention}} Notifications about lost villages will no longer show up.",
 
+  "observe.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "observe.invalidTribeID": "{{.Mention}} The tribe ID must be a number greater than 0.",
+  "observe.serverIsClosed": "{{.Mention}} Server is closed.",
+  "observe.serverNotFound": "{{.Mention}} Server not found.",
+  "observe.groupNotFound": "{{.Mention}} Group not found.",
+  "observe.tribeNotFound": "{{.Mention}} Tribe not found.",
+  "observe.observationLimitHasBeenReached": "{{.Mention}} The observation limit for this group has been reached ({{.Total}}/{{.Limit}}).",
+  "observe.success": "{{.Mention}} Added.",
+
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
   "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
