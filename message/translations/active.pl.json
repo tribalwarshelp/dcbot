@@ -1,0 +1,93 @@
+{
+  "help.title": "Pomoc",
+  "help.description": "Komendy oferowane przez bota",
+  "help.footer": "",
+  "help.forAllUsers": "Dla wszystkich",
+  "help.forAdmins": "Dla adminów",
+  "help.tribe.topatt": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych w ataku.",
+  "help.tribe.topdef": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych w obronie.",
+  "help.tribe.topsupp": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych jako wspierający.",
+  "help.tribe.toptotal": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych ogólnie.",
+  "help.tribe.toppoints": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - Generuje listę graczy z wybranych plemion i sortuje po punktach.",
+  "help.author": "**{{.Command}}** - pokazuje możliwe formy kontaktu z autorem.",
+  "help.addgroup": "**{{.Command}}** - dodaje nową grupę obserwacyjną.",
+  "help.groups": "**{{.Command}}** - pokazuje listę grup dodanych przez administrację tego serwera Discord..",
+  "help.deletegroup": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - usuwa grupę obserwacyjną.",
+  "help.showennobledbarbs": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - włącza/wyłącza informacje o podbitych wioskach barbarzyńskich.",
+  "help.observe": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] [serwer] [id plemienia] - dodaje plemię do grupy.",
+  "help.observations": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - pokazuje plemiona należące do wybranej grupy.",
+  "help.deleteobservation": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - usuwa plemię z grupy.",
+  "help.conqueredvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - zmienia kanał na którym będą się pojawiać informację o podbitych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
+  "help.disableconqueredvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o podbitych wioskach w danej grupie.",
+  "help.lostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - zmienia kanał na którym będą się pojawiać informację o straconych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
+  "help.disablelostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o straconych wioskach w danej grupie.",
+
+  "tribe.invalidPage": "{{.Mention}} Strona musi być liczbą większą od 0.",
+  "tribe.noTribeID": "{{.Mention}} Nie wprowadziłeś ID plemienia.",
+  "tribe.title.sortedByOD": "Gracze posortowani według pokonanych przeciwników",
+  "tribe.title.sortedByODA": "Gracze posortowani według pokonanych przeciwników jako agresor",
+  "tribe.title.sortedByODD": "Gracze posortowani według pokonanych przeciwników jako obrońca",
+  "tribe.title.sortedByODS": "Gracze posortowani według pokonanych przeciwników jako wspierający",
+  "tribe.title.sortedByPoints": "Gracze posortowani według punktów",
+  "tribe.tribesNotFound": "{{.Mention}} Plemię nie zostało znalezione.",
+  "tribe.exceededMaximumNumberOfPages": "{{.Mention}} Przekroczyłeś limit stron ({{.Page}}/{{.MaxPage}}).",
+  "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Plemię: [``{{.TribeTag}}``]({{.TribeURL}}) | Ranking: **{{.Rank}}** | Wynik: **{{.Score}}**)\n",
+
+  "addGroup.groupLimitHasBeenReached": "{{.Mention}} Osiągnięto limit grup ({{.Total}}/{{.Limit}}).",
+  "addGroup.success": "{{.Mention}} Nowa grupa została utworzona (ID: {{.ID}}).",
+
+  "deleteGroup.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "deleteGroup.success": "{{.Mention}} Grupa została usunięta.",
+
+  "groups.noGroupsAdded": "Brak dodanych grup.",
+  "groups.title": "Lista grup",
+
+  "conqueredVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "conqueredVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "conqueredVillages.success": "{{.Mention}} Kanał został pomyślnie zmieniony.",
+
+  "disableConqueredVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "disableConqueredVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "disableConqueredVillages.success": "{{.Mention}} Informacje o podbitych wioskach nie będą się już pokazywały.",
+
+  "lostVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "lostVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "lostVillages.success": "{{.Mention}} Kanał został pomyślnie zmieniony.",
+
+  "disableLostVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "disableLostVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "disableLostVillages.success": "{{.Mention}} Informacje o straconych wioskach nie będą się już pokazywały.",
+
+  "observe.invalidGroupID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "observe.invalidTribeID": "{{.Mention}} ID plemienia musi być liczbą większą od 0.",
+  "observe.serwerIsClosed": "{{.Mention}} Sewer jest zamknięty.",
+  "observe.serwerNotFound": "{{.Mention}} Serwer nie został znaleziony.",
+  "observe.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "observe.tribeNotFound": "{{.Mention}} Plemię nie zostało znalezione.",
+  "observe.observationLimitHasBeenReached": "{{.Mention}} Limit obserwacji dla grupy został osiągnięty ({{.Total}}/{{.Limit}}).",
+  "observe.success": "{{.Mention}} Dodano.",
+
+  "deleteObservation.invalidGroupID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "deleteObservation.invalidObservationID": "{{.Mention}} ID obserwacji musi być liczbą większą od 0.",
+  "deleteObservation.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "deleteObservation.success": "{{.Mention}} Usunięto.",
+
+  "observations.invalidGroupID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "observations.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "observations.title": "Obserwowane plemiona\nIndex | ID - Serwer - Plemię",
+
+  "showEnnobledBarbs.invalidGroupID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "showEnnobledBarbs.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "showEnnobledBarbs.success_1": "{{.Mention}} Powiadomienia o podbitych barbarkach nie będą się już dłużej pokazywały.",
+  "showEnnobledBarbs.success_2": "{{.Mention}} Włączono powiadomienia o podbitych barbarkach.",
+
+  "cron.lostVillages.title": "Stracone wioski",
+  "cron.conqueredVillages.title": "Podbite wioski",
+  "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] podbił wioskę {{.Village}} (Poprzedni właściciel: {{.OldOwner}} [{{.OldOwnerTribe}}])",
+
+  "api.defaultError": "{{.Mention}} Wystąpił błąd podczas pobierania danych z API, prosimy spróbować później.",
+
+  "pagination.labelDisplayedPage": "Strona: {{.Page}} z {{.MaxPage}}",
+
+  "internalServerError": "{{.Mention}} Wewnętrzny błąd serwera, prosimy spróbować później."
+}
