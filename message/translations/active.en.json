@@ -67,6 +67,11 @@
   "observe.observationLimitHasBeenReached": "{{.Mention}} The observation limit for this group has been reached ({{.Total}}/{{.Limit}}).",
   "observe.success": "{{.Mention}} Added.",
 
+  "unObserve.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "unObserve.invalidObservationID": "{{.Mention}} The observation ID must be a number greater than 0.",
+  "unObserve.groupNotFound": "{{.Mention}} Group not found.",
+  "unObserve.success": "{{.Mention}} Deleted.",
+
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
   "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
