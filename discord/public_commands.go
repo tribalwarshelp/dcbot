@@ -217,13 +217,9 @@ func (s *Session) handleAuthorCommand(m *discordgo.MessageCreate) {
 	s.SendMessage(m.ChannelID, fmt.Sprintf("%s Discord: Kichiyaki#2064 | https://dawid-wysokinski.pl/#contact.", m.Author.Mention()))
 }
 
-func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleTribeCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength < 4 {
-		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Niepoprawna komenda (sprawdź %s)",
-				m.Author.Mention(),
-				HelpCommand.WithPrefix(s.cfg.CommandPrefix)))
+	if argsLength < 3 {
 		return
 	}
 
@@ -231,7 +227,13 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 	world := args[1]
 	page, err := strconv.Atoi(args[2])
 	if err != nil || page <= 0 {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s 3 argument musi być liczbą większą od 0.", m.Author.Mention()))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.invalidPage",
+			DefaultMessage: message.FallbackMsg("tribe.invalidPage", "{{.Mention}} The page must be a number greater than 0."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 		return
 	}
 	ids := []int{}
@@ -243,7 +245,13 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 		ids = append(ids, id)
 	}
 	if len(ids) == 0 {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie wprowadziłeś ID plemion.", m.Author.Mention()))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.noTribeID",
+			DefaultMessage: message.FallbackMsg("tribe.noTribeID", "{{.Mention}} You haven't entered the tribe ID."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 		return
 	}
 
@@ -261,28 +269,38 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 	case TopAttCommand:
 		filter.RankAttGTE = 1
 		filter.Sort = "rankAtt ASC"
-		title = "Top pokonani w ataku"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByODA",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODA", "Sorted by ODA"),
+		})
 	case TopDefCommand:
 		filter.RankDefGTE = 1
 		filter.Sort = "rankDef ASC"
-		title = "Top pokonani w obronie"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByODD",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODD", "Sorted by ODD"),
+		})
 	case TopSuppCommand:
 		filter.RankSupGTE = 1
 		filter.Sort = "rankSup ASC"
-		title = "Top pokonani jako wspierający"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByODS",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODS", "Sorted by ODS"),
+		})
 	case TopTotalCommand:
 		filter.RankTotalGTE = 1
 		filter.Sort = "rankTotal ASC"
-		title = "Top pokonani ogólnie"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByOD",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByOD", "Sorted by OD"),
+		})
 	case TopPointsCommand:
 		filter.Sort = "rank ASC"
-		title = "Najwięcej punktów"
+		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.title.sortedByPoints",
+			DefaultMessage: message.FallbackMsg("tribe.title.sortedByPoints", "Sorted by points"),
+		})
 	default:
-		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Nieznana komenda %s (sprawdź %s)",
-				m.Author.Mention(),
-				command.String(),
-				HelpCommand.WithPrefix(s.cfg.CommandPrefix)))
 		return
 	}
 
@@ -291,23 +309,49 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 	})
 	if err != nil {
 		s.SendMessage(m.ChannelID,
-			fmt.Sprintf("%s Wystąpił błąd podczas pobierania danych z API, prosimy spróbować później.", m.Author.Mention()))
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "api.defaultError",
+				DefaultMessage: message.FallbackMsg("api.defaultError", "{{.Mention}} There was an error fetching data from the API, please try again later."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
 		return
 	}
 	if playersList == nil || playersList.Total == 0 {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie znaleziono graczy należących do plemion o podanych ID.", m.Author.Mention()))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.tribesNotFound",
+			DefaultMessage: message.FallbackMsg("tribe.tribesNotFound", "{{.Mention}} There was an error fetching data from the API, please try again later."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 		return
 	}
 	totalPages := int(math.Ceil(float64(playersList.Total) / float64(limit)))
 	if page > totalPages {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Przekroczyłeś limit stron (%d/%d).", m.Author.Mention(), page, totalPages))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.exceededMaximumNumberOfPages",
+			DefaultMessage: message.FallbackMsg("tribe.exceededMaximumNumberOfPages", "{{.Mention}} You have exceeded the maximum number of pages ({{.Page}}/{{.MaxPage}})."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+				"Page":    page,
+				"MaxPage": totalPages,
+			},
+		}))
 		return
 	}
 
 	langTag := utils.LanguageTagFromWorldName(world)
 	langVersion, err := s.cfg.API.LangVersions.Read(langTag)
 	if err != nil || langVersion == nil {
-		s.SendMessage(m.ChannelID, fmt.Sprintf("%s Nie znaleziono wersji językowej: %s.", m.Author.Mention(), langTag))
+		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "internalServerError",
+			DefaultMessage: message.FallbackMsg("internalServerError", "{{.Mention}} Internal server error occurred, please try again later."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 		return
 	}
 
@@ -344,20 +388,31 @@ func (s *Session) handleTribeCommand(m *discordgo.MessageCreate, args ...string)
 			tribeURL = utils.FormatTribeURL(world, langVersion.Host, player.Tribe.ID)
 		}
 
-		msg.Append(fmt.Sprintf("**%d**. [``%s``](%s) (Plemię: [``%s``](%s) | Ranking ogólny: **%d** | Wynik: **%d**)\n",
-			offset+i+1,
-			player.Name,
-			utils.FormatPlayerURL(world, langVersion.Host, player.ID),
-			tribeTag,
-			tribeURL,
-			rank,
-			score))
+		msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "tribe.messageLine",
+			DefaultMessage: message.FallbackMsg("tribe.messageLine", "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Tribe: [``{{.TribeTag}}``]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n"),
+			TemplateData: map[string]interface{}{
+				"Index":      offset + i + 1,
+				"PlayerName": player.Name,
+				"PlayerURL":  utils.FormatPlayerURL(world, langVersion.Host, player.ID),
+				"TribeTag":   tribeTag,
+				"TribeURL":   tribeURL,
+				"Rank":       rank,
+				"Score":      score,
+			},
+		}))
 	}
 
 	s.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle(title).
-		SetDescription("A oto lista!").
 		SetFields(msg.ToMessageEmbedFields()).
-		SetFooter(fmt.Sprintf("Strona %d z %d", page, totalPages)).
+		SetFooter(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "pagination.labelDisplayedPage",
+			DefaultMessage: message.FallbackMsg("pagination.labelDisplayedPage", "{{.Page}} from {{.MaxPage}}"),
+			TemplateData: map[string]interface{}{
+				"Page":    page,
+				"MaxPage": totalPages,
+			},
+		})).
 		MessageEmbed)
 }

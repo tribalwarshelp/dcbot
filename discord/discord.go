@@ -106,7 +106,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	case AuthorCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleAuthorCommand(m)
 	case TribeCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleTribeCommand(m, args...)
+		s.handleTribeCommand(ctx, m, args...)
 
 	case AddGroupCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleAddGroupCommand(m)
