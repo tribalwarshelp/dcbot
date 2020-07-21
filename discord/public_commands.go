@@ -183,6 +183,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 - %s
 - %s
 - %s
+- %s
 				`,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.lostvillages",
@@ -209,6 +210,15 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			TemplateData: map[string]interface{}{
 				"Command":   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
 				"Languages": getAvailableLanguages(),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.showselfconquers",
+			DefaultMessage: message.FallbackMsg("help.showselfconquers",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about self-conquers between tribes in one group."),
+			TemplateData: map[string]interface{}{
+				"Command":       ShowSelfConquersCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 			},
 		}),
 	)

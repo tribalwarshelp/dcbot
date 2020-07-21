@@ -22,6 +22,7 @@
   "help.lostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - zmienia kanał na którym będą się pojawiać informację o straconych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
   "help.disablelostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o straconych wioskach w danej grupie.",
   "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - zmień język.",
+  "help.showselfconquers": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - włącza/wyłącza notyfikacje o podbiciach plemion należących do jednej grupy.",
 
   "tribe.invalidPage": "{{.Mention}} Strona musi być liczbą większą od 0.",
   "tribe.noTribeID": "{{.Mention}} Nie wprowadziłeś ID plemienia.",
@@ -81,6 +82,11 @@
   "showEnnobledBarbs.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
   "showEnnobledBarbs.success_1": "{{.Mention}} Powiadomienia o podbitych barbarkach nie będą się już dłużej pokazywały.",
   "showEnnobledBarbs.success_2": "{{.Mention}} Włączono powiadomienia o podbitych barbarkach.",
+
+  "showSelfConquers.invalidGroupID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
+  "showSelfConquers.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
+  "showSelfConquers.success_1": "{{.Mention}} Powiadomieniach o podbiciach plemion w tej samej grupie nie będą się już pokazywały.",
+  "showSelfConquers.success_2": "{{.Mention}} Włączono powiadomienia o podbiciach plemion w tej samej grupie.",
 
   "changeLanguage.languageNotSupported": "{{.Mention}} Język nie jest obsługiwany.",
   "changeLanguage.success": "{{.Mention}} Język został zmieniony.",

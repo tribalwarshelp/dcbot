@@ -134,6 +134,8 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		s.handleLostVillagesCommand(ctx, m, args...)
 	case DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleDisableLostVillagesCommand(ctx, m, args...)
+	case ShowSelfConquersCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleShowSelfConquersCommand(ctx, m, args...)
 
 	}
 }
