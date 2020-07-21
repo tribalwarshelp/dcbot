@@ -9,6 +9,7 @@ import (
 	"github.com/tribalwarshelp/dcbot/message"
 
 	"github.com/pkg/errors"
+	"github.com/tribalwarshelp/shared/mode"
 	shared_models "github.com/tribalwarshelp/shared/models"
 
 	"github.com/tribalwarshelp/dcbot/discord"
@@ -52,6 +53,9 @@ func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
 		if !ok {
+			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
+		}
+		if mode.Get() == mode.DevelopmentMode {
 			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
 		}
 
@@ -164,33 +168,56 @@ func (h *handler) checkEnnoblements() {
 		}
 
 		if group.ConqueredVillagesChannelID != "" && !conqueredVillagesMsg.IsEmpty() {
-			h.discord.SendEmbed(group.ConqueredVillagesChannelID,
-				discord.
-					NewEmbed().
-					SetTitle(localizer.MustLocalize(&i18n.LocalizeConfig{
-						MessageID: "cron.conqueredVillages.title",
-						DefaultMessage: message.FallbackMsg("cron.conqueredVillages.title",
-							"Conquered villages"),
-					})).
-					SetColor(colorConqueredVillage).
-					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
-					SetTimestamp(formatDateOfConquest(time.Now())).
-					MessageEmbed)
+			fields := conqueredVillagesMsg.ToMessageEmbedFields()
+			title := localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "cron.conqueredVillages.title",
+				DefaultMessage: message.FallbackMsg("cron.conqueredVillages.title",
+					"Conquered villages"),
+			})
+			timestamp := formatDateOfConquest(time.Now())
+
+			for i := 0; i < len(fields); i += discord.EmbedLimitField {
+				end := i + discord.EmbedLimitField
+
+				if end > len(fields) {
+					end = len(fields)
+				}
+
+				h.discord.SendEmbed(group.ConqueredVillagesChannelID,
+					discord.
+						NewEmbed().
+						SetTitle(title).
+						SetColor(colorConqueredVillage).
+						SetFields(fields[i:end]).
+						SetTimestamp(timestamp).
+						MessageEmbed)
+			}
 		}
 
 		if group.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
-			h.discord.SendEmbed(group.LostVillagesChannelID,
-				discord.
-					NewEmbed().
-					SetTitle(localizer.MustLocalize(&i18n.LocalizeConfig{
-						MessageID: "cron.lostVillages.title",
-						DefaultMessage: message.FallbackMsg("cron.lostVillages.title",
-							"Lost villages"),
-					})).
-					SetColor(colorLostVillage).
-					SetFields(lostVillagesMsg.ToMessageEmbedFields()).
-					SetTimestamp(formatDateOfConquest(time.Now())).
-					MessageEmbed)
+			fields := lostVillagesMsg.ToMessageEmbedFields()
+			title := localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "cron.lostVillages.title",
+				DefaultMessage: message.FallbackMsg("cron.lostVillages.title",
+					"Lost villages"),
+			})
+			timestamp := formatDateOfConquest(time.Now())
+			for i := 0; i < len(fields); i += discord.EmbedLimitField {
+				end := i + discord.EmbedLimitField
+
+				if end > len(fields) {
+					end = len(fields)
+				}
+
+				h.discord.SendEmbed(group.LostVillagesChannelID,
+					discord.
+						NewEmbed().
+						SetTitle(title).
+						SetColor(colorLostVillage).
+						SetFields(fields[i:end]).
+						SetTimestamp(timestamp).
+						MessageEmbed)
+			}
 		}
 	}
 
