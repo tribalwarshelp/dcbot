@@ -185,7 +185,7 @@ func (s *Session) handleConqueredVillagesCommand(ctx commandCtx, m *discordgo.Me
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "help.conqueredvillages",
 				DefaultMessage: message.FallbackMsg("help.conqueredvillages",
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
 				TemplateData: map[string]interface{}{
 					"Command":       ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -321,7 +321,7 @@ func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.Message
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "help.lostvillages",
 				DefaultMessage: message.FallbackMsg("help.lostvillages",
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
 				TemplateData: map[string]interface{}{
 					"Command":       LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -778,8 +778,8 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 	})
 
 	msg := &EmbedMessage{}
-	if len(observations) <= 0 {
-		msg.Append("Brak")
+	if len(observations) <= 0 || err != nil || langVersionList != nil {
+		msg.Append("-")
 	} else {
 		for i, observation := range observations {
 			tag := "Unknown"

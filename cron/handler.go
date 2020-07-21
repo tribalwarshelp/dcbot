@@ -148,6 +148,7 @@ func (h *handler) checkEnnoblements() {
 							(!group.ShowEnnobledBarbarians && isBarbarian) {
 							continue
 						}
+
 						newMsgDataConfig := newMessageConfig{
 							host:        langVersion.Host,
 							server:      observation.Server,
@@ -175,6 +176,7 @@ func (h *handler) checkEnnoblements() {
 					SetTimestamp(formatDateOfConquest(time.Now())).
 					MessageEmbed)
 		}
+
 		if group.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
 			h.discord.SendEmbed(group.LostVillagesChannelID,
 				discord.
