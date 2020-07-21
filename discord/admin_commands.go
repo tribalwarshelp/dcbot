@@ -32,6 +32,7 @@ const (
 	ConqueredVillagesCommand        Command = "conqueredvillages"
 	DisableConqueredVillagesCommand Command = "disableconqueredvillages"
 	ChangeLanguageCommand           Command = "changelanguage"
+	ShowSelfConquersCommand         Command = "showselfconquers"
 )
 
 func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCreate) {
@@ -778,7 +779,7 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 	})
 
 	msg := &EmbedMessage{}
-	if len(observations) <= 0 || err != nil || langVersionList != nil {
+	if len(observations) <= 0 || err != nil || langVersionList == nil || langVersionList.Items == nil {
 		msg.Append("-")
 	} else {
 		for i, observation := range observations {
@@ -847,8 +848,8 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "observations.groupNotFound",
-				DefaultMessage: message.FallbackMsg("observations.groupNotFound", "{{.Mention}} Group not found."),
+				MessageID:      "showEnnobledBarbs.groupNotFound",
+				DefaultMessage: message.FallbackMsg("showEnnobledBarbs.groupNotFound", "{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -961,4 +962,91 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 				"Mention": m.Author.Mention(),
 			},
 		}))
+
+}
+func (s *Session) handleShowSelfConquersCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
+	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
+		return
+	}
+
+	argsLength := len(args)
+	if argsLength > 1 {
+		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
+		return
+	} else if argsLength < 1 {
+		s.SendMessage(m.ChannelID,
+			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "help.showselfconquers",
+				DefaultMessage: message.FallbackMsg("help.showselfconquers",
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about self-conquers between tribes in one group."),
+				TemplateData: map[string]interface{}{
+					"Command":       ShowSelfConquersCommand.WithPrefix(s.cfg.CommandPrefix),
+					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+				},
+			}))
+		return
+	}
+
+	groupID, err := strconv.Atoi(args[0])
+	if err != nil || groupID <= 0 {
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "showSelfConquers.invalidGroupID",
+				DefaultMessage: message.FallbackMsg("showSelfConquers.invalidGroupID",
+					"{{.Mention}} The group ID must be a number greater than 0."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
+		return
+	}
+	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	if err != nil || group.ServerID != m.GuildID {
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID:      "showSelfConquers.groupNotFound",
+				DefaultMessage: message.FallbackMsg("showSelfConquers.groupNotFound", "{{.Mention}} Group not found."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
+		return
+	}
+
+	oldValue := group.ShowSelfConquers
+	group.ShowSelfConquers = !oldValue
+	if err := s.cfg.GroupRepository.Update(context.Background(), group); err != nil {
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "internalServerError",
+				DefaultMessage: message.FallbackMsg("internalServerError",
+					"{{.Mention}} Internal server error occurred, please try again later."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
+		return
+	}
+
+	if oldValue {
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "showSelfConquers.success_1",
+				DefaultMessage: message.FallbackMsg("showSelfConquers.success_1",
+					"{{.Mention}} Notifications about self-conquers will no longer show up."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
+	} else {
+		s.SendMessage(m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "showSelfConquers.success_2",
+				DefaultMessage: message.FallbackMsg("showSelfConquers.success_2",
+					"{{.Mention}} Enabled notifications about self-conquers."),
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}))
+	}
 }

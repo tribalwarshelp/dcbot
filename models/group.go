@@ -5,6 +5,7 @@ type Group struct {
 	ConqueredVillagesChannelID string       `pg:",use_zero" json:"conqueredVillagesChannelID" gqlgen:"conqueredVillagesChannelID"`
 	LostVillagesChannelID      string       `pg:",use_zero" json:"lostVillagesChannelID" gqlgen:"lostVillagesChannelID"`
 	ShowEnnobledBarbarians     bool         `pg:",use_zero"`
+	ShowSelfConquers           bool         `pg:",use_zero"`
 	ServerID                   string       `pg:"on_delete:CASCADE,use_zero" json:"serverID" gqlgen:"serverID"`
 	Server                     *Server      `json:"server,omitempty" gqlgen:"server"`
 	Observations               Observations `json:"observation,omitempty" gqlgen:"observation"`

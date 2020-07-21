@@ -22,6 +22,7 @@
   "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
   "help.disablelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages.",
   "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - change language.",
+  "help.showselfconquers": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about self-conquers between tribes in one group.",
 
   "tribe.invalidPage": "{{.Mention}} The page must be a number greater than 0.",
   "tribe.noTribeID": "{{.Mention}} You haven't entered the tribe ID.",
@@ -84,6 +85,11 @@
 
   "changeLanguage.languageNotSupported": "{{.Mention}} Language not supported.",
   "changeLanguage.success": "{{.Mention}} The language has been changed.",
+
+  "showSelfConquers.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
+  "showSelfConquers.groupNotFound": "{{.Mention}} Group not found.",
+  "showSelfConquers.success_1": "{{.Mention}} Notifications about self-conquers will no longer show up.",
+  "showSelfConquers.success_2": "{{.Mention}} Enabled notifications about self-conquers.",
 
   "cron.lostVillages.title": "Lost villages",
   "cron.conqueredVillages.title": "Conquered villages",

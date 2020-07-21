@@ -52,7 +52,7 @@ func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
 		if !ok {
-			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
+			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
 		}
 
 		m[w] = filterEnnoblements(es, lastEnnoblementAt)
@@ -141,10 +141,11 @@ func (h *handler) checkEnnoblements() {
 				}
 
 				if group.ConqueredVillagesChannelID != "" {
-					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID) {
+					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID, group.ShowSelfConquers) {
 						isBarbarian := isPlayerNil(ennoblement.OldOwner) || ennoblement.OldOwner.ID == 0
-						if (!isPlayerTribeNil(ennoblement.OldOwner) &&
-							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID)) ||
+						isInTheSameGroup := !isPlayerTribeNil(ennoblement.OldOwner) &&
+							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID)
+						if (!group.ShowSelfConquers && isInTheSameGroup) ||
 							(!group.ShowEnnobledBarbarians && isBarbarian) {
 							continue
 						}
