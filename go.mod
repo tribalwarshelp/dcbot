@@ -10,8 +10,8 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/segmentio/encoding v0.1.14 // indirect
-	github.com/tribalwarshelp/golang-sdk v0.0.0-20200709112050-ba3a7ba145b1
-	github.com/tribalwarshelp/shared v0.0.0-20200707075151-722e4a520a3c
+	github.com/tribalwarshelp/golang-sdk v0.0.0-20200721095058-9ee3513a54a9
+	github.com/tribalwarshelp/shared v0.0.0-20200721094728-9ea33a732990
 	golang.org/x/sys v0.0.0-20200615200032-f1bc736245b1 // indirect
 	golang.org/x/text v0.3.2
 )

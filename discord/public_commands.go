@@ -439,7 +439,7 @@ func (s *Session) handleTribeCommand(ctx commandCtx, m *discordgo.MessageCreate,
 		SetFields(msg.ToMessageEmbedFields()).
 		SetFooter(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "pagination.labelDisplayedPage",
-			DefaultMessage: message.FallbackMsg("pagination.labelDisplayedPage", "{{.Page}} from {{.MaxPage}}"),
+			DefaultMessage: message.FallbackMsg("pagination.labelDisplayedPage", "{{.Page}} of {{.MaxPage}}"),
 			TemplateData: map[string]interface{}{
 				"Page":    page,
 				"MaxPage": totalPages,

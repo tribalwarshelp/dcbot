@@ -17,9 +17,9 @@
   "help.observe": "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group.",
   "help.observations": "**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group.",
   "help.deleteobservation": "**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group.",
-  "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
+  "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
   "help.disableconqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages.",
-  "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. **IMPORTANT!** Call this command on the channel you want to display these notifications.",
+  "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
   "help.disablelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages.",
   "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - change language.",
 
@@ -91,7 +91,7 @@
 
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
-  "pagination.labelDisplayedPage": "Page: {{.Page}} from {{.MaxPage}}",
+  "pagination.labelDisplayedPage": "Page: {{.Page}} of {{.MaxPage}}",
 
   "internalServerError": "{{.Mention}} Internal server error occurred, please try again later."
 }
