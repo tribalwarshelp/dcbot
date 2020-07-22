@@ -146,11 +146,10 @@ func (h *handler) checkEnnoblements() {
 
 				if group.ConqueredVillagesChannelID != "" {
 					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID, group.ShowSelfConquers) {
-						isBarbarian := isPlayerNil(ennoblement.OldOwner) || ennoblement.OldOwner.ID == 0
 						isInTheSameGroup := !isPlayerTribeNil(ennoblement.OldOwner) &&
 							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID)
 						if (!group.ShowSelfConquers && isInTheSameGroup) ||
-							(!group.ShowEnnobledBarbarians && isBarbarian) {
+							(!group.ShowEnnobledBarbarians && isBarbarian(ennoblement.OldOwner)) {
 							continue
 						}
 
@@ -168,56 +167,35 @@ func (h *handler) checkEnnoblements() {
 		}
 
 		if group.ConqueredVillagesChannelID != "" && !conqueredVillagesMsg.IsEmpty() {
-			fields := conqueredVillagesMsg.ToMessageEmbedFields()
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "cron.conqueredVillages.title",
 				DefaultMessage: message.FallbackMsg("cron.conqueredVillages.title",
 					"Conquered villages"),
 			})
-			timestamp := formatDateOfConquest(time.Now())
-
-			for i := 0; i < len(fields); i += discord.EmbedLimitField {
-				end := i + discord.EmbedLimitField
-
-				if end > len(fields) {
-					end = len(fields)
-				}
-
-				h.discord.SendEmbed(group.ConqueredVillagesChannelID,
-					discord.
-						NewEmbed().
-						SetTitle(title).
-						SetColor(colorConqueredVillage).
-						SetFields(fields[i:end]).
-						SetTimestamp(timestamp).
-						MessageEmbed)
-			}
+			h.discord.SendEmbed(group.ConqueredVillagesChannelID,
+				discord.
+					NewEmbed().
+					SetTitle(title).
+					SetColor(colorConqueredVillage).
+					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
+					SetTimestamp(formatDateOfConquest(time.Now())).
+					MessageEmbed)
 		}
 
 		if group.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
-			fields := lostVillagesMsg.ToMessageEmbedFields()
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "cron.lostVillages.title",
 				DefaultMessage: message.FallbackMsg("cron.lostVillages.title",
 					"Lost villages"),
 			})
-			timestamp := formatDateOfConquest(time.Now())
-			for i := 0; i < len(fields); i += discord.EmbedLimitField {
-				end := i + discord.EmbedLimitField
-
-				if end > len(fields) {
-					end = len(fields)
-				}
-
-				h.discord.SendEmbed(group.LostVillagesChannelID,
-					discord.
-						NewEmbed().
-						SetTitle(title).
-						SetColor(colorLostVillage).
-						SetFields(fields[i:end]).
-						SetTimestamp(timestamp).
-						MessageEmbed)
-			}
+			h.discord.SendEmbed(group.LostVillagesChannelID,
+				discord.
+					NewEmbed().
+					SetTitle(title).
+					SetColor(colorLostVillage).
+					SetFields(lostVillagesMsg.ToMessageEmbedFields()).
+					SetTimestamp(formatDateOfConquest(time.Now())).
+					MessageEmbed)
 		}
 	}
 

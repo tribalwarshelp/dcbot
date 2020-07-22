@@ -57,6 +57,7 @@ func (s *Session) init() error {
 	if err := s.UpdateStatus(s.cfg.Status); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -70,8 +71,21 @@ func (s *Session) SendMessage(channelID, message string) error {
 }
 
 func (s *Session) SendEmbed(channelID string, message *discordgo.MessageEmbed) error {
-	_, err := s.dg.ChannelMessageSendEmbed(channelID, message)
-	return err
+	fields := message.Fields
+
+	for i := 0; i < len(fields); i += EmbedLimitField {
+		end := i + EmbedLimitField
+
+		if end > len(fields) {
+			end = len(fields)
+		}
+		message.Fields = fields[i:end]
+		if _, err := s.dg.ChannelMessageSendEmbed(channelID, message); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *Session) UpdateStatus(status string) error {
@@ -79,6 +93,16 @@ func (s *Session) UpdateStatus(status string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *Session) IsGuildMember(guildID string) (bool, error) {
+	_, err := s.dg.State.Guild(guildID)
+	if err != nil {
+		if _, err = s.dg.Guild(guildID); err != nil {
+			return false, err
+		}
+	}
+	return true, nil
 }
 
 func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCreate) {
@@ -100,6 +124,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		server:    server,
 		localizer: message.NewLocalizer(server.Lang),
 	}
+
 	switch splitted[0] {
 	case HelpCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleHelpCommand(ctx, m)
@@ -118,14 +143,13 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	case GroupsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleGroupsCommand(ctx, m)
 
-	case ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleShowEnnobledBarbariansCommand(ctx, m, args...)
 	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObserveCommand(ctx, m, args...)
 	case DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleDeleteObservationCommand(ctx, m, args...)
 	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObservationsCommand(ctx, m, args...)
+
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleConqueredVillagesCommand(ctx, m, args...)
 	case DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
@@ -134,6 +158,9 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		s.handleLostVillagesCommand(ctx, m, args...)
 	case DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleDisableLostVillagesCommand(ctx, m, args...)
+
+	case ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleShowEnnobledBarbariansCommand(ctx, m, args...)
 	case ShowSelfConquersCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleShowSelfConquersCommand(ctx, m, args...)
 
@@ -176,14 +203,4 @@ func (s *Session) memberHasPermission(guildID string, userID string, permission 
 
 func (s *Session) sendUnknownCommandError(mention, channelID string, command ...string) {
 	s.SendMessage(channelID, mention+` Unknown command: `+strings.Join(command, " "))
-}
-
-func (s *Session) IsGuildMember(guildID string) (bool, error) {
-	_, err := s.dg.State.Guild(guildID)
-	if err != nil {
-		if _, err = s.dg.Guild(guildID); err != nil {
-			return false, err
-		}
-	}
-	return true, nil
 }

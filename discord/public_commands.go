@@ -306,35 +306,35 @@ func (s *Session) handleTribeCommand(ctx commandCtx, m *discordgo.MessageCreate,
 		filter.RankAttGTE = 1
 		filter.Sort = "rankAtt ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      "tribe.title.sortedByODA",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODA", "Ordered by ODA"),
+			MessageID:      "tribe.title.orderedByODA",
+			DefaultMessage: message.FallbackMsg("tribe.title.orderedByODA", "Ordered by ODA"),
 		})
 	case TopDefCommand:
 		filter.RankDefGTE = 1
 		filter.Sort = "rankDef ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      "tribe.title.sortedByODD",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODD", "Ordered by ODD"),
+			MessageID:      "tribe.title.orderedByODD",
+			DefaultMessage: message.FallbackMsg("tribe.title.orderedByODD", "Ordered by ODD"),
 		})
 	case TopSuppCommand:
 		filter.RankSupGTE = 1
 		filter.Sort = "rankSup ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      "tribe.title.sortedByODS",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByODS", "Ordered by ODS"),
+			MessageID:      "tribe.title.orderedByODS",
+			DefaultMessage: message.FallbackMsg("tribe.title.orderedByODS", "Ordered by ODS"),
 		})
 	case TopTotalCommand:
 		filter.RankTotalGTE = 1
 		filter.Sort = "rankTotal ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      "tribe.title.sortedByOD",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByOD", "Ordered by OD"),
+			MessageID:      "tribe.title.orderedByOD",
+			DefaultMessage: message.FallbackMsg("tribe.title.orderedByOD", "Ordered by OD"),
 		})
 	case TopPointsCommand:
 		filter.Sort = "rank ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      "tribe.title.sortedByPoints",
-			DefaultMessage: message.FallbackMsg("tribe.title.sortedByPoints", "Ordered by points"),
+			MessageID:      "tribe.title.orderedByPoints",
+			DefaultMessage: message.FallbackMsg("tribe.title.orderedByPoints", "Ordered by points"),
 		})
 	default:
 		return
