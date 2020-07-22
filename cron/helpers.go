@@ -40,3 +40,7 @@ func formatMsgLink(text string, url string) string {
 	}
 	return fmt.Sprintf("[``%s``](%s)", text, url)
 }
+
+func isBarbarian(p *shared_models.Player) bool {
+	return isPlayerNil(p) || p.ID == 0
+}
