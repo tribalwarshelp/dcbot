@@ -93,7 +93,7 @@
 
   "cron.lostVillages.title": "Lost villages",
   "cron.conqueredVillages.title": "Conquered villages",
-  "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] has conquered the village {{.Village}} (Old owner: {{.OldOwner}} [{{.OldOwnerTribe}}])",
+  "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] conquered {{.Village}} (Old owner: {{.OldOwner}} [{{.OldOwnerTribe}}])",
 
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
