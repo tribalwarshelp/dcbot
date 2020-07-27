@@ -213,11 +213,11 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "help.showselfconquers",
-			DefaultMessage: message.FallbackMsg("help.showselfconquers",
+			MessageID: "help.showinternals",
+			DefaultMessage: message.FallbackMsg("help.showinternals",
 				"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about self-conquers between tribes in one group."),
 			TemplateData: map[string]interface{}{
-				"Command":       ShowSelfConquersCommand.WithPrefix(s.cfg.CommandPrefix),
+				"Command":       ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 			},
 		}),

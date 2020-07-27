@@ -27,12 +27,12 @@ func (e ennoblements) getLostVillagesByTribe(tribeID int) ennoblements {
 	return filtered
 }
 
-func (e ennoblements) getConqueredVillagesByTribe(tribeID int, showSelfConquers bool) ennoblements {
+func (e ennoblements) getConqueredVillagesByTribe(tribeID int, showInternals bool) ennoblements {
 	filtered := ennoblements{}
 	for _, ennoblement := range e {
 		if isPlayerTribeNil(ennoblement.NewOwner) ||
 			ennoblement.NewOwner.Tribe.ID != tribeID ||
-			(!showSelfConquers && !isPlayerTribeNil(ennoblement.OldOwner) && ennoblement.OldOwner.Tribe.ID == tribeID) {
+			(!showInternals && !isPlayerTribeNil(ennoblement.OldOwner) && ennoblement.OldOwner.Tribe.ID == tribeID) {
 			continue
 		}
 		filtered = append(filtered, ennoblement)
