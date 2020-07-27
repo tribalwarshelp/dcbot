@@ -161,8 +161,8 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 
 	case ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleShowEnnobledBarbariansCommand(ctx, m, args...)
-	case ShowSelfConquersCommand.WithPrefix(s.cfg.CommandPrefix):
-		s.handleShowSelfConquersCommand(ctx, m, args...)
+	case ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleShowInternalsCommand(ctx, m, args...)
 
 	}
 }

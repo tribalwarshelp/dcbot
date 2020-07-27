@@ -32,7 +32,7 @@ const (
 	ConqueredVillagesCommand        Command = "conqueredvillages"
 	DisableConqueredVillagesCommand Command = "disableconqueredvillages"
 	ChangeLanguageCommand           Command = "changelanguage"
-	ShowSelfConquersCommand         Command = "showselfconquers"
+	ShowInternalsCommand            Command = "showinternals"
 )
 
 func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCreate) {
@@ -964,7 +964,7 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 		}))
 
 }
-func (s *Session) handleShowSelfConquersCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
 	}
@@ -976,11 +976,11 @@ func (s *Session) handleShowSelfConquersCommand(ctx commandCtx, m *discordgo.Mes
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.showselfconquers",
-				DefaultMessage: message.FallbackMsg("help.showselfconquers",
+				MessageID: "help.showinternals",
+				DefaultMessage: message.FallbackMsg("help.showinternals",
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about self-conquers between tribes in one group."),
 				TemplateData: map[string]interface{}{
-					"Command":       ShowSelfConquersCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 				},
 			}))
@@ -1013,8 +1013,8 @@ func (s *Session) handleShowSelfConquersCommand(ctx commandCtx, m *discordgo.Mes
 		return
 	}
 
-	oldValue := group.ShowSelfConquers
-	group.ShowSelfConquers = !oldValue
+	oldValue := group.ShowInternals
+	group.ShowInternals = !oldValue
 	if err := s.cfg.GroupRepository.Update(context.Background(), group); err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{

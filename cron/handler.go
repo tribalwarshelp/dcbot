@@ -2,6 +2,7 @@ package cron
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -31,11 +32,18 @@ type handler struct {
 	status            string
 }
 
-func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
+func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, error) {
 	m := make(map[string]ennoblements)
 
+	query := ""
+
 	for _, w := range servers {
-		es, err := h.api.LiveEnnoblements.Browse(w, &sdk.LiveEnnoblementInclude{
+		query += fmt.Sprintf(`
+			%s: liveEnnoblements(server: "%s") {
+				%s
+				ennobledAt
+			}
+		`, w, w, sdk.LiveEnnoblementInclude{
 			NewOwner: true,
 			Village:  true,
 			NewOwnerInclude: sdk.PlayerInclude{
@@ -45,13 +53,17 @@ func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 			OldOwnerInclude: sdk.PlayerInclude{
 				Tribe: true,
 			},
-		})
-		if err != nil {
-			log.Printf("%s: %s", w, err.Error())
-			continue
-		}
+		}.String())
+	}
 
-		lastEnnoblementAt, ok := h.lastEnnoblementAt[w]
+	resp := make(map[string]ennoblements)
+
+	if err := h.api.Post(fmt.Sprintf(`query { %s }`, query), &resp); err != nil {
+		return m, errors.Wrap(err, "loadEnnoblements")
+	}
+
+	for server, ennoblements := range resp {
+		lastEnnoblementAt, ok := h.lastEnnoblementAt[server]
 		if !ok {
 			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
 		}
@@ -59,16 +71,16 @@ func (h *handler) loadEnnoblements(servers []string) map[string]ennoblements {
 			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
 		}
 
-		m[w] = filterEnnoblements(es, lastEnnoblementAt)
+		m[server] = filterEnnoblements(ennoblements, lastEnnoblementAt)
 
-		lastEnnoblement := m[w].getLastEnnoblement()
+		lastEnnoblement := m[server].getLastEnnoblement()
 		if lastEnnoblement != nil {
 			lastEnnoblementAt = lastEnnoblement.EnnobledAt
 		}
-		h.lastEnnoblementAt[w] = lastEnnoblementAt
+		h.lastEnnoblementAt[server] = lastEnnoblementAt
 	}
 
-	return m
+	return m, nil
 }
 
 func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersion, error) {
@@ -114,7 +126,11 @@ func (h *handler) checkEnnoblements() {
 		log.Print(err)
 		return
 	}
-	ennoblementsByServerKey := h.loadEnnoblements(servers)
+	ennoblementsByServerKey, err := h.loadEnnoblements(servers)
+	if err != nil {
+		log.Print(err)
+		return
+	}
 
 	for _, group := range groups {
 		if group.ConqueredVillagesChannelID == "" && group.LostVillagesChannelID == "" {
@@ -145,10 +161,10 @@ func (h *handler) checkEnnoblements() {
 				}
 
 				if group.ConqueredVillagesChannelID != "" {
-					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID, group.ShowSelfConquers) {
+					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID, group.ShowInternals) {
 						isInTheSameGroup := !isPlayerTribeNil(ennoblement.OldOwner) &&
 							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID)
-						if (!group.ShowSelfConquers && isInTheSameGroup) ||
+						if (!group.ShowInternals && isInTheSameGroup) ||
 							(!group.ShowEnnobledBarbarians && isBarbarian(ennoblement.OldOwner)) {
 							continue
 						}
@@ -172,7 +188,7 @@ func (h *handler) checkEnnoblements() {
 				DefaultMessage: message.FallbackMsg("cron.conqueredVillages.title",
 					"Conquered villages"),
 			})
-			h.discord.SendEmbed(group.ConqueredVillagesChannelID,
+			go h.discord.SendEmbed(group.ConqueredVillagesChannelID,
 				discord.
 					NewEmbed().
 					SetTitle(title).
@@ -188,7 +204,7 @@ func (h *handler) checkEnnoblements() {
 				DefaultMessage: message.FallbackMsg("cron.lostVillages.title",
 					"Lost villages"),
 			})
-			h.discord.SendEmbed(group.LostVillagesChannelID,
+			go h.discord.SendEmbed(group.LostVillagesChannelID,
 				discord.
 					NewEmbed().
 					SetTitle(title).

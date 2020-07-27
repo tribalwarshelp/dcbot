@@ -40,5 +40,6 @@ func Attach(c *cron.Cron, cfg Config) {
 		h.checkBotServers()
 		h.deleteClosedTribalWarsServers()
 		h.updateBotStatus()
+		h.checkEnnoblements()
 	}()
 }
