@@ -18,10 +18,10 @@ import (
 const (
 	HelpCommand      Command = "help"
 	TribeCommand     Command = "tribe"
-	TopAttCommand    Command = "topatt"
-	TopDefCommand    Command = "topdef"
-	TopSuppCommand   Command = "topsupp"
-	TopTotalCommand  Command = "toptotal"
+	TopODACommand    Command = "topoda"
+	TopODDCommand    Command = "topodd"
+	TopODSCommand    Command = "topods"
+	TopODCommand     Command = "topod"
 	TopPointsCommand Command = "toppoints"
 	AuthorCommand    Command = "author"
 )
@@ -37,35 +37,35 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 - %s
 				`,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "help.tribe.topatt",
-			DefaultMessage: message.FallbackMsg("help.tribe.topatt",
+			MessageID: "help.tribe.topoda",
+			DefaultMessage: message.FallbackMsg("help.tribe.topoda",
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopAttCommand.String(),
+				"Command": tribeCMDWithPrefix + " " + TopODACommand.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "help.tribe.topdef",
-			DefaultMessage: message.FallbackMsg("help.tribe.topdef",
+			MessageID: "help.tribe.topodd",
+			DefaultMessage: message.FallbackMsg("help.tribe.topodd",
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopDefCommand.String(),
+				"Command": tribeCMDWithPrefix + " " + TopODDCommand.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "help.tribe.topsupp",
-			DefaultMessage: message.FallbackMsg("help.tribe.topsupp",
+			MessageID: "help.tribe.topods",
+			DefaultMessage: message.FallbackMsg("help.tribe.topods",
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopSuppCommand.String(),
+				"Command": tribeCMDWithPrefix + " " + TopODSCommand.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "help.tribe.toptotal",
-			DefaultMessage: message.FallbackMsg("help.tribe.toptotal",
+			MessageID: "help.tribe.topod",
+			DefaultMessage: message.FallbackMsg("help.tribe.topod",
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopTotalCommand.String(),
+				"Command": tribeCMDWithPrefix + " " + TopODCommand.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -79,7 +79,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.author",
 			DefaultMessage: message.FallbackMsg("help.author",
-				"**{{.Command}}** - shows how to contact the author."),
+				"**{{.Command}}** - shows how to get in touch with the author."),
 			TemplateData: map[string]interface{}{
 				"Command": AuthorCommand.WithPrefix(s.cfg.CommandPrefix),
 			},
@@ -108,7 +108,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.groups",
 			DefaultMessage: message.FallbackMsg("help.groups",
-				"**{{.Command}}** - shows you a list of groups created by this guild."),
+				"**{{.Command}}** - shows you a list of groups created by this server."),
 			TemplateData: map[string]interface{}{
 				"Command": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 			},
@@ -215,7 +215,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.showinternals",
 			DefaultMessage: message.FallbackMsg("help.showinternals",
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about self-conquers between tribes in one group."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering."),
 			TemplateData: map[string]interface{}{
 				"Command":       ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -302,28 +302,28 @@ func (s *Session) handleTribeCommand(ctx commandCtx, m *discordgo.MessageCreate,
 	}
 	title := ""
 	switch command {
-	case TopAttCommand:
+	case TopODACommand:
 		filter.RankAttGTE = 1
 		filter.Sort = "rankAtt ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "tribe.title.orderedByODA",
 			DefaultMessage: message.FallbackMsg("tribe.title.orderedByODA", "Ordered by ODA"),
 		})
-	case TopDefCommand:
+	case TopODDCommand:
 		filter.RankDefGTE = 1
 		filter.Sort = "rankDef ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "tribe.title.orderedByODD",
 			DefaultMessage: message.FallbackMsg("tribe.title.orderedByODD", "Ordered by ODD"),
 		})
-	case TopSuppCommand:
+	case TopODSCommand:
 		filter.RankSupGTE = 1
 		filter.Sort = "rankSup ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "tribe.title.orderedByODS",
 			DefaultMessage: message.FallbackMsg("tribe.title.orderedByODS", "Ordered by ODS"),
 		})
-	case TopTotalCommand:
+	case TopODCommand:
 		filter.RankTotalGTE = 1
 		filter.Sort = "rankTotal ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -404,16 +404,16 @@ func (s *Session) handleTribeCommand(ctx commandCtx, m *discordgo.MessageCreate,
 		rank := 0
 		score := 0
 		switch command {
-		case TopAttCommand:
+		case TopODACommand:
 			rank = player.RankAtt
 			score = player.ScoreAtt
-		case TopDefCommand:
+		case TopODDCommand:
 			rank = player.RankDef
 			score = player.ScoreDef
-		case TopSuppCommand:
+		case TopODSCommand:
 			rank = player.RankSup
 			score = player.ScoreSup
-		case TopTotalCommand:
+		case TopODCommand:
 			rank = player.RankTotal
 			score = player.ScoreTotal
 		case TopPointsCommand:

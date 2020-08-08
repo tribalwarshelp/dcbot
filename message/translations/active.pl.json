@@ -4,10 +4,10 @@
   "help.footer": "",
   "help.forAllUsers": "Dla wszystkich",
   "help.forAdmins": "Dla adminów",
-  "help.tribe.topatt": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych w ataku.",
-  "help.tribe.topdef": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych w obronie.",
-  "help.tribe.topsupp": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych jako wspierający.",
-  "help.tribe.toptotal": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych ogólnie.",
+  "help.tribe.topoda": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych w ataku.",
+  "help.tribe.topodd": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych w obronie.",
+  "help.tribe.topods": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych jako wspierający.",
+  "help.tribe.topod": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - generuje listę graczy z wybranych plemion i sortuje po pokonanych ogólnie.",
   "help.tribe.toppoints": "**{{.Command}}** [serwer] [strona] [id1] [id2] [id3] [n id] - Generuje listę graczy z wybranych plemion i sortuje po punktach.",
   "help.author": "**{{.Command}}** - pokazuje możliwe formy kontaktu z autorem.",
   "help.addgroup": "**{{.Command}}** - dodaje nową grupę obserwacyjną.",
@@ -43,6 +43,7 @@
 
   "groups.noGroupsAdded": "Brak dodanych grup.",
   "groups.title": "Lista grup",
+  "groups.fieldTitle": "Index | ID | Podbite | Stracone | Barbarki | Wewnętrzne podboje",
 
   "conqueredVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
   "conqueredVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",

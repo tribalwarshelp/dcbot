@@ -192,7 +192,7 @@ func (h *handler) checkEnnoblements() {
 				discord.
 					NewEmbed().
 					SetTitle(title).
-					SetColor(colorConqueredVillage).
+					SetColor(colorConqueredVillages).
 					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
 					SetTimestamp(formatDateOfConquest(time.Now())).
 					MessageEmbed)
@@ -208,7 +208,7 @@ func (h *handler) checkEnnoblements() {
 				discord.
 					NewEmbed().
 					SetTitle(title).
-					SetColor(colorLostVillage).
+					SetColor(colorLostVillages).
 					SetFields(lostVillagesMsg.ToMessageEmbedFields()).
 					SetTimestamp(formatDateOfConquest(time.Now())).
 					MessageEmbed)
