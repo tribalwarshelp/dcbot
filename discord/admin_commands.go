@@ -138,6 +138,13 @@ func (s *Session) handleDeleteGroupCommand(ctx commandCtx, m *discordgo.MessageC
 		}))
 }
 
+func getEmojiForGroupsCommand(val bool) string {
+	if val {
+		return ":white_check_mark:"
+	}
+	return ":x:"
+}
+
 func (s *Session) handleGroupsCommand(ctx commandCtx, m *discordgo.MessageCreate) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
@@ -153,7 +160,14 @@ func (s *Session) handleGroupsCommand(ctx commandCtx, m *discordgo.MessageCreate
 
 	msg := ""
 	for i, groups := range groups {
-		msg += fmt.Sprintf("**%d** | %d\n", i+1, groups.ID)
+
+		msg += fmt.Sprintf("**%d** | %d | %s | %s | %s | %s\n", i+1,
+			groups.ID,
+			getEmojiForGroupsCommand(groups.ConqueredVillagesChannelID != ""),
+			getEmojiForGroupsCommand(groups.LostVillagesChannelID != ""),
+			getEmojiForGroupsCommand(groups.ShowEnnobledBarbarians),
+			getEmojiForGroupsCommand(groups.ShowInternals),
+		)
 	}
 
 	if msg == "" {
@@ -168,7 +182,10 @@ func (s *Session) handleGroupsCommand(ctx commandCtx, m *discordgo.MessageCreate
 			MessageID:      "groups.title",
 			DefaultMessage: message.FallbackMsg("groups.title", "Group list"),
 		})).
-		AddField("Index | ID", msg).
+		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID:      "groups.fieldTitle",
+			DefaultMessage: message.FallbackMsg("groups.fieldTitle", "Index | ID | Conquer | Loss | Barbarian | Internal"),
+		}), msg).
 		MessageEmbed)
 }
 
@@ -978,7 +995,7 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "help.showinternals",
 				DefaultMessage: message.FallbackMsg("help.showinternals",
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about self-conquers between tribes in one group."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering."),
 				TemplateData: map[string]interface{}{
 					"Command":       ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -991,8 +1008,8 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	if err != nil || groupID <= 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showSelfConquers.invalidGroupID",
-				DefaultMessage: message.FallbackMsg("showSelfConquers.invalidGroupID",
+				MessageID: "showInternals.invalidGroupID",
+				DefaultMessage: message.FallbackMsg("showInternals.invalidGroupID",
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -1004,8 +1021,8 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "showSelfConquers.groupNotFound",
-				DefaultMessage: message.FallbackMsg("showSelfConquers.groupNotFound", "{{.Mention}} Group not found."),
+				MessageID:      "showInternals.groupNotFound",
+				DefaultMessage: message.FallbackMsg("showInternals.groupNotFound", "{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -1031,9 +1048,9 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	if oldValue {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showSelfConquers.success_1",
-				DefaultMessage: message.FallbackMsg("showSelfConquers.success_1",
-					"{{.Mention}} Notifications about self-conquers will no longer show up."),
+				MessageID: "showInternals.success_1",
+				DefaultMessage: message.FallbackMsg("showInternals.success_1",
+					"{{.Mention}} Notifications about internals will no longer show up."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -1041,9 +1058,9 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	} else {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showSelfConquers.success_2",
-				DefaultMessage: message.FallbackMsg("showSelfConquers.success_2",
-					"{{.Mention}} Enabled notifications about self-conquers."),
+				MessageID: "showInternals.success_2",
+				DefaultMessage: message.FallbackMsg("showInternals.success_2",
+					"{{.Mention}} Enabled notifications about internals."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},

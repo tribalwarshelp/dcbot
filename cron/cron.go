@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/tribalwarshelp/golang-sdk/sdk"
+	"github.com/tribalwarshelp/shared/mode"
 
 	"github.com/tribalwarshelp/dcbot/discord"
 	"github.com/tribalwarshelp/dcbot/group"
@@ -40,6 +41,8 @@ func Attach(c *cron.Cron, cfg Config) {
 		h.checkBotServers()
 		h.deleteClosedTribalWarsServers()
 		h.updateBotStatus()
-		h.checkEnnoblements()
+		if mode.Get() == mode.DevelopmentMode {
+			h.checkEnnoblements()
+		}
 	}()
 }

@@ -4,14 +4,14 @@
   "help.footer": "",
   "help.forAllUsers": "For all users",
   "help.forAdmins": "For admins",
-  "help.tribe.topatt": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA.",
-  "help.tribe.topdef": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD.",
-  "help.tribe.topsupp": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS.",
-  "help.tribe.toptotal": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD.",
+  "help.tribe.topoda": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA.",
+  "help.tribe.topodd": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD.",
+  "help.tribe.topods": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS.",
+  "help.tribe.topod": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD.",
   "help.tribe.toppoints": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points.",
-  "help.author": "**{{.Command}}** - shows how to contact the author.",
+  "help.author": "**{{.Command}}** - shows how to get in touch with the author.",
   "help.addgroup": "**{{.Command}}** - adds a new observation group.",
-  "help.groups": "**{{.Command}}** - shows you a list of groups created by this guild.",
+  "help.groups": "**{{.Command}}** - shows you a list of groups created by this server.",
   "help.deletegroup": "**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group.",
   "help.showennobledbarbs": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages.",
   "help.observe": "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group.",
@@ -22,7 +22,7 @@
   "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
   "help.disablelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages.",
   "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - change language.",
-  "help.showinternals": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about self-conquers between tribes in one group.",
+  "help.showinternals": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering.",
 
   "tribe.invalidPage": "{{.Mention}} The page must be a number greater than 0.",
   "tribe.noTribeID": "{{.Mention}} You haven't entered the tribe ID.",
@@ -43,6 +43,7 @@
 
   "groups.noGroupsAdded": "No groups added.",
   "groups.title": "Group list",
+  "groups.fieldTitle": "Index | ID | Conquer | Loss | Barbarian | Internal",
 
   "conqueredVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
   "conqueredVillages.groupNotFound": "{{.Mention}} Group not found.",
@@ -88,8 +89,8 @@
 
   "showInternals.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
   "showInternals.groupNotFound": "{{.Mention}} Group not found.",
-  "showInternals.success_1": "{{.Mention}} Notifications about self-conquers will no longer show up.",
-  "showInternals.success_2": "{{.Mention}} Enabled notifications about self-conquers.",
+  "showInternals.success_1": "{{.Mention}} Notifications about internals will no longer show up.",
+  "showInternals.success_2": "{{.Mention}} Enabled notifications about internals.",
 
   "cron.lostVillages.title": "Lost villages",
   "cron.conqueredVillages.title": "Conquered villages",

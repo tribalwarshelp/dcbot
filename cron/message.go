@@ -12,10 +12,10 @@ import (
 type messageType string
 
 const (
-	messageTypeConquer    messageType = "conquer"
-	messageTypeLost       messageType = "lost"
-	colorLostVillage                  = 0xff0000
-	colorConqueredVillage             = 0x00ff00
+	messageTypeConquer     messageType = "conquer"
+	messageTypeLost        messageType = "lost"
+	colorLostVillages                  = 0xff0000
+	colorConqueredVillages             = 0x00ff00
 )
 
 type checkEnnoblementsMsg struct {
