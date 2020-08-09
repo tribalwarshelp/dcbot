@@ -145,7 +145,7 @@ func (h *handler) checkEnnoblements() {
 			if ok && langVersion != nil && langVersion.Host != "" {
 				if group.LostVillagesChannelID != "" {
 					for _, ennoblement := range ennoblements.getLostVillagesByTribe(observation.TribeID) {
-						if !isPlayerTribeNil(ennoblement.NewOwner) &&
+						if !utils.IsPlayerTribeNil(ennoblement.NewOwner) &&
 							group.Observations.Contains(observation.Server, ennoblement.NewOwner.Tribe.ID) {
 							continue
 						}
@@ -162,7 +162,7 @@ func (h *handler) checkEnnoblements() {
 
 				if group.ConqueredVillagesChannelID != "" {
 					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID, group.ShowInternals) {
-						isInTheSameGroup := !isPlayerTribeNil(ennoblement.OldOwner) &&
+						isInTheSameGroup := !utils.IsPlayerTribeNil(ennoblement.OldOwner) &&
 							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID)
 						if (!group.ShowInternals && isInTheSameGroup) ||
 							(!group.ShowEnnobledBarbarians && isBarbarian(ennoblement.OldOwner)) {

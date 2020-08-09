@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"github.com/tribalwarshelp/dcbot/utils"
 	shared_models "github.com/tribalwarshelp/shared/models"
 )
 
@@ -17,8 +18,8 @@ func (e ennoblements) getLastEnnoblement() *shared_models.LiveEnnoblement {
 func (e ennoblements) getLostVillagesByTribe(tribeID int) ennoblements {
 	filtered := ennoblements{}
 	for _, ennoblement := range e {
-		if (!isPlayerTribeNil(ennoblement.NewOwner) && ennoblement.NewOwner.Tribe.ID == tribeID) ||
-			isPlayerTribeNil(ennoblement.OldOwner) ||
+		if (!utils.IsPlayerTribeNil(ennoblement.NewOwner) && ennoblement.NewOwner.Tribe.ID == tribeID) ||
+			utils.IsPlayerTribeNil(ennoblement.OldOwner) ||
 			ennoblement.OldOwner.Tribe.ID != tribeID {
 			continue
 		}
@@ -30,9 +31,9 @@ func (e ennoblements) getLostVillagesByTribe(tribeID int) ennoblements {
 func (e ennoblements) getConqueredVillagesByTribe(tribeID int, showInternals bool) ennoblements {
 	filtered := ennoblements{}
 	for _, ennoblement := range e {
-		if isPlayerTribeNil(ennoblement.NewOwner) ||
+		if utils.IsPlayerTribeNil(ennoblement.NewOwner) ||
 			ennoblement.NewOwner.Tribe.ID != tribeID ||
-			(!showInternals && !isPlayerTribeNil(ennoblement.OldOwner) && ennoblement.OldOwner.Tribe.ID == tribeID) {
+			(!showInternals && !utils.IsPlayerTribeNil(ennoblement.OldOwner) && ennoblement.OldOwner.Tribe.ID == tribeID) {
 			continue
 		}
 		filtered = append(filtered, ennoblement)

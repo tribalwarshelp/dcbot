@@ -72,16 +72,36 @@ func (s *Session) SendMessage(channelID, message string) error {
 
 func (s *Session) SendEmbed(channelID string, message *discordgo.MessageEmbed) error {
 	fields := message.Fields
-
-	for i := 0; i < len(fields); i += EmbedLimitField {
-		end := i + EmbedLimitField
-
-		if end > len(fields) {
-			end = len(fields)
+	baseNumberOfCharacters := len(message.Description) + len(message.Title)
+	if message.Author != nil {
+		baseNumberOfCharacters += len(message.Author.Name)
+	}
+	if message.Footer != nil {
+		baseNumberOfCharacters += len(message.Footer.Text)
+	}
+	splittedFields := [][]*discordgo.MessageEmbedField{}
+	characters := baseNumberOfCharacters
+	fromIndex := 0
+	for index, field := range fields {
+		if characters+len(field.Name)+len(field.Value) > EmbedLimit || index == len(fields)-1 {
+			splittedFields = append(splittedFields, fields[fromIndex:index+1])
+			fromIndex = index
+			characters = baseNumberOfCharacters
 		}
-		message.Fields = fields[i:end]
-		if _, err := s.dg.ChannelMessageSendEmbed(channelID, message); err != nil {
-			return err
+		characters += len(field.Name)
+		characters += len(field.Value)
+	}
+	for _, fields := range splittedFields {
+		for i := 0; i < len(fields); i += EmbedLimitField {
+			end := i + EmbedLimitField
+
+			if end > len(fields) {
+				end = len(fields)
+			}
+			message.Fields = fields[i:end]
+			if _, err := s.dg.ChannelMessageSendEmbed(channelID, message); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -142,14 +162,12 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		s.handleDeleteGroupCommand(ctx, m, args...)
 	case GroupsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleGroupsCommand(ctx, m)
-
 	case ObserveCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObserveCommand(ctx, m, args...)
 	case DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleDeleteObservationCommand(ctx, m, args...)
 	case ObservationsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleObservationsCommand(ctx, m, args...)
-
 	case ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleConqueredVillagesCommand(ctx, m, args...)
 	case DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
@@ -158,12 +176,18 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		s.handleLostVillagesCommand(ctx, m, args...)
 	case DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleDisableLostVillagesCommand(ctx, m, args...)
-
 	case ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleShowEnnobledBarbariansCommand(ctx, m, args...)
 	case ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix):
 		s.handleShowInternalsCommand(ctx, m, args...)
 
+	case CoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleCoordsTranslationCommand(ctx, m, args...)
+	case DisableCoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix):
+		s.handleDisableCoordsTranslationCommand(ctx, m, args...)
+
+	default:
+		s.translateCoords(ctx, m)
 	}
 }
 

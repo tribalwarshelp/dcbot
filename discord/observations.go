@@ -979,8 +979,8 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 				"Mention": m.Author.Mention(),
 			},
 		}))
-
 }
+
 func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
 		return
