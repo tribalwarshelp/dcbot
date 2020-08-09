@@ -141,7 +141,7 @@ func (s *Session) translateCoords(ctx commandCtx, m *discordgo.MessageCreate) {
 					"Player":  FormatLink(playerName, playerURL),
 					"Tribe":   FormatLink(tribeName, tribeURL),
 				},
-			}))
+			}) + "\n")
 		}
 
 		s.SendEmbed(m.ChannelID, NewEmbed().
