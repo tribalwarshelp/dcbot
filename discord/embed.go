@@ -15,7 +15,7 @@ const (
 	EmbedLimitFieldName   = 256
 	EmbedLimitField       = 25
 	EmbedLimitFooter      = 2048
-	EmbedLimit            = 4000
+	EmbedLimit            = 5500
 )
 
 type Embed struct {

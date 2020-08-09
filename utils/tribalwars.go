@@ -1,6 +1,10 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/tribalwarshelp/shared/models"
+)
 
 const (
 	endpointTribeProfile   = "/game.php?screen=info_ally&id=%d"
@@ -18,4 +22,16 @@ func FormatTribeURL(world, host string, id int) string {
 
 func FormatPlayerURL(world, host string, id int) string {
 	return fmt.Sprintf("https://%s.%s"+endpointPlayerProfile, world, host, id)
+}
+
+func IsPlayerNil(player *models.Player) bool {
+	return player == nil
+}
+
+func IsPlayerTribeNil(player *models.Player) bool {
+	return IsPlayerNil(player) || player.Tribe == nil
+}
+
+func IsVillageNil(village *models.Village) bool {
+	return village == nil
 }

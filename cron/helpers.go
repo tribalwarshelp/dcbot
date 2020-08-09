@@ -1,9 +1,9 @@
 package cron
 
 import (
-	"fmt"
 	"time"
 
+	"github.com/tribalwarshelp/dcbot/utils"
 	shared_models "github.com/tribalwarshelp/shared/models"
 )
 
@@ -18,29 +18,10 @@ func filterEnnoblements(ennoblements []*shared_models.LiveEnnoblement, t time.Ti
 	return filtered
 }
 
-func isPlayerNil(player *shared_models.Player) bool {
-	return player == nil
-}
-
-func isPlayerTribeNil(player *shared_models.Player) bool {
-	return isPlayerNil(player) || player.Tribe == nil
-}
-
-func isVillageNil(village *shared_models.Village) bool {
-	return village == nil
-}
-
 func formatDateOfConquest(t time.Time) string {
 	return t.Format(time.RFC3339)
 }
 
-func formatMsgLink(text string, url string) string {
-	if url == "" {
-		return text
-	}
-	return fmt.Sprintf("[``%s``](%s)", text, url)
-}
-
 func isBarbarian(p *shared_models.Player) bool {
-	return isPlayerNil(p) || p.ID == 0
+	return utils.IsPlayerNil(p) || p.ID == 0
 }

@@ -21,8 +21,10 @@
   "help.disableconqueredvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o podbitych wioskach w danej grupie.",
   "help.lostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - zmienia kanał na którym będą się pojawiać informację o straconych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
   "help.disablelostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o straconych wioskach w danej grupie.",
-  "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - zmień język.",
+  "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - zmień język bota.",
   "help.showinternals": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - włącza/wyłącza notyfikacje o podbiciach plemion należących do jednej grupy.",
+  "help.coordstranslation": "**{{.Command}}** [serwer] - włącz translator koordynat.",
+  "help.disablecoordstranslation": "**{{.Command}}** - wyłącz translator koordynat.",
 
   "tribe.invalidPage": "{{.Mention}} Strona musi być liczbą większą od 0.",
   "tribe.noTribeID": "{{.Mention}} Nie wprowadziłeś ID plemienia.",
@@ -91,6 +93,13 @@
 
   "changeLanguage.languageNotSupported": "{{.Mention}} Język nie jest obsługiwany.",
   "changeLanguage.success": "{{.Mention}} Język został zmieniony.",
+
+  "coordsTranslation.title": "Wioski",
+  "coordsTranslation.message": "{{.Village}} należąca do {{.Player}} (Plemię: {{.Tribe}}).",
+  "coordsTranslation.serverNotFound": "{{.Mention}} Serwer nie został znaleziony.",
+  "coordsTranslation.success": "{{.Mention}} Translator koordynat został włączony.",
+
+  "disableCoordsTranslation.success": "{{.Mention}} Translator koordynat został wyłączony.",
 
   "cron.lostVillages.title": "Stracone wioski",
   "cron.conqueredVillages.title": "Podbite wioski",

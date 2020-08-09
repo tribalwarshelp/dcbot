@@ -1,9 +1,8 @@
 package cron
 
 import (
-	"fmt"
-
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/tribalwarshelp/dcbot/discord"
 	"github.com/tribalwarshelp/dcbot/message"
 	"github.com/tribalwarshelp/dcbot/utils"
 	shared_models "github.com/tribalwarshelp/shared/models"
@@ -55,27 +54,23 @@ func newMessage(cfg newMessageConfig) checkEnnoblementsMsg {
 		newOwnerTribeTag: "-",
 		localizer:        cfg.localizer,
 	}
-	if !isVillageNil(cfg.ennoblement.Village) {
-		data.village = fmt.Sprintf("%s (%d|%d) %s",
-			cfg.ennoblement.Village.Name,
-			cfg.ennoblement.Village.X,
-			cfg.ennoblement.Village.Y,
-			cfg.ennoblement.Village.Continent())
+	if !utils.IsVillageNil(cfg.ennoblement.Village) {
+		data.village = cfg.ennoblement.Village.FullName()
 		data.villageURL = utils.FormatVillageURL(cfg.server, cfg.host, cfg.ennoblement.Village.ID)
 	}
-	if !isPlayerNil(cfg.ennoblement.OldOwner) {
+	if !utils.IsPlayerNil(cfg.ennoblement.OldOwner) {
 		data.oldOwnerName = cfg.ennoblement.OldOwner.Name
 		data.oldOwnerURL = utils.FormatPlayerURL(cfg.server, cfg.host, cfg.ennoblement.OldOwner.ID)
 	}
-	if !isPlayerTribeNil(cfg.ennoblement.OldOwner) {
+	if !utils.IsPlayerTribeNil(cfg.ennoblement.OldOwner) {
 		data.oldOwnerTribeTag = cfg.ennoblement.OldOwner.Tribe.Tag
 		data.oldOwnerTribeURL = utils.FormatTribeURL(cfg.server, cfg.host, cfg.ennoblement.OldOwner.Tribe.ID)
 	}
-	if !isPlayerNil(cfg.ennoblement.NewOwner) {
+	if !utils.IsPlayerNil(cfg.ennoblement.NewOwner) {
 		data.newOwnerName = cfg.ennoblement.NewOwner.Name
 		data.newOwnerURL = utils.FormatPlayerURL(cfg.server, cfg.host, cfg.ennoblement.NewOwner.ID)
 	}
-	if !isPlayerTribeNil(cfg.ennoblement.NewOwner) {
+	if !utils.IsPlayerTribeNil(cfg.ennoblement.NewOwner) {
 		data.newOwnerTribeTag = cfg.ennoblement.NewOwner.Tribe.Tag
 		data.newOwnerTribeURL = utils.FormatTribeURL(cfg.server, cfg.host, cfg.ennoblement.NewOwner.Tribe.ID)
 	}
@@ -89,11 +84,11 @@ func (msg checkEnnoblementsMsg) String() string {
 		DefaultMessage: message.FallbackMsg("cron.checkEnnoblements.msgLine",
 			"{{.NewOwner}} ({{.NewOwnerTribe}}) has conquered the village {{.Village}} (Old owner: {{.OldOwner}} ({{.OldOwnerTribe}}))"),
 		TemplateData: map[string]interface{}{
-			"NewOwner":      formatMsgLink(msg.newOwnerName, msg.newOwnerURL),
-			"NewOwnerTribe": formatMsgLink(msg.newOwnerTribeTag, msg.newOwnerTribeURL),
-			"Village":       formatMsgLink(msg.village, msg.villageURL),
-			"OldOwner":      formatMsgLink(msg.oldOwnerName, msg.oldOwnerURL),
-			"OldOwnerTribe": formatMsgLink(msg.oldOwnerTribeTag, msg.oldOwnerTribeURL),
+			"NewOwner":      discord.FormatLink(msg.newOwnerName, msg.newOwnerURL),
+			"NewOwnerTribe": discord.FormatLink(msg.newOwnerTribeTag, msg.newOwnerTribeURL),
+			"Village":       discord.FormatLink(msg.village, msg.villageURL),
+			"OldOwner":      discord.FormatLink(msg.oldOwnerName, msg.oldOwnerURL),
+			"OldOwnerTribe": discord.FormatLink(msg.oldOwnerTribeTag, msg.oldOwnerTribeURL),
 		},
 	}) + "\n"
 }

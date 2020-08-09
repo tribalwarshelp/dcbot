@@ -184,6 +184,8 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 - %s
 - %s
 - %s
+- %s
+- %s
 				`,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.lostvillages",
@@ -204,6 +206,15 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.showinternals",
+			DefaultMessage: message.FallbackMsg("help.showinternals",
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering."),
+			TemplateData: map[string]interface{}{
+				"Command":       ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
+				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.changelanguage",
 			DefaultMessage: message.FallbackMsg("help.changelanguage",
 				"**{{.Command}}** [{{.Languages}}] - change language."),
@@ -213,12 +224,19 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "help.showinternals",
-			DefaultMessage: message.FallbackMsg("help.showinternals",
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering."),
+			MessageID: "help.coordstranslation",
+			DefaultMessage: message.FallbackMsg("help.coordstranslation",
+				"**{{.Command}}** [server] - enable coords translation feature."),
 			TemplateData: map[string]interface{}{
-				"Command":       ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+				"Command": CoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
+			},
+		}),
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "help.disablecoordstranslation",
+			DefaultMessage: message.FallbackMsg("help.disablecoordstranslation",
+				"**{{.Command}}** - disable coords translation feature."),
+			TemplateData: map[string]interface{}{
+				"Command": DisableCoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
 			},
 		}),
 	)

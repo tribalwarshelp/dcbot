@@ -23,6 +23,8 @@
   "help.disablelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages.",
   "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - change language.",
   "help.showinternals": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering.",
+  "help.coordstranslation": "**{{.Command}}** [server] - enable coords translation feature.",
+  "help.disablecoordstranslation": "**{{.Command}}** - disable coords translation feature.",
 
   "tribe.invalidPage": "{{.Mention}} The page must be a number greater than 0.",
   "tribe.noTribeID": "{{.Mention}} You haven't entered the tribe ID.",
@@ -91,6 +93,13 @@
   "showInternals.groupNotFound": "{{.Mention}} Group not found.",
   "showInternals.success_1": "{{.Mention}} Notifications about internals will no longer show up.",
   "showInternals.success_2": "{{.Mention}} Enabled notifications about internals.",
+
+  "coordsTranslation.title": "Villages",
+  "coordsTranslation.message": "{{.Village}} owned by {{.Player}} (Tribe: {{.Tribe}}).",
+  "coordsTranslation.serverNotFound": "{{.Mention}} Server not found.",
+  "coordsTranslation.success": "{{.Mention}} Coords translation feature has been enabled.",
+
+  "disableCoordsTranslation.success": "{{.Mention}} Coords translation feature has been disabled.",
 
   "cron.lostVillages.title": "Lost villages",
   "cron.conqueredVillages.title": "Conquered villages",
