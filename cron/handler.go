@@ -129,7 +129,6 @@ func (h *handler) checkEnnoblements() {
 	ennoblementsByServerKey, err := h.loadEnnoblements(servers)
 	if err != nil {
 		log.Print(err)
-		return
 	}
 
 	for _, group := range groups {
