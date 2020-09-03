@@ -82,7 +82,7 @@ func (msg checkEnnoblementsMsg) String() string {
 	return msg.localizer.MustLocalize(&i18n.LocalizeConfig{
 		MessageID: "cron.checkEnnoblements.msgLine",
 		DefaultMessage: message.FallbackMsg("cron.checkEnnoblements.msgLine",
-			"{{.NewOwner}} ({{.NewOwnerTribe}}) has conquered the village {{.Village}} (Old owner: {{.OldOwner}} ({{.OldOwnerTribe}}))"),
+			"{{.NewOwner}} ({{.NewOwnerTribe}}) conquered {{.Village}} (Old owner: {{.OldOwner}} ({{.OldOwnerTribe}}))"),
 		TemplateData: map[string]interface{}{
 			"NewOwner":      discord.FormatLink(msg.newOwnerName, msg.newOwnerURL),
 			"NewOwnerTribe": discord.FormatLink(msg.newOwnerTribeTag, msg.newOwnerTribeURL),
