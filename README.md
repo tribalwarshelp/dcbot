@@ -5,9 +5,13 @@ Discord bot for the online game Tribal Wars.
 Features:
 
 1. Coords translation
+
    ![Screenshot](/screenshots/coordstranslation.png?raw=true)
+
 2. Near real-time notifications about conquers
+
    ![Screenshot](/screenshots/notifications.png?raw=true)
+
 3. Tribe members ordered by OD/ODA/ODD/ODS/points
 
 [You can check all available commands here.](https://dcbot.tribalwarshelp.com/commands/)
