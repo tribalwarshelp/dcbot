@@ -699,7 +699,7 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "help.observations",
 				DefaultMessage: message.FallbackMsg("help.observations",
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] shows a list of observed tribes by this group."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group."),
 				TemplateData: map[string]interface{}{
 					"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -926,7 +926,7 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "help.changelanguage",
 				DefaultMessage: message.FallbackMsg("help.changelanguage",
-					"**{{.Command}}** [{{.Languages}}] - change language."),
+					"**{{.Command}}** [{{.Languages}}] - changes language."),
 				TemplateData: map[string]interface{}{
 					"Command":   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
 					"Languages": getAvailableLanguages(),

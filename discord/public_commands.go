@@ -134,7 +134,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.observe",
 			DefaultMessage: message.FallbackMsg("help.observe",
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - adds a tribe to the observation group."),
 			TemplateData: map[string]interface{}{
 				"Command":       ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -143,7 +143,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.observations",
 			DefaultMessage: message.FallbackMsg("help.observations",
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] shows a list of observed tribes by this group."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group."),
 			TemplateData: map[string]interface{}{
 				"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -171,7 +171,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.disableconqueredvillages",
 			DefaultMessage: message.FallbackMsg("help.disableconqueredvillages",
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - disables notifications about conquered villages."),
 			TemplateData: map[string]interface{}{
 				"Command":       DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -217,7 +217,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.changelanguage",
 			DefaultMessage: message.FallbackMsg("help.changelanguage",
-				"**{{.Command}}** [{{.Languages}}] - change language."),
+				"**{{.Command}}** [{{.Languages}}] - changes language."),
 			TemplateData: map[string]interface{}{
 				"Command":   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
 				"Languages": getAvailableLanguages(),
@@ -226,7 +226,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.coordstranslation",
 			DefaultMessage: message.FallbackMsg("help.coordstranslation",
-				"**{{.Command}}** [server] - enable coords translation feature."),
+				"**{{.Command}}** [server] - enables coords translation feature."),
 			TemplateData: map[string]interface{}{
 				"Command": CoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
 			},
@@ -234,7 +234,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "help.disablecoordstranslation",
 			DefaultMessage: message.FallbackMsg("help.disablecoordstranslation",
-				"**{{.Command}}** - disable coords translation feature."),
+				"**{{.Command}}** - disables coords translation feature."),
 			TemplateData: map[string]interface{}{
 				"Command": DisableCoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
 			},
@@ -258,7 +258,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		})).
 		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      "help.forAllUsers",
-			DefaultMessage: message.FallbackMsg("help.forAllUsers", "For all guild members."),
+			DefaultMessage: message.FallbackMsg("help.forAllUsers", "For all server members."),
 		}), commandsForAll).
 		AddField(forAdmins, commandsForGuildAdmins).
 		AddField(forAdmins+" 2", commandsForGuildAdmins2).

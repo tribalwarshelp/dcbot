@@ -34,7 +34,7 @@ func (s *Session) handleCoordsTranslationCommand(ctx commandCtx, m *discordgo.Me
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "help.coordstranslation",
 				DefaultMessage: message.FallbackMsg("help.coordstranslation",
-					"**{{.Command}}** [server] - enable coords translation feature."),
+					"**{{.Command}}** [server] - enables coords translation feature."),
 				TemplateData: map[string]interface{}{
 					"Command": CoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
 				},

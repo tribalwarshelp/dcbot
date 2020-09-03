@@ -1,17 +1,23 @@
 # TWHelp DC Bot
 
+Discord bot for the online game Tribal Wars.
+
 Features:
 
 1. Coords translation
+   ![Screenshot](/screenshots/coordstranslation.png?raw=true)
 2. Near real-time notifications about conquers
+   ![Screenshot](/screenshots/notifications.png?raw=true)
 3. Tribe members ordered by OD/ODA/ODD/ODS/points
+
+[You can check all available commands here.](https://dcbot.tribalwarshelp.com/commands/)
 
 ## Development
 
 **Required env variables to run this bot** (you can set them directly in your system or create .env.development file):
 
 ```
-DB_USER=your_pgDb_user
+DB_USER=your_pgdb_user
 DB_NAME=your_pgdb_name
 DB_PORT=your_pgdb_port
 DB_HOST=your_pgdb_host
