@@ -1,0 +1,113 @@
+{
+  "help.title": "Help",
+  "help.description": "Commando's te gebruiken voor de bot.",
+  "help.footer": "",
+  "help.forAllUsers": "Voor alle gebruikers",
+  "help.forAdmins": "Voor beheerders",
+  "help.tribe.topoda": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - genereert een spelerslijst van de geselecteerde stam gerangschikt op ODA.",
+  "help.tribe.topodd": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - genereert een spelerslijst van de geselecteerde stam gerangschikt op ODD.",
+  "help.tribe.topods": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - genereert een spelerslijst van de geselecteerde stam gerangschikt op ODS.",
+  "help.tribe.topod": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - genereert een spelerslijst van de geselecteerde stam gerangschikt op OD.",
+  "help.tribe.toppoints": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - genereert een spelerslijst van de geselecteerde stam gerangschikt op punten.",
+  "help.author": "**{{.Command}}** - laat je zien hoe je in contact komt met de autheur.",
+  "help.addgroup": "**{{.Command}}** - voegt een nieuwe observatiegroep toe.",
+  "help.groups": "**{{.Command}}** - laat een lijst zien van groepen gemaakt door deze server.",
+  "help.deletegroup": "**{{.Command}}** [group id from {{.GroupsCommand}}] - verwijder een observatiegroep.",
+  "help.showennobledbarbs": "**{{.Command}}** [group id from {{.GroupsCommand}}] - zet notificaties aan/uit over geëdelde barbarendorpen.",
+  "help.observe": "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - voegt een stam toe aan de observatiegroep.",
+  "help.observations": "**{{.Command}}** [group id from {{.GroupsCommand}}] - laat een lijst zijn van geobserveerde stammen in deze groep.",
+  "help.deleteobservation": "**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - verwijderd een stam uit de observatiegroep.",
+  "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - verandert het kanaal waar de notificaties over veroverde dorpen worden weergeven **BELANGRIJK!** voer dit commando uit op het kanaal waar de notificaties moeten worden weergeven.",
+  "help.disableconqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - zet notificaties over veroverde dorpen uit.",
+  "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - verandert het kanaal waar de notificaties over verloren dorpen worden weergeven **BELANGRIJK!** voer dit commando uit op het kanaal waar de notificaties moeten worden weergeven.",
+  "help.disablelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - zet notificaties over verloren dorpen uit.",
+  "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - verander taal.",
+  "help.showinternals": "**{{.Command}}** [group id from {{.GroupsCommand}}] - zet notificaties aan/uit over internen.",
+  "help.coordstranslation": "**{{.Command}}** [server] - zet de coordinaten vertaling aan.",
+  "help.disablecoordstranslation": "**{{.Command}}** - zet de coordinaten vertaling aan.",
+
+  "tribe.invalidPage": "{{.Mention}} de pagina moet een nummer hoger dan 0 hebben.",
+  "tribe.noTribeID": "{{.Mention}} Je hebt de stamID niet ingevuld.",
+  "tribe.title.orderedByOD": "geranschikt op OD",
+  "tribe.title.orderedByODA": "geranschikt op ODA",
+  "tribe.title.orderedByODD": "geranschikt op ODD",
+  "tribe.title.orderedByODS": "geranschikt op ODS",
+  "tribe.title.orderedByPoints": "geranschikt op points",
+  "tribe.tribesNotFound": "{{.Mention}} Stammen niet gevonden.",
+  "tribe.exceededMaximumNumberOfPages": "{{.Mention}} Je hebt de maximale aantal pagina's overschreden ({{.Page}}/{{.MaxPage}}).",
+  "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Stam: [``{{.TribeTag}}``]({{.TribeURL}}) | Rang: **{{.Rank}}** | Score: **{{.Score}}**)\n",
+
+  "addGroup.groupLimitHasBeenReached": "{{.Mention}} De groeplimiet is bereikt ({{.Total}}/{{.Limit}}).",
+  "addGroup.success": "{{.Mention}} Een nieuwe groep is gemaakt (ID: {{.ID}}).",
+
+  "deleteGroup.invalidID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "deleteGroup.success": "{{.Mention}} De groep is verwijderd.",
+
+  "groups.noGroupsAdded": "Geen groep toegevoegd.",
+  "groups.title": "Groeplijst",
+  "groups.fieldTitle": "Index | ID | Veroverd | Verloren | Barbaar | Intern",
+
+  "conqueredVillages.invalidID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "conqueredVillages.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "conqueredVillages.success": "{{.Mention}} Groep succesvol aangepast.",
+
+  "disableConqueredVillages.invalidID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "disableConqueredVillages.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "disableConqueredVillages.success": "{{.Mention}} Notificaties over veroverde dorpen zullen niet langer worden weergeven.",
+
+  "lostVillages.invalidID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "lostVillages.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "lostVillages.success": "{{.Mention}} Groep succesvol aangepast.",
+
+  "disableLostVillages.invalidID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "disableLostVillages.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "disableLostVillages.success": "{{.Mention}} Notificaties over verloren dorpen zullen niet langer worden weergeven.",
+
+  "observe.invalidGroupID": "{{.Mention}} De groepID moet een  hoger dan 0 zijn.",
+  "observe.invalidTribeID": "{{.Mention}} De tribeID moet een  hoger dan 0 zijn.",
+  "observe.serverIsClosed": "{{.Mention}} Server is gesloten.",
+  "observe.serverNotFound": "{{.Mention}} Server niet gevonden.",
+  "observe.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "observe.tribeNotFound": "{{.Mention}} stam is niet gevonden.",
+  "observe.observationLimitHasBeenReached": "{{.Mention}} De observatielimiet voor deze groep is bereikt ({{.Total}}/{{.Limit}}).",
+  "observe.success": "{{.Mention}} toegevoegd.",
+
+  "deleteObservation.invalidGroupID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "deleteObservation.invalidObservationID": "{{.Mention}} De observatieID moet een  hoger dan 0 zijn.",
+  "deleteObservation.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "deleteObservation.success": "{{.Mention}} verwijderd.",
+
+  "observations.invalidGroupID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "observations.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "observations.title": "Observed tribes\nIndex | ID - Server - Stam",
+
+  "showEnnobledBarbs.invalidGroupID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "showEnnobledBarbs.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "showEnnobledBarbs.success_1": "{{.Mention}} Notificaties over veroverde barbarendorpen dorpen zullen niet langer worden weergeven.",
+  "showEnnobledBarbs.success_2": "{{.Mention}} Notificaties aangezet voor veroverde barbarendorpen.",
+
+  "changeLanguage.languageNotSupported": "{{.Mention}} Taal niet ondersteund.",
+  "changeLanguage.success": "{{.Mention}} De taal is succesvol aangepast.",
+
+  "showInternals.invalidGroupID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
+  "showInternals.groupNotFound": "{{.Mention}} Groep niet gevonden.",
+  "showInternals.success_1": "{{.Mention}} Notificaties over interns zullen niet langer worden weergeven.",
+  "showInternals.success_2": "{{.Mention}} Notificaties aangezet voor interns.",
+
+  "coordsTranslation.title": "Dorpen",
+  "coordsTranslation.message": "{{.Village}} eigendom van {{.Player}} (Stam: {{.Tribe}}).",
+  "coordsTranslation.serverNotFound": "{{.Mention}} Server niet gevonden.",
+  "coordsTranslation.success": "{{.Mention}} Coordinaten vertaling is aan gezet.",
+
+  "disableCoordsTranslation.success": "{{.Mention}}Coordinaten vertaling is uit gezet.",
+
+  "cron.lostVillages.title": "Verloren dorpen",
+  "cron.conqueredVillages.title": "Veroverde dorpen",
+  "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] veroverd {{.Village}} (oude eigenaar: {{.OldOwner}} [{{.OldOwnerTribe}}])",
+
+  "api.defaultError": "{{.Mention}} Er is een fout opgetreden bij het ophalen van gegevens uit de API. Probeer het later opnieuw.",
+
+  "pagination.labelDisplayedPage": "pagina: {{.Page}} van de {{.MaxPage}}",
+
+  "internalServerError": "{{.Mention}} Interne server error is voorgekomen, probeer het later opnieuw."
+}
