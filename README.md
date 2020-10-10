@@ -13,6 +13,7 @@ Features:
    ![Screenshot](/screenshots/notifications.png?raw=true)
 
 3. Tribe members ordered by OD/ODA/ODD/ODS/points
+4. Translated into 3 languages: Polish, English, Dutch
 
 [You can check all available commands here.](https://dcbot.tribalwarshelp.com/commands/)
 
