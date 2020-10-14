@@ -1,6 +1,12 @@
 package message
 
 const (
+	InternalServerError = "internalServerError"
+
+	ApiDefaultError = "api.defaultError"
+
+	PaginationLabelDisplayedPage = "pagination.labelDisplayedPage"
+
 	HelpForAdmins                = "help.forAdmins"
 	HelpTitle                    = "help.title"
 	HelpDescription              = "help.description"
@@ -26,4 +32,15 @@ const (
 	HelpChangageLanguage         = "help.changelanguage"
 	HelpCoordsTranslation        = "help.coordstranslation"
 	HelpDisableCoordsTranslation = "help.disablecoordstranslation"
+
+	TribeInvalidPage                  = "tribe.invalidPage"
+	TribeNoTribeID                    = "tribe.noTribeID"
+	TribeTitleOrderedByODA            = "tribe.title.orderedByODA"
+	TribeTitleOrderedByODD            = "tribe.title.orderedByODD"
+	TribeTitleOrderedByODS            = "tribe.title.orderedByODS"
+	TribeTitleOrderedByOD             = "tribe.title.orderedByOD"
+	TribeTitleOrderedByPoints         = "tribe.title.orderedByPoints"
+	TribeTribesNotFound               = "tribe.tribesNotFound"
+	TribeExceededMaximumNumberOfPages = "tribe.exceededMaximumNumberOfPages"
+	TribeMessageLine                  = "tribe.messageLine"
 )

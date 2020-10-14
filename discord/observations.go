@@ -63,8 +63,8 @@ func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCrea
 	if err := s.cfg.GroupRepository.Store(context.Background(), group); err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "internalServerError",
-				DefaultMessage: message.FallbackMsg("internalServerError",
+				MessageID: message.InternalServerError,
+				DefaultMessage: message.FallbackMsg(message.InternalServerError,
 					"{{.Mention}} Internal server error occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -588,8 +588,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "internalServerError",
-				DefaultMessage: message.FallbackMsg("internalServerError",
+				MessageID: message.InternalServerError,
+				DefaultMessage: message.FallbackMsg(message.InternalServerError,
 					"{{.Mention}} Internal server error occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -740,8 +740,8 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "internalServerError",
-				DefaultMessage: message.FallbackMsg("internalServerError",
+				MessageID: message.InternalServerError,
+				DefaultMessage: message.FallbackMsg(message.InternalServerError,
 					"{{.Mention}} Internal server error occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -773,8 +773,8 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 		if err != nil {
 			s.SendMessage(m.ChannelID,
 				ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "internalServerError",
-					DefaultMessage: message.FallbackMsg("internalServerError",
+					MessageID: message.InternalServerError,
+					DefaultMessage: message.FallbackMsg(message.InternalServerError,
 						"{{.Mention}} Internal server error occurred, please try again later."),
 					TemplateData: map[string]interface{}{
 						"Mention": m.Author.Mention(),
@@ -879,8 +879,8 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 	if err := s.cfg.GroupRepository.Update(context.Background(), group); err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "internalServerError",
-				DefaultMessage: message.FallbackMsg("internalServerError",
+				MessageID: message.InternalServerError,
+				DefaultMessage: message.FallbackMsg(message.InternalServerError,
 					"{{.Mention}} Internal server error occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -960,8 +960,8 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 	if err := s.cfg.ServerRepository.Update(context.Background(), ctx.server); err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "internalServerError",
-				DefaultMessage: message.FallbackMsg("internalServerError",
+				MessageID: message.InternalServerError,
+				DefaultMessage: message.FallbackMsg(message.InternalServerError,
 					"{{.Mention}} Internal server error occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -1035,8 +1035,8 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	if err := s.cfg.GroupRepository.Update(context.Background(), group); err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "internalServerError",
-				DefaultMessage: message.FallbackMsg("internalServerError",
+				MessageID: message.InternalServerError,
+				DefaultMessage: message.FallbackMsg(message.InternalServerError,
 					"{{.Mention}} Internal server error occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
