@@ -754,7 +754,7 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 	langTags := []shared_models.LanguageTag{}
 	for _, observation := range observations {
 		tribeIDsByServer[observation.Server] = append(tribeIDsByServer[observation.Server], observation.TribeID)
-		currentLangTag := utils.LanguageTagFromWorldName(observation.Server)
+		currentLangTag := utils.LanguageTagFromServerKey(observation.Server)
 		unique := true
 		for _, langTag := range langTags {
 			if langTag == currentLangTag {
@@ -804,7 +804,7 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 			if observation.Tribe != nil {
 				tag = observation.Tribe.Tag
 			}
-			lv := utils.FindLangVersionByTag(langVersionList.Items, utils.LanguageTagFromWorldName(observation.Server))
+			lv := utils.FindLangVersionByTag(langVersionList.Items, utils.LanguageTagFromServerKey(observation.Server))
 			tribeURL := ""
 			if lv != nil {
 				tribeURL = utils.FormatTribeURL(observation.Server, lv.Host, observation.TribeID)

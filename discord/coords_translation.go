@@ -96,7 +96,7 @@ func (s *Session) translateCoords(ctx commandCtx, m *discordgo.MessageCreate) {
 	coords := extractAllCoordsFromMessage(m.Content)
 	coordsLen := len(coords)
 	if coordsLen > 0 {
-		langVersion, err := s.cfg.API.LangVersions.Read(utils.LanguageTagFromWorldName(ctx.server.CoordsTranslation))
+		langVersion, err := s.cfg.API.LangVersions.Read(utils.LanguageTagFromServerKey(ctx.server.CoordsTranslation))
 		if err != nil || langVersion == nil {
 			return
 		}

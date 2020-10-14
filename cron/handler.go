@@ -35,6 +35,10 @@ type handler struct {
 func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, error) {
 	m := make(map[string]ennoblements)
 
+	if len(servers) == 0 {
+		return m, nil
+	}
+
 	query := ""
 
 	for _, w := range servers {
@@ -87,7 +91,7 @@ func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersi
 	languageTags := []shared_models.LanguageTag{}
 	cache := make(map[shared_models.LanguageTag]bool)
 	for _, server := range servers {
-		languageTag := utils.LanguageTagFromWorldName(server)
+		languageTag := utils.LanguageTagFromServerKey(server)
 		if languageTag.IsValid() && !cache[languageTag] {
 			cache[languageTag] = true
 			languageTags = append(languageTags, languageTag)
@@ -140,7 +144,7 @@ func (h *handler) checkEnnoblements() {
 		conqueredVillagesMsg := &discord.EmbedMessage{}
 		for _, observation := range group.Observations {
 			ennoblements, ok := ennoblementsByServerKey[observation.Server]
-			langVersion := utils.FindLangVersionByTag(langVersions, utils.LanguageTagFromWorldName(observation.Server))
+			langVersion := utils.FindLangVersionByTag(langVersions, utils.LanguageTagFromServerKey(observation.Server))
 			if ok && langVersion != nil && langVersion.Host != "" {
 				if group.LostVillagesChannelID != "" {
 					for _, ennoblement := range ennoblements.getLostVillagesByTribe(observation.TribeID) {
