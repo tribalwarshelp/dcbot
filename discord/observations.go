@@ -613,8 +613,8 @@ func (s *Session) handleDeleteObservationCommand(ctx commandCtx, m *discordgo.Me
 	} else if argsLength < 2 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.deleteobservation",
-				DefaultMessage: message.FallbackMsg("help.deleteobservation",
+				MessageID: message.HelpDeleteObservation,
+				DefaultMessage: message.FallbackMsg(message.HelpDeleteObservation,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group."),
 				TemplateData: map[string]interface{}{
 					"Command":             DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -629,8 +629,8 @@ func (s *Session) handleDeleteObservationCommand(ctx commandCtx, m *discordgo.Me
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "deleteObservation.invalidGroupID",
-				DefaultMessage: message.FallbackMsg("deleteObservation.invalidGroupID",
+				MessageID: message.DeleteObservationInvalidGroupID,
+				DefaultMessage: message.FallbackMsg(message.DeleteObservationInvalidGroupID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -642,8 +642,8 @@ func (s *Session) handleDeleteObservationCommand(ctx commandCtx, m *discordgo.Me
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "deleteObservation.invalidTribeID",
-				DefaultMessage: message.FallbackMsg("deleteObservation.invalidTribeID",
+				MessageID: message.DeleteObservationInvalidTribeID,
+				DefaultMessage: message.FallbackMsg(message.DeleteObservationInvalidTribeID,
 					"{{.Mention}} The tribe ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -656,8 +656,8 @@ func (s *Session) handleDeleteObservationCommand(ctx commandCtx, m *discordgo.Me
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "deleteObservation.groupNotFound",
-				DefaultMessage: message.FallbackMsg("deleteObservation.groupNotFound", "{{.Mention}} Group not found."),
+				MessageID:      message.DeleteObservationGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.DeleteObservationGroupNotFound, "{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -671,8 +671,8 @@ func (s *Session) handleDeleteObservationCommand(ctx commandCtx, m *discordgo.Me
 	})
 
 	s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-		MessageID:      "unObserve.success",
-		DefaultMessage: message.FallbackMsg("unObserve.success", "{{.Mention}} Deleted."),
+		MessageID:      message.DeleteObservationSuccess,
+		DefaultMessage: message.FallbackMsg(message.DeleteObservationSuccess, "{{.Mention}} Deleted."),
 		TemplateData: map[string]interface{}{
 			"Mention": m.Author.Mention(),
 		},
@@ -691,8 +691,8 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.observations",
-				DefaultMessage: message.FallbackMsg("help.observations",
+				MessageID: message.HelpObservations,
+				DefaultMessage: message.FallbackMsg(message.HelpObservations,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group."),
 				TemplateData: map[string]interface{}{
 					"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),

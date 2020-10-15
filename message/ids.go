@@ -78,4 +78,9 @@ const (
 	ObserveGroupNotFound       = "observe.groupNotFound"
 	ObserveLimitHasBeenReached = "observe.observationLimitHasBeenReached"
 	ObserveSuccess             = "observe.success"
+
+	DeleteObservationInvalidGroupID = "deleteObservation.invalidGroupID"
+	DeleteObservationInvalidTribeID = "deleteObservation.invalidTribeID"
+	DeleteObservationGroupNotFound  = "deleteObservation.groupNotFound"
+	DeleteObservationSuccess        = "deleteObservation.success"
 )
