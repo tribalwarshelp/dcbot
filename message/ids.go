@@ -69,4 +69,13 @@ const (
 	DisableLostVillagesInvalidID     = "disableLostVillages.invalidID"
 	DisableLostVillagesGroupNotFound = "disableLostVillages.groupNotFound"
 	DisableLostVillagesSuccess       = "disableLostVillages.success"
+
+	ObserveInvalidGroupID      = "observe.invalidGroupID"
+	ObserveInvalidTribeID      = "observe.invalidTribeID"
+	ObserveServerNotFound      = "observe.serverNotFound"
+	ObserveServerIsClosed      = "observe.serverIsClosed"
+	ObserveTribeNotFound       = "observe.tribeNotFound"
+	ObserveGroupNotFound       = "observe.groupNotFound"
+	ObserveLimitHasBeenReached = "observe.observationLimitHasBeenReached"
+	ObserveSuccess             = "observe.success"
 )

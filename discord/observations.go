@@ -470,8 +470,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	} else if argsLength < 3 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.observe",
-				DefaultMessage: message.FallbackMsg("help.observe",
+				MessageID: message.HelpObserve,
+				DefaultMessage: message.FallbackMsg(message.HelpObserve,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group."),
 				TemplateData: map[string]interface{}{
 					"Command":       ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -485,8 +485,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "observe.invalidGroupID",
-				DefaultMessage: message.FallbackMsg("observe.invalidGroupID",
+				MessageID: message.ObserveInvalidGroupID,
+				DefaultMessage: message.FallbackMsg(message.ObserveInvalidGroupID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -499,8 +499,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	if err != nil || tribeID <= 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "observe.invalidTribeID",
-				DefaultMessage: message.FallbackMsg("observe.invalidTribeID",
+				MessageID: message.ObserveInvalidTribeID,
+				DefaultMessage: message.FallbackMsg(message.ObserveInvalidTribeID,
 					"{{.Mention}} The tribe ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -513,8 +513,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	if err != nil || server == nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "observe.serverNotFound",
-				DefaultMessage: message.FallbackMsg("observe.serverNotFound", "{{.Mention}} Server not found."),
+				MessageID:      message.ObserveServerNotFound,
+				DefaultMessage: message.FallbackMsg(message.ObserveServerNotFound, "{{.Mention}} Server not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -524,8 +524,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	if server.Status == shared_models.ServerStatusClosed {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "observe.serverIsClosed",
-				DefaultMessage: message.FallbackMsg("observe.serverIsClosed", "{{.Mention}} Server is closed."),
+				MessageID:      message.ObserveServerIsClosed,
+				DefaultMessage: message.FallbackMsg(message.ObserveServerIsClosed, "{{.Mention}} Server is closed."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -537,8 +537,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	if err != nil || tribe == nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "observe.tribeNotFound",
-				DefaultMessage: message.FallbackMsg("observe.tribeNotFound", "{{.Mention}} Tribe not found."),
+				MessageID:      message.ObserveTribeNotFound,
+				DefaultMessage: message.FallbackMsg(message.ObserveTribeNotFound, "{{.Mention}} Tribe not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -550,8 +550,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "observe.groupNotFound",
-				DefaultMessage: message.FallbackMsg("observe.groupNotFound", "{{.Mention}} Group not found."),
+				MessageID:      message.ObserveGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.ObserveGroupNotFound, "{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -562,8 +562,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	if len(group.Observations) >= observationsPerGroup {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "observe.observationLimitHasBeenReached",
-				DefaultMessage: message.FallbackMsg("observe.observationLimitHasBeenReached",
+				MessageID: message.ObserveLimitHasBeenReached,
+				DefaultMessage: message.FallbackMsg(message.ObserveLimitHasBeenReached,
 					"{{.Mention}} The observation limit for this group has been reached ({{.Total}}/{{.Limit}})."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -593,8 +593,8 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	}
 
 	s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-		MessageID:      "observe.success",
-		DefaultMessage: message.FallbackMsg("observe.success", "{{.Mention}} Added."),
+		MessageID:      message.ObserveSuccess,
+		DefaultMessage: message.FallbackMsg(message.ObserveSuccess, "{{.Mention}} Added."),
 		TemplateData: map[string]interface{}{
 			"Mention": m.Author.Mention(),
 		},
