@@ -46,4 +46,7 @@ const (
 
 	AddGroupGroupLimitHasBeenReached = "addGroup.groupLimitHasBeenReached"
 	AddGroupSuccess                  = "addGroup.success"
+
+	DeleteGroupInvalidID = "deleteGroup.invalidID"
+	DeleteGroupSuccess   = "deleteGroup.success"
 )

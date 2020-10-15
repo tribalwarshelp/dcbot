@@ -97,8 +97,8 @@ func (s *Session) handleDeleteGroupCommand(ctx commandCtx, m *discordgo.MessageC
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.deletegroup",
-				DefaultMessage: message.FallbackMsg("help.deletegroup",
+				MessageID: message.HelpDeleteGroup,
+				DefaultMessage: message.FallbackMsg(message.HelpDeleteGroup,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group."),
 				TemplateData: map[string]interface{}{
 					"Command":       DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -112,8 +112,8 @@ func (s *Session) handleDeleteGroupCommand(ctx commandCtx, m *discordgo.MessageC
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "deleteGroup.invalidID",
-				DefaultMessage: message.FallbackMsg("deleteGroup.invalidID",
+				MessageID: message.DeleteGroupInvalidID,
+				DefaultMessage: message.FallbackMsg(message.DeleteGroupInvalidID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -129,20 +129,13 @@ func (s *Session) handleDeleteGroupCommand(ctx commandCtx, m *discordgo.MessageC
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "deleteGroup.success",
-			DefaultMessage: message.FallbackMsg("deleteGroup.success",
+			MessageID: message.DeleteGroupSuccess,
+			DefaultMessage: message.FallbackMsg(message.DeleteGroupSuccess,
 				"{{.Mention}} The group has been deleted."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
 		}))
-}
-
-func getEmojiForGroupsCommand(val bool) string {
-	if val {
-		return ":white_check_mark:"
-	}
-	return ":x:"
 }
 
 func (s *Session) handleGroupsCommand(ctx commandCtx, m *discordgo.MessageCreate) {
