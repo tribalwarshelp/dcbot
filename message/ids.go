@@ -53,4 +53,8 @@ const (
 	GroupsNoGroupsAdded = "groups.noGroupsAdded"
 	GroupsTitle         = "groups.title"
 	GroupsFieldTitle    = "groups.fieldTitle"
+
+	ConqueredVillagesInvalidID     = "conqueredVillages.invalidID"
+	ConqueredVillagesGroupNotFound = "conqueredVillages.groupNotFound"
+	ConqueredVillagesSuccess       = "conqueredVillages.success"
 )

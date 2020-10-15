@@ -210,8 +210,8 @@ func (s *Session) handleConqueredVillagesCommand(ctx commandCtx, m *discordgo.Me
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "conqueredVillages.invalidID",
-				DefaultMessage: message.FallbackMsg("conqueredVillages.invalidID",
+				MessageID: message.ConqueredVillagesInvalidID,
+				DefaultMessage: message.FallbackMsg(message.ConqueredVillagesInvalidID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -227,8 +227,8 @@ func (s *Session) handleConqueredVillagesCommand(ctx commandCtx, m *discordgo.Me
 	if err != nil || len(groups) == 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "conqueredVillages.groupNotFound",
-				DefaultMessage: message.FallbackMsg("conqueredVillages.groupNotFound",
+				MessageID: message.ConqueredVillagesGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.ConqueredVillagesGroupNotFound,
 					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -241,8 +241,8 @@ func (s *Session) handleConqueredVillagesCommand(ctx commandCtx, m *discordgo.Me
 	go s.cfg.GroupRepository.Update(context.Background(), groups[0])
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "conqueredVillages.success",
-			DefaultMessage: message.FallbackMsg("conqueredVillages.success",
+			MessageID: message.ConqueredVillagesSuccess,
+			DefaultMessage: message.FallbackMsg(message.ConqueredVillagesSuccess,
 				"{{.Mention}} Channel changed successfully."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
@@ -262,8 +262,8 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx commandCtx, m *disco
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.disableconqueredvillages",
-				DefaultMessage: message.FallbackMsg("help.disableconqueredvillages",
+				MessageID: message.HelpDisableConqueredVillages,
+				DefaultMessage: message.FallbackMsg(message.HelpDisableConqueredVillages,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages."),
 				TemplateData: map[string]interface{}{
 					"Command":       DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
