@@ -43,8 +43,8 @@ func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCrea
 	if len(ctx.server.Groups) >= groupsPerServer {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "addGroup.groupLimitHasBeenReached",
-				DefaultMessage: message.FallbackMsg("addGroup.groupLimitHasBeenReached",
+				MessageID: message.AddGroupGroupLimitHasBeenReached,
+				DefaultMessage: message.FallbackMsg(message.AddGroupGroupLimitHasBeenReached,
 					"{{.Mention}} The group limit has been reached ({{.Total}}/{{.Limit}})."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -75,8 +75,8 @@ func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCrea
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "addGroup.success",
-			DefaultMessage: message.FallbackMsg("addGroup.success",
+			MessageID: message.AddGroupSuccess,
+			DefaultMessage: message.FallbackMsg(message.AddGroupSuccess,
 				"{{.Mention}} A new group has been created (ID: {{.ID}})."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),

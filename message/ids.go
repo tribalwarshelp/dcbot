@@ -43,4 +43,7 @@ const (
 	TribeTribesNotFound               = "tribe.tribesNotFound"
 	TribeExceededMaximumNumberOfPages = "tribe.exceededMaximumNumberOfPages"
 	TribeMessageLine                  = "tribe.messageLine"
+
+	AddGroupGroupLimitHasBeenReached = "addGroup.groupLimitHasBeenReached"
+	AddGroupSuccess                  = "addGroup.success"
 )
