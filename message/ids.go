@@ -65,4 +65,8 @@ const (
 	LostVillagesInvalidID     = "lostVillages.invalidID"
 	LostVillagesGroupNotFound = "lostVillages.groupNotFound"
 	LostVillagesSuccess       = "lostVillages.success"
+
+	DisableLostVillagesInvalidID     = "disableLostVillages.invalidID"
+	DisableLostVillagesGroupNotFound = "disableLostVillages.groupNotFound"
+	DisableLostVillagesSuccess       = "disableLostVillages.success"
 )

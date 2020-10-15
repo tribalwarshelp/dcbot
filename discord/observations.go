@@ -264,7 +264,7 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx commandCtx, m *disco
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDisableConqueredVillages,
 				DefaultMessage: message.FallbackMsg(message.HelpDisableConqueredVillages,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about conquered villages."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disables notifications about conquered villages."),
 				TemplateData: map[string]interface{}{
 					"Command":       DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -400,9 +400,9 @@ func (s *Session) handleDisableLostVillagesCommand(ctx commandCtx, m *discordgo.
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.disablelostvillages",
-				DefaultMessage: message.FallbackMsg("help.disablelostvillages",
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disable notifications about lost villages."),
+				MessageID: message.HelpDisableLostVillages,
+				DefaultMessage: message.FallbackMsg(message.HelpDisableLostVillages,
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disables notifications about lost villages."),
 				TemplateData: map[string]interface{}{
 					"Command":       DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -415,8 +415,8 @@ func (s *Session) handleDisableLostVillagesCommand(ctx commandCtx, m *discordgo.
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "disableLostVillages.invalidID",
-				DefaultMessage: message.FallbackMsg("disableLostVillages.invalidID",
+				MessageID: message.DisableLostVillagesInvalidID,
+				DefaultMessage: message.FallbackMsg(message.DisableLostVillagesInvalidID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -432,8 +432,8 @@ func (s *Session) handleDisableLostVillagesCommand(ctx commandCtx, m *discordgo.
 	if err != nil || len(groups) == 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "disableLostVillages.groupNotFound",
-				DefaultMessage: message.FallbackMsg("disableLostVillages.groupNotFound",
+				MessageID: message.DisableLostVillagesGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.DisableLostVillagesGroupNotFound,
 					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -449,8 +449,8 @@ func (s *Session) handleDisableLostVillagesCommand(ctx commandCtx, m *discordgo.
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "disableLostVillages.success",
-			DefaultMessage: message.FallbackMsg("disableLostVillages.success",
+			MessageID: message.DisableLostVillagesSuccess,
+			DefaultMessage: message.FallbackMsg(message.DisableLostVillagesSuccess,
 				"{{.Mention}} Notifications about lost villages will no longer show up."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
