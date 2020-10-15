@@ -49,4 +49,8 @@ const (
 
 	DeleteGroupInvalidID = "deleteGroup.invalidID"
 	DeleteGroupSuccess   = "deleteGroup.success"
+
+	GroupsNoGroupsAdded = "groups.noGroupsAdded"
+	GroupsTitle         = "groups.title"
+	GroupsFieldTitle    = "groups.fieldTitle"
 )

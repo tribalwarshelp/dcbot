@@ -165,19 +165,20 @@ func (s *Session) handleGroupsCommand(ctx commandCtx, m *discordgo.MessageCreate
 
 	if msg == "" {
 		msg = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      "groups.noGroupsAdded",
-			DefaultMessage: message.FallbackMsg("groups.noGroupsAdded", "No groups added"),
+			MessageID: message.GroupsNoGroupsAdded,
+			DefaultMessage: message.FallbackMsg(message.GroupsNoGroupsAdded,
+				"On this server hasn't been added any groups."),
 		})
 	}
 
 	s.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      "groups.title",
-			DefaultMessage: message.FallbackMsg("groups.title", "Group list"),
+			MessageID:      message.GroupsTitle,
+			DefaultMessage: message.FallbackMsg(message.GroupsTitle, "Group list"),
 		})).
 		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      "groups.fieldTitle",
-			DefaultMessage: message.FallbackMsg("groups.fieldTitle", "Index | ID | Conquer | Loss | Barbarian | Internal"),
+			MessageID:      message.GroupsFieldTitle,
+			DefaultMessage: message.FallbackMsg(message.GroupsFieldTitle, "Index | ID | Conquer | Loss | Barbarian | Internal"),
 		}), msg).
 		MessageEmbed)
 }
@@ -194,8 +195,8 @@ func (s *Session) handleConqueredVillagesCommand(ctx commandCtx, m *discordgo.Me
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.conqueredvillages",
-				DefaultMessage: message.FallbackMsg("help.conqueredvillages",
+				MessageID: message.HelpConqueredVillages,
+				DefaultMessage: message.FallbackMsg(message.HelpConqueredVillages,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
 				TemplateData: map[string]interface{}{
 					"Command":       ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),

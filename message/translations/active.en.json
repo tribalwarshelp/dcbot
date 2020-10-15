@@ -43,7 +43,7 @@
   "deleteGroup.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
   "deleteGroup.success": "{{.Mention}} The group has been deleted.",
 
-  "groups.noGroupsAdded": "No groups added.",
+  "groups.noGroupsAdded": "On this server hasn't been added any groups.",
   "groups.title": "Group list",
   "groups.fieldTitle": "Index | ID | Conquer | Loss | Barbarian | Internal",
 
@@ -103,7 +103,7 @@
 
   "cron.lostVillages.title": "Lost villages",
   "cron.conqueredVillages.title": "Conquered villages",
-  "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] conquered {{.Village}} (Old owner: {{.OldOwner}} [{{.OldOwnerTribe}}])",
+  "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] has conquered {{.Village}} (Old owner: {{.OldOwner}} [{{.OldOwnerTribe}}])",
 
   "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
 
