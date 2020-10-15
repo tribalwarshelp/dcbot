@@ -57,4 +57,12 @@ const (
 	ConqueredVillagesInvalidID     = "conqueredVillages.invalidID"
 	ConqueredVillagesGroupNotFound = "conqueredVillages.groupNotFound"
 	ConqueredVillagesSuccess       = "conqueredVillages.success"
+
+	DisableConqueredVillagesInvalidID     = "disableConqueredVillages.invalidID"
+	DisableConqueredVillagesGroupNotFound = "disableConqueredVillages.groupNotFound"
+	DisableConqueredVillagesSuccess       = "disableConqueredVillages.success"
+
+	LostVillagesInvalidID     = "lostVillages.invalidID"
+	LostVillagesGroupNotFound = "lostVillages.groupNotFound"
+	LostVillagesSuccess       = "lostVillages.success"
 )

@@ -277,8 +277,8 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx commandCtx, m *disco
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "disableConqueredVillages.invalidID",
-				DefaultMessage: message.FallbackMsg("disableConqueredVillages.invalidID",
+				MessageID: message.DisableConqueredVillagesInvalidID,
+				DefaultMessage: message.FallbackMsg(message.DisableConqueredVillagesInvalidID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -294,8 +294,8 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx commandCtx, m *disco
 	if err != nil || len(groups) == 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "disableConqueredVillages.groupNotFound",
-				DefaultMessage: message.FallbackMsg("disableConqueredVillages.groupNotFound",
+				MessageID: message.DisableConqueredVillagesGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.DisableConqueredVillagesGroupNotFound,
 					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -310,8 +310,8 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx commandCtx, m *disco
 	}
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "disableConqueredVillages.success",
-			DefaultMessage: message.FallbackMsg("disableConqueredVillages.success",
+			MessageID: message.DisableConqueredVillagesSuccess,
+			DefaultMessage: message.FallbackMsg(message.DisableConqueredVillagesSuccess,
 				"{{.Mention}} Notifications about conquered villages will no longer show up."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
@@ -331,8 +331,8 @@ func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.Message
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.lostvillages",
-				DefaultMessage: message.FallbackMsg("help.lostvillages",
+				MessageID: message.HelpLostVillages,
+				DefaultMessage: message.FallbackMsg(message.HelpLostVillages,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
 				TemplateData: map[string]interface{}{
 					"Command":       LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -346,8 +346,8 @@ func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.Message
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "lostVillages.invalidID",
-				DefaultMessage: message.FallbackMsg("lostVillages.invalidID",
+				MessageID: message.LostVillagesInvalidID,
+				DefaultMessage: message.FallbackMsg(message.LostVillagesInvalidID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -364,8 +364,8 @@ func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.Message
 		log.Print(groups)
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "lostVillages.groupNotFound",
-				DefaultMessage: message.FallbackMsg("lostVillages.groupNotFound",
+				MessageID: message.LostVillagesGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.LostVillagesGroupNotFound,
 					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -379,8 +379,8 @@ func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.Message
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "lostVillages.success",
-			DefaultMessage: message.FallbackMsg("lostVillages.success",
+			MessageID: message.LostVillagesSuccess,
+			DefaultMessage: message.FallbackMsg(message.LostVillagesSuccess,
 				"{{.Mention}} Channel changed successfully."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
