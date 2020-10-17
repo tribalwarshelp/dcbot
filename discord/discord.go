@@ -79,6 +79,7 @@ func (s *Session) SendEmbed(channelID string, message *discordgo.MessageEmbed) e
 	if message.Footer != nil {
 		baseNumberOfCharacters += len(message.Footer.Text)
 	}
+
 	splittedFields := [][]*discordgo.MessageEmbedField{}
 	characters := baseNumberOfCharacters
 	fromIndex := 0
@@ -199,7 +200,7 @@ func (s *Session) memberHasPermission(guildID string, userID string, permission 
 		}
 	}
 
-	// check if a user is guild owner
+	// check if user is a guild owner
 	guild, err := s.dg.State.Guild(guildID)
 	if err != nil {
 		if guild, err = s.dg.Guild(guildID); err != nil {

@@ -140,8 +140,8 @@ func (h *handler) checkEnnoblements() {
 			continue
 		}
 		localizer := message.NewLocalizer(group.Server.Lang)
-		lostVillagesMsg := &discord.EmbedMessage{}
-		conqueredVillagesMsg := &discord.EmbedMessage{}
+		lostVillagesMsg := &discord.MessageEmbed{}
+		conqueredVillagesMsg := &discord.MessageEmbed{}
 		for _, observation := range group.Observations {
 			ennoblements, ok := ennoblementsByServerKey[observation.Server]
 			langVersion := utils.FindLangVersionByTag(langVersions, utils.LanguageTagFromServerKey(observation.Server))

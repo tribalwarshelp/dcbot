@@ -26,14 +26,11 @@ func (s *Session) handleCoordsTranslationCommand(ctx commandCtx, m *discordgo.Me
 	}
 
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.coordstranslation",
-				DefaultMessage: message.FallbackMsg("help.coordstranslation",
+				MessageID: message.HelpCoordsTranslation,
+				DefaultMessage: message.FallbackMsg(message.HelpCoordsTranslation,
 					"**{{.Command}}** [server] - enables coords translation feature."),
 				TemplateData: map[string]interface{}{
 					"Command": CoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -47,8 +44,8 @@ func (s *Session) handleCoordsTranslationCommand(ctx commandCtx, m *discordgo.Me
 	if err != nil || server == nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "coordsTranslation.serverNotFound",
-				DefaultMessage: message.FallbackMsg("coordsTranslation.serverNotFound", "{{.Mention}} Server not found."),
+				MessageID:      message.CoordsTranslationServerNotFound,
+				DefaultMessage: message.FallbackMsg(message.CoordsTranslationServerNotFound, "{{.Mention}} Server not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -61,8 +58,8 @@ func (s *Session) handleCoordsTranslationCommand(ctx commandCtx, m *discordgo.Me
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "coordsTranslation.success",
-			DefaultMessage: message.FallbackMsg("coordsTranslation.success",
+			MessageID: message.CoordsTranslationSuccess,
+			DefaultMessage: message.FallbackMsg(message.CoordsTranslationSuccess,
 				"{{.Mention}} Coords translation feature has been enabled."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
@@ -80,8 +77,8 @@ func (s *Session) handleDisableCoordsTranslationCommand(ctx commandCtx, m *disco
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "disableCoordsTranslation.success",
-			DefaultMessage: message.FallbackMsg("disableCoordsTranslation.success",
+			MessageID: message.DisableCoordsTranslationSuccess,
+			DefaultMessage: message.FallbackMsg(message.DisableCoordsTranslationSuccess,
 				"{{.Mention}} Coords translation feature has been disabled."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
@@ -106,7 +103,8 @@ func (s *Session) translateCoords(ctx commandCtx, m *discordgo.MessageCreate) {
 		list, err := s.cfg.API.Villages.Browse(ctx.server.CoordsTranslation,
 			&models.VillageFilter{
 				XY: coords,
-			}, &sdk.VillageInclude{
+			},
+			&sdk.VillageInclude{
 				Player: true,
 				PlayerInclude: sdk.PlayerInclude{
 					Tribe: true,
@@ -116,7 +114,7 @@ func (s *Session) translateCoords(ctx commandCtx, m *discordgo.MessageCreate) {
 			return
 		}
 
-		msg := &EmbedMessage{}
+		msg := &MessageEmbed{}
 		for _, village := range list.Items {
 			villageURL := utils.FormatVillageURL(ctx.server.CoordsTranslation, langVersion.Host, village.ID)
 			playerName := "-"
@@ -133,8 +131,8 @@ func (s *Session) translateCoords(ctx commandCtx, m *discordgo.MessageCreate) {
 			}
 
 			msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "coordsTranslation.message",
-				DefaultMessage: message.FallbackMsg("coordsTranslation.message",
+				MessageID: message.CoordsTranslationMessage,
+				DefaultMessage: message.FallbackMsg(message.CoordsTranslationMessage,
 					"{{.Village}} owned by {{.Player}} (Tribe: {{.Tribe}})."),
 				TemplateData: map[string]interface{}{
 					"Village": FormatLink(village.FullName(), villageURL),
@@ -146,8 +144,8 @@ func (s *Session) translateCoords(ctx commandCtx, m *discordgo.MessageCreate) {
 
 		s.SendEmbed(m.ChannelID, NewEmbed().
 			SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "coordsTranslation.title",
-				DefaultMessage: message.FallbackMsg("coordsTranslation.title", "Villages"),
+				MessageID:      message.CoordsTranslationTitle,
+				DefaultMessage: message.FallbackMsg(message.CoordsTranslationTitle, "Villages"),
 			})).
 			SetFields(msg.ToMessageEmbedFields()).
 			MessageEmbed)

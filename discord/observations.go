@@ -789,7 +789,7 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 		Tag: langTags,
 	})
 
-	msg := &EmbedMessage{}
+	msg := &MessageEmbed{}
 	if len(observations) <= 0 || err != nil || langVersionList == nil || langVersionList.Items == nil {
 		msg.Append("-")
 	} else {

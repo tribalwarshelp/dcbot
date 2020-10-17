@@ -100,4 +100,11 @@ const (
 	ShowInternalsGroupNotFound  = "showInternals.groupNotFound"
 	ShowInternalsSuccess1       = "showInternals.success_1"
 	ShowInternalsSuccess2       = "showInternals.success_2"
+
+	CoordsTranslationServerNotFound = "coordsTranslation.serverNotFound"
+	CoordsTranslationSuccess        = "coordsTranslation.success"
+	CoordsTranslationMessage        = "coordsTranslation.message"
+	CoordsTranslationTitle          = "coordsTranslation.title"
+
+	DisableCoordsTranslationSuccess = "disableCoordsTranslation.success"
 )

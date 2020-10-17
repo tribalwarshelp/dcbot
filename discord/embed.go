@@ -252,17 +252,17 @@ func (e *Embed) TruncateFooter() *Embed {
 	return e
 }
 
-type EmbedMessage struct {
+type MessageEmbed struct {
 	chunks []string
 	index  int
 	mutex  sync.Mutex
 }
 
-func (msg *EmbedMessage) IsEmpty() bool {
+func (msg *MessageEmbed) IsEmpty() bool {
 	return len(msg.chunks) == 0
 }
 
-func (msg *EmbedMessage) Append(m string) {
+func (msg *MessageEmbed) Append(m string) {
 	msg.mutex.Lock()
 	defer msg.mutex.Unlock()
 	for len(msg.chunks) < msg.index+1 {
@@ -278,7 +278,7 @@ func (msg *EmbedMessage) Append(m string) {
 	msg.chunks[msg.index] += m
 }
 
-func (msg *EmbedMessage) ToMessageEmbedFields() []*discordgo.MessageEmbedField {
+func (msg *MessageEmbed) ToMessageEmbedFields() []*discordgo.MessageEmbedField {
 	msg.mutex.Lock()
 	defer msg.mutex.Unlock()
 	fields := []*discordgo.MessageEmbedField{}
