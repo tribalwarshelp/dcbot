@@ -26,8 +26,7 @@ const (
 	AuthorCommand    Command = "author"
 )
 
-func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) {
-	tribeCMDWithPrefix := TribeCommand.WithPrefix(s.cfg.CommandPrefix)
+func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	commandsForAll := fmt.Sprintf(`
 - %s
 - %s
@@ -41,7 +40,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODA,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopODACommand.String(),
+				"Command": TribeCommand + " " + TopODACommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -49,7 +48,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODD,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopODDCommand.String(),
+				"Command": TribeCommand + " " + TopODDCommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -57,7 +56,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODS,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopODSCommand.String(),
+				"Command": TribeCommand + " " + TopODSCommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -65,7 +64,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopOD,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopODCommand.String(),
+				"Command": TribeCommand + " " + TopODCommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -73,7 +72,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopPoints,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points."),
 			TemplateData: map[string]interface{}{
-				"Command": tribeCMDWithPrefix + " " + TopPointsCommand.String(),
+				"Command": TribeCommand + " " + TopPointsCommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -258,20 +257,20 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		})).
 		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.HelpForAllUsers,
-			DefaultMessage: message.FallbackMsg(message.HelpForAllUsers, "For all server members."),
+			DefaultMessage: message.FallbackMsg(message.HelpForAllUsers, "For everyone"),
 		}), commandsForAll).
 		AddField(forAdmins, commandsForGuildAdmins).
 		AddField(forAdmins+" 2", commandsForGuildAdmins2).
 		MessageEmbed)
 }
 
-func (s *Session) handleAuthorCommand(m *discordgo.MessageCreate) {
+func (s *Session) handleAuthorCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	s.SendMessage(m.ChannelID,
 		fmt.Sprintf("%s Discord: Kichiyaki#2064 | https://dawid-wysokinski.pl/#contact.",
 			m.Author.Mention()))
 }
 
-func (s *Session) handleTribeCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
+func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength < 3 {
 		return

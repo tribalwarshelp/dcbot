@@ -35,11 +35,7 @@ const (
 	ShowInternalsCommand            Command = "showinternals"
 )
 
-func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCreate) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleAddGroupCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if len(ctx.server.Groups) >= groupsPerServer {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -85,16 +81,9 @@ func (s *Session) handleAddGroupCommand(ctx commandCtx, m *discordgo.MessageCrea
 		}))
 }
 
-func (s *Session) handleDeleteGroupCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleDeleteGroupCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDeleteGroup,
@@ -138,11 +127,7 @@ func (s *Session) handleDeleteGroupCommand(ctx commandCtx, m *discordgo.MessageC
 		}))
 }
 
-func (s *Session) handleGroupsCommand(ctx commandCtx, m *discordgo.MessageCreate) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleGroupsCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
 		ServerID: []string{m.GuildID},
 		Order:    []string{"id ASC"},
@@ -183,16 +168,9 @@ func (s *Session) handleGroupsCommand(ctx commandCtx, m *discordgo.MessageCreate
 		MessageEmbed)
 }
 
-func (s *Session) handleConqueredVillagesCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpConqueredVillages,
@@ -250,16 +228,9 @@ func (s *Session) handleConqueredVillagesCommand(ctx commandCtx, m *discordgo.Me
 		}))
 }
 
-func (s *Session) handleDisableConqueredVillagesCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleDisableConqueredVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDisableConqueredVillages,
@@ -319,16 +290,9 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx commandCtx, m *disco
 		}))
 }
 
-func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleLostVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpLostVillages,
@@ -388,16 +352,9 @@ func (s *Session) handleLostVillagesCommand(ctx commandCtx, m *discordgo.Message
 		}))
 }
 
-func (s *Session) handleDisableLostVillagesCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleDisableLostVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDisableLostVillages,
@@ -458,16 +415,9 @@ func (s *Session) handleDisableLostVillagesCommand(ctx commandCtx, m *discordgo.
 		}))
 }
 
-func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 3 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[3:argsLength]...)
-		return
-	} else if argsLength < 3 {
+	if argsLength != 3 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpObserve,
@@ -601,16 +551,9 @@ func (s *Session) handleObserveCommand(ctx commandCtx, m *discordgo.MessageCreat
 	}))
 }
 
-func (s *Session) handleDeleteObservationCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleDeleteObservationCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 2 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[2:argsLength]...)
-		return
-	} else if argsLength < 2 {
+	if argsLength != 2 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDeleteObservation,
@@ -679,16 +622,9 @@ func (s *Session) handleDeleteObservationCommand(ctx commandCtx, m *discordgo.Me
 	}))
 }
 
-func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpObservations,
@@ -819,16 +755,9 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 		MessageEmbed)
 }
 
-func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleShowEnnobledBarbariansCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpShowEnnobledBarbs,
@@ -906,16 +835,9 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 	}
 }
 
-func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleChangeLanguageCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpChangageLanguage,
@@ -957,6 +879,7 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 			}))
 		return
 	}
+	ctx.localizer = message.NewLocalizer(lang)
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -969,16 +892,9 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 		}))
 }
 
-func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleShowInternalsCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
-	if argsLength > 1 {
-		s.sendUnknownCommandError(m.Author.Mention(), m.ChannelID, args[1:argsLength]...)
-		return
-	} else if argsLength < 1 {
+	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpShowInternals,

@@ -2,7 +2,7 @@
   "help.title": "Help",
   "help.description": "Commands offered by the bot.",
   "help.footer": "",
-  "help.forAllUsers": "For all members",
+  "help.forAllUsers": "For everyone",
   "help.forAdmins": "For admins",
   "help.tribe.topoda": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA.",
   "help.tribe.topodd": "**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD.",

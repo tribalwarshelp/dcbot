@@ -11,8 +11,8 @@ func (cmd Command) String() string {
 	return string(cmd)
 }
 
-func (cmd Command) WithPrefix(prefix string) string {
-	return prefix + cmd.String()
+func (cmd Command) WithPrefix(prefix string) Command {
+	return Command(prefix + cmd.String())
 }
 
 type commandCtx struct {

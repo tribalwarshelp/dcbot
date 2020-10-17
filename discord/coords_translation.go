@@ -20,11 +20,7 @@ const (
 
 var coordsRegex = regexp.MustCompile(`(\d+)\|(\d+)`)
 
-func (s *Session) handleCoordsTranslationCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleCoordsTranslationCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
 		s.SendMessage(m.ChannelID,
@@ -67,11 +63,7 @@ func (s *Session) handleCoordsTranslationCommand(ctx commandCtx, m *discordgo.Me
 		}))
 }
 
-func (s *Session) handleDisableCoordsTranslationCommand(ctx commandCtx, m *discordgo.MessageCreate, args ...string) {
-	if has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator); err != nil || !has {
-		return
-	}
-
+func (s *Session) handleDisableCoordsTranslationCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	ctx.server.CoordsTranslation = ""
 	go s.cfg.ServerRepository.Update(context.Background(), ctx.server)
 
@@ -86,7 +78,7 @@ func (s *Session) handleDisableCoordsTranslationCommand(ctx commandCtx, m *disco
 		}))
 }
 
-func (s *Session) translateCoords(ctx commandCtx, m *discordgo.MessageCreate) {
+func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 	if ctx.server.CoordsTranslation == "" {
 		return
 	}
