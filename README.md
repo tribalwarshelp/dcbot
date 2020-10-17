@@ -29,6 +29,7 @@ DB_HOST=your_pgdb_host
 DB_PASSWORD=your_pgdb_password
 API_URL=your_api_url
 BOT_TOKEN=your_bot_token
+LOG_DB_QUERIES=true|false
 ```
 
 ### Prerequisites

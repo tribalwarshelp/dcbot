@@ -12,7 +12,7 @@ RUN go mod download
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
-RUN go build -o main .
+RUN go build -o dcbot .
 
 ######## Start a new stage from scratch #######
 FROM alpine:latest  
@@ -23,7 +23,7 @@ WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/message/translations ./message/translations
-COPY --from=builder /app/main .
+COPY --from=builder /app/dcbot .
 
 ENV MODE=production
 ENV GIN_MODE=release
@@ -32,4 +32,4 @@ EXPOSE 8080
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait ./wait
 RUN chmod +x ./wait
 
-CMD ./wait && ./main
+CMD ./wait && ./dcbot
