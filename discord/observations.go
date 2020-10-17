@@ -693,7 +693,7 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpObservations,
 				DefaultMessage: message.FallbackMsg(message.HelpObservations,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of monitored tribes added to this group."),
 				TemplateData: map[string]interface{}{
 					"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -706,8 +706,8 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "observations.invalidGroupID",
-				DefaultMessage: message.FallbackMsg("observations.invalidGroupID",
+				MessageID: message.ObservationsInvalidGroupID,
+				DefaultMessage: message.FallbackMsg(message.ObservationsInvalidGroupID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -719,8 +719,8 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "observations.groupNotFound",
-				DefaultMessage: message.FallbackMsg("observations.groupNotFound", "{{.Mention}} Group not found."),
+				MessageID:      message.ObservationsGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.ObservationsGroupNotFound, "{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -811,9 +811,9 @@ func (s *Session) handleObservationsCommand(ctx commandCtx, m *discordgo.Message
 	}
 	s.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "observations.title",
-			DefaultMessage: message.FallbackMsg("observations.title",
-				"Observed tribes\nIndex | ID - Server - Tribe"),
+			MessageID: message.ObservationsTitle,
+			DefaultMessage: message.FallbackMsg(message.ObservationsTitle,
+				"monitored tribes\nIndex | ID - Server - Tribe"),
 		})).
 		SetFields(msg.ToMessageEmbedFields()).
 		MessageEmbed)
@@ -831,8 +831,8 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.showennobledbarbs",
-				DefaultMessage: message.FallbackMsg("help.showennobledbarbs",
+				MessageID: message.HelpShowEnnobledBarbs,
+				DefaultMessage: message.FallbackMsg(message.HelpShowEnnobledBarbs,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages."),
 				TemplateData: map[string]interface{}{
 					"Command":       ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -846,8 +846,8 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 	if err != nil || groupID <= 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showEnnobledBarbs.invalidGroupID",
-				DefaultMessage: message.FallbackMsg("showEnnobledBarbs.invalidGroupID",
+				MessageID: message.ShowEnnobledBarbsInvalidGroupID,
+				DefaultMessage: message.FallbackMsg(message.ShowEnnobledBarbsInvalidGroupID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -859,8 +859,8 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "showEnnobledBarbs.groupNotFound",
-				DefaultMessage: message.FallbackMsg("showEnnobledBarbs.groupNotFound", "{{.Mention}} Group not found."),
+				MessageID:      message.ShowEnnobledBarbsGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.ShowEnnobledBarbsGroupNotFound, "{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -886,8 +886,8 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 	if oldValue {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showEnnobledBarbs.success_1",
-				DefaultMessage: message.FallbackMsg("showEnnobledBarbs.success_1",
+				MessageID: message.ShowEnnobledBarbsSuccess1,
+				DefaultMessage: message.FallbackMsg(message.ShowEnnobledBarbsSuccess1,
 					"{{.Mention}} Notifications about conquered barbarian villages will no longer show up."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -896,8 +896,8 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx commandCtx, m *discord
 	} else {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showEnnobledBarbs.success_2",
-				DefaultMessage: message.FallbackMsg("showEnnobledBarbs.success_2",
+				MessageID: message.ShowEnnobledBarbsSuccess2,
+				DefaultMessage: message.FallbackMsg(message.ShowEnnobledBarbsSuccess2,
 					"{{.Mention}} Enabled notifications about conquered barbarian villages."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -918,8 +918,8 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.changelanguage",
-				DefaultMessage: message.FallbackMsg("help.changelanguage",
+				MessageID: message.HelpChangageLanguage,
+				DefaultMessage: message.FallbackMsg(message.HelpChangageLanguage,
 					"**{{.Command}}** [{{.Languages}}] - changes language."),
 				TemplateData: map[string]interface{}{
 					"Command":   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -930,18 +930,12 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 	}
 
 	lang := args[0]
-	valid := false
-	for _, langTag := range message.LanguageTags() {
-		if langTag.String() == lang {
-			valid = true
-			break
-		}
-	}
+	valid := isValidLanguageTag(lang)
 	if !valid {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "changeLanguage.languageNotSupported",
-				DefaultMessage: message.FallbackMsg("changeLanguage.languageNotSupported",
+				MessageID: message.ChangeLanguageLanguageNotSupported,
+				DefaultMessage: message.FallbackMsg(message.ChangeLanguageLanguageNotSupported,
 					"{{.Mention}} Language not supported."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -966,8 +960,8 @@ func (s *Session) handleChangeLanguageCommand(ctx commandCtx, m *discordgo.Messa
 
 	s.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "changeLanguage.success",
-			DefaultMessage: message.FallbackMsg("changeLanguage.success",
+			MessageID: message.ChangeLanguageSuccess,
+			DefaultMessage: message.FallbackMsg(message.ChangeLanguageSuccess,
 				"{{.Mention}} The language has been changed."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
@@ -987,8 +981,8 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	} else if argsLength < 1 {
 		s.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "help.showinternals",
-				DefaultMessage: message.FallbackMsg("help.showinternals",
+				MessageID: message.HelpShowInternals,
+				DefaultMessage: message.FallbackMsg(message.HelpShowInternals,
 					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering."),
 				TemplateData: map[string]interface{}{
 					"Command":       ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -1002,8 +996,8 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	if err != nil || groupID <= 0 {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showInternals.invalidGroupID",
-				DefaultMessage: message.FallbackMsg("showInternals.invalidGroupID",
+				MessageID: message.ShowInternalsInvalidGroupID,
+				DefaultMessage: message.FallbackMsg(message.ShowInternalsInvalidGroupID,
 					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -1015,8 +1009,8 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	if err != nil || group.ServerID != m.GuildID {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      "showInternals.groupNotFound",
-				DefaultMessage: message.FallbackMsg("showInternals.groupNotFound", "{{.Mention}} Group not found."),
+				MessageID:      message.ShowInternalsGroupNotFound,
+				DefaultMessage: message.FallbackMsg(message.ShowInternalsGroupNotFound, "{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -1042,8 +1036,8 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	if oldValue {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showInternals.success_1",
-				DefaultMessage: message.FallbackMsg("showInternals.success_1",
+				MessageID: message.ShowInternalsSuccess1,
+				DefaultMessage: message.FallbackMsg(message.ShowInternalsSuccess1,
 					"{{.Mention}} Notifications about internals will no longer show up."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
@@ -1052,8 +1046,8 @@ func (s *Session) handleShowInternalsCommand(ctx commandCtx, m *discordgo.Messag
 	} else {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "showInternals.success_2",
-				DefaultMessage: message.FallbackMsg("showInternals.success_2",
+				MessageID: message.ShowInternalsSuccess2,
+				DefaultMessage: message.FallbackMsg(message.ShowInternalsSuccess2,
 					"{{.Mention}} Enabled notifications about internals."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),

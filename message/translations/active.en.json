@@ -15,7 +15,7 @@
   "help.deletegroup": "**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group.",
   "help.showennobledbarbs": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages.",
   "help.observe": "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - adds a tribe to the observation group.",
-  "help.observations": "**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group.",
+  "help.observations": "**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of monitored tribes added to this group.",
   "help.deleteobservation": "**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group.",
   "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
   "help.disableconqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disables notifications about conquered villages.",
@@ -79,7 +79,7 @@
 
   "observations.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
   "observations.groupNotFound": "{{.Mention}} Group not found.",
-  "observations.title": "Observed tribes\nIndex | ID - Server - Tribe",
+  "observations.title": "monitored tribes\nIndex | ID - Server - Tribe",
 
   "showEnnobledBarbs.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
   "showEnnobledBarbs.groupNotFound": "{{.Mention}} Group not found.",

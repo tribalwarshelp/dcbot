@@ -83,4 +83,21 @@ const (
 	DeleteObservationInvalidTribeID = "deleteObservation.invalidTribeID"
 	DeleteObservationGroupNotFound  = "deleteObservation.groupNotFound"
 	DeleteObservationSuccess        = "deleteObservation.success"
+
+	ObservationsInvalidGroupID = "observations.invalidGroupID"
+	ObservationsGroupNotFound  = "observations.groupNotFound"
+	ObservationsTitle          = "observations.title"
+
+	ShowEnnobledBarbsInvalidGroupID = "showEnnobledBarbs.invalidGroupID"
+	ShowEnnobledBarbsGroupNotFound  = "showEnnobledBarbs.groupNotFound"
+	ShowEnnobledBarbsSuccess1       = "showEnnobledBarbs.success_1"
+	ShowEnnobledBarbsSuccess2       = "showEnnobledBarbs.success_2"
+
+	ChangeLanguageLanguageNotSupported = "changeLanguage.languageNotSupported"
+	ChangeLanguageSuccess              = "changeLanguage.success"
+
+	ShowInternalsInvalidGroupID = "showInternals.invalidGroupID"
+	ShowInternalsGroupNotFound  = "showInternals.groupNotFound"
+	ShowInternalsSuccess1       = "showInternals.success_1"
+	ShowInternalsSuccess2       = "showInternals.success_2"
 )

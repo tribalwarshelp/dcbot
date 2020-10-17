@@ -79,7 +79,7 @@
 
   "observations.invalidGroupID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
   "observations.groupNotFound": "{{.Mention}} Groep niet gevonden.",
-  "observations.title": "Observed tribes\nIndex | ID - Server - Stam",
+  "observations.title": "Monitored tribes\nIndex | ID - Server - Stam",
 
   "showEnnobledBarbs.invalidGroupID": "{{.Mention}} de groepID moet een  hoger dan 0 zijn.",
   "showEnnobledBarbs.groupNotFound": "{{.Mention}} Groep niet gevonden.",

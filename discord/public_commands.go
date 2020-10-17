@@ -143,7 +143,7 @@ func (s *Session) handleHelpCommand(ctx commandCtx, m *discordgo.MessageCreate) 
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpGroups,
 			DefaultMessage: message.FallbackMsg(message.HelpGroups,
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of observed tribes by this group."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of monitored tribes added to this group."),
 			TemplateData: map[string]interface{}{
 				"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
