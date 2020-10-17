@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 
 	"github.com/tribalwarshelp/dcbot/message"
@@ -20,14 +21,16 @@ import (
 	"github.com/tribalwarshelp/shared/mode"
 
 	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pgext"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
 )
 
 const (
-	status        = "Tribal Wars | tw!help"
 	commandPrefix = "tw!"
 )
+
+var status = "Tribal Wars | " + discord.HelpCommand.WithPrefix(commandPrefix).String()
 
 func init() {
 	os.Setenv("TZ", "UTC")
@@ -57,6 +60,11 @@ func main() {
 			log.Fatal(err)
 		}
 	}()
+	if strings.ToUpper(os.Getenv("LOG_DB_QUERIES")) == "TRUE" {
+		db.AddQueryHook(pgext.DebugHook{
+			Verbose: true,
+		})
+	}
 
 	serverRepo, err := server_repository.NewPgRepo(db)
 	if err != nil {

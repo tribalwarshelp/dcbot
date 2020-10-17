@@ -1,19 +1,34 @@
 package models
 
+import (
+	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pg/v10/orm"
+)
+
 type Server struct {
 	tableName struct{} `pg:",alias:server"`
 
-	ID                string `pg:",pk" json:"id" gqlgen:"id"`
-	Lang              string `pg:",use_zero"`
-	CoordsTranslation string `pg:",use_zero"`
-	Groups            []*Group
+	ID                string   `pg:",pk" json:"id" gqlgen:"id"`
+	Lang              string   `pg:",use_zero"`
+	CoordsTranslation string   `pg:",use_zero"`
+	Groups            []*Group `pg:"rel:has-many"`
 }
 
 type ServerFilter struct {
-	tableName struct{} `urlstruct:"server"`
+	ID []string
+	DefaultFilter
+}
 
-	ID     []string
-	Limit  int      `urlstruct:",nowhere"`
-	Offset int      `urlstruct:",nowhere"`
-	Order  []string `urlstruct:",nowhere"`
+func (f *ServerFilter) ApplyWithPrefix(prefix string) func(q *orm.Query) (*orm.Query, error) {
+	return func(q *orm.Query) (*orm.Query, error) {
+		if len(f.ID) > 0 {
+			field := addPrefixToFieldName("id", prefix)
+			q = q.Where(field+" = ANY(?)", pg.Array(f.ID))
+		}
+		return f.DefaultFilter.Apply(q)
+	}
+}
+
+func (f *ServerFilter) Apply(q *orm.Query) (*orm.Query, error) {
+	return f.ApplyWithPrefix("server")(q)
 }

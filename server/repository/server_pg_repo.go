@@ -16,7 +16,7 @@ type pgRepo struct {
 }
 
 func NewPgRepo(db *pg.DB) (server.Repository, error) {
-	if err := db.CreateTable((*models.Server)(nil), &orm.CreateTableOptions{
+	if err := db.Model((*models.Server)(nil)).CreateTable(&orm.CreateTableOptions{
 		IfNotExists: true,
 	}); err != nil {
 		return nil, errors.Wrap(err, "Cannot create 'servers' table")
@@ -56,13 +56,9 @@ func (repo *pgRepo) Fetch(ctx context.Context, f *models.ServerFilter) ([]*model
 
 	if f != nil {
 		query = query.
-			WhereStruct(f).
+			Apply(f.Apply).
 			Limit(f.Limit).
 			Offset(f.Offset)
-
-		if len(f.Order) > 0 {
-			query = query.Order(f.Order...)
-		}
 	}
 
 	total, err := query.SelectAndCount()
@@ -78,7 +74,7 @@ func (repo *pgRepo) Delete(ctx context.Context, f *models.ServerFilter) ([]*mode
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {
-		query = query.WhereStruct(f)
+		query = query.Apply(f.Apply)
 	}
 
 	_, err := query.

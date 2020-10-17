@@ -3,6 +3,7 @@ package discord
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/tribalwarshelp/dcbot/message"
@@ -267,6 +268,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 				return
 			}
 		}
+		log.Print(h.cmd)
 		h.fn(ctx, m, args...)
 		return
 	}

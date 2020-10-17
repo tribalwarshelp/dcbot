@@ -130,9 +130,12 @@ func (s *Session) handleDeleteGroupCommand(ctx *commandCtx, m *discordgo.Message
 func (s *Session) handleGroupsCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
 		ServerID: []string{m.GuildID},
-		Order:    []string{"id ASC"},
+		DefaultFilter: models.DefaultFilter{
+			Order: []string{"id ASC"},
+		},
 	})
 	if err != nil {
+		log.Print(err)
 		return
 	}
 
@@ -665,7 +668,9 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 	}
 	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &models.ObservationFilter{
 		GroupID: []int{groupID},
-		Order:   []string{"id ASC"},
+		DefaultFilter: models.DefaultFilter{
+			Order: []string{"id ASC"},
+		},
 	})
 	if err != nil {
 		s.SendMessage(m.ChannelID,

@@ -187,8 +187,8 @@ func (h *handler) checkEnnoblements() {
 
 		if group.ConqueredVillagesChannelID != "" && !conqueredVillagesMsg.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "cron.conqueredVillages.title",
-				DefaultMessage: message.FallbackMsg("cron.conqueredVillages.title",
+				MessageID: message.CronConqueredVillagesTitle,
+				DefaultMessage: message.FallbackMsg(message.CronConqueredVillagesTitle,
 					"Conquered villages"),
 			})
 			go h.discord.SendEmbed(group.ConqueredVillagesChannelID,
@@ -203,8 +203,8 @@ func (h *handler) checkEnnoblements() {
 
 		if group.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "cron.lostVillages.title",
-				DefaultMessage: message.FallbackMsg("cron.lostVillages.title",
+				MessageID: message.CronLostVillagesTitle,
+				DefaultMessage: message.FallbackMsg(message.CronLostVillagesTitle,
 					"Lost villages"),
 			})
 			go h.discord.SendEmbed(group.LostVillagesChannelID,

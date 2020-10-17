@@ -107,4 +107,8 @@ const (
 	CoordsTranslationTitle          = "coordsTranslation.title"
 
 	DisableCoordsTranslationSuccess = "disableCoordsTranslation.success"
+
+	CronConqueredVillagesTitle   = "cron.conqueredVillages.title"
+	CronLostVillagesTitle        = "cron.lostVillages.title"
+	CronCheckEnnoblementsMsgLine = "cron.checkEnnoblements.msgLine"
 )
