@@ -3,6 +3,7 @@ package cron
 import (
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 	"github.com/tribalwarshelp/shared/mode"
 
@@ -14,6 +15,8 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+var log = logrus.WithField("package", "cron")
+
 type Config struct {
 	ServerRepo      server.Repository
 	ObservationRepo observation.Repository
@@ -24,7 +27,7 @@ type Config struct {
 }
 
 func Attach(c *cron.Cron, cfg Config) {
-	h := &handler{
+	w := &worker{
 		lastEnnoblementAt: make(map[string]time.Time),
 		serverRepo:        cfg.ServerRepo,
 		observationRepo:   cfg.ObservationRepo,
@@ -33,16 +36,16 @@ func Attach(c *cron.Cron, cfg Config) {
 		api:               cfg.API,
 		status:            cfg.Status,
 	}
-	c.AddFunc("@every 1m", h.checkEnnoblements)
-	c.AddFunc("@every 30m", h.checkBotServers)
-	c.AddFunc("@every 2h10m", h.deleteClosedTribalWarsServers)
-	c.AddFunc("@every 2h", h.updateBotStatus)
+	c.AddFunc("@every 1m", w.checkEnnoblements)
+	c.AddFunc("@every 30m", w.checkBotServers)
+	c.AddFunc("@every 2h10m", w.deleteClosedTribalWarsServers)
+	c.AddFunc("@every 2h", w.updateBotStatus)
 	go func() {
-		h.checkBotServers()
-		h.deleteClosedTribalWarsServers()
-		h.updateBotStatus()
+		w.checkBotServers()
+		w.deleteClosedTribalWarsServers()
+		w.updateBotStatus()
 		if mode.Get() == mode.DevelopmentMode {
-			h.checkEnnoblements()
+			w.checkEnnoblements()
 		}
 	}()
 }

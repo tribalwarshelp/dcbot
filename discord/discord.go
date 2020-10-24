@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/tribalwarshelp/dcbot/message"
 
 	"github.com/tribalwarshelp/dcbot/group"
@@ -15,6 +16,8 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 )
+
+var log = logrus.WithField("package", "discord")
 
 type handler struct {
 	cmd                   Command
@@ -240,8 +243,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	}
 
 	splitted := strings.Split(m.Content, " ")
-	argsLength := len(splitted) - 1
-	args := splitted[1 : argsLength+1]
+	args := splitted[1:]
 	server := &models.Server{
 		ID:   m.GuildID,
 		Lang: message.GetDefaultLanguage().String(),
@@ -256,7 +258,8 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		localizer: message.NewLocalizer(server.Lang),
 	}
 
-	h := s.handlers.find(Command(splitted[0]))
+	cmd := Command(splitted[0])
+	h := s.handlers.find(cmd)
 	if h != nil {
 		if h.requireAdmPermissions {
 			if m.GuildID == "" {
@@ -267,6 +270,16 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 				return
 			}
 		}
+		log.
+			WithFields(logrus.Fields{
+				"serverID":       server.ID,
+				"lang":           server.Lang,
+				"command":        cmd,
+				"args":           args,
+				"authorID":       m.Author.ID,
+				"authorUsername": m.Author.Username,
+			}).
+			Info("handleNewMessage: Executing command")
 		h.fn(ctx, m, args...)
 		return
 	}

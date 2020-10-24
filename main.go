@@ -8,6 +8,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/sirupsen/logrus"
 	"github.com/tribalwarshelp/dcbot/message"
 
 	"github.com/tribalwarshelp/golang-sdk/sdk"
@@ -38,26 +39,41 @@ func init() {
 	if mode.Get() == mode.DevelopmentMode {
 		godotenv.Load(".env.development")
 	}
+
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	customFormatter.FullTimestamp = true
+	logrus.SetFormatter(customFormatter)
 }
 
 func main() {
 	dir, err := os.Getwd()
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
-	if err := message.LoadMessageFiles(path.Join(dir, "message", "translations")); err != nil {
-		log.Fatal(err)
+	dirWithMessages := path.Join(dir, "message", "translations")
+	if err := message.LoadMessageFiles(dirWithMessages); err != nil {
+		logrus.Fatal(err)
 	}
+	logrus.WithField("dir", dirWithMessages).
+		WithField("languages", message.LanguageTags()).
+		Info("Loaded messages")
 
-	db := pg.Connect(&pg.Options{
+	dbOptions := &pg.Options{
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
 		Database: os.Getenv("DB_NAME"),
 		Addr:     os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT"),
-	})
+	}
+	dbFields := logrus.Fields{
+		"user":     dbOptions.User,
+		"database": dbOptions.Database,
+		"addr":     dbOptions.Addr,
+	}
+	db := pg.Connect(dbOptions)
 	defer func() {
 		if err := db.Close(); err != nil {
-			log.Fatal(err)
+			logrus.WithFields(dbFields).Fatalln(err)
 		}
 	}()
 	if strings.ToUpper(os.Getenv("LOG_DB_QUERIES")) == "TRUE" {
@@ -65,19 +81,21 @@ func main() {
 			Verbose: true,
 		})
 	}
+	logrus.WithFields(dbFields).Info("Connected to the database")
 
 	serverRepo, err := server_repository.NewPgRepo(db)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 	groupRepo, err := group_repository.NewPgRepo(db)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 	observationRepo, err := observation_repository.NewPgRepo(db)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
+	logrus.Info("Loaded all repositories")
 
 	api := sdk.New(os.Getenv("API_URL"))
 
@@ -91,9 +109,14 @@ func main() {
 		API:                   api,
 	})
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 	defer sess.Close()
+	logrus.WithFields(logrus.Fields{
+		"api":           os.Getenv("API_URL"),
+		"commandPrefix": commandPrefix,
+		"status":        status,
+	}).Info("Initialized new Discord session")
 
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cron.VerbosePrintfLogger(log.New(os.Stdout, "cron: ", log.LstdFlags))),
@@ -108,12 +131,13 @@ func main() {
 	})
 	c.Start()
 	defer c.Stop()
+	logrus.Info("Started cron worker")
 
-	log.Print("Bot is waiting for your actions!")
+	logrus.Info("Bot is waiting for your actions!")
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT)
 	<-channel
 
-	log.Print("shutting down")
+	logrus.Info("shutting down")
 }

@@ -3,7 +3,6 @@ package cron
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -22,7 +21,7 @@ import (
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 )
 
-type handler struct {
+type worker struct {
 	lastEnnoblementAt map[string]time.Time
 	serverRepo        server.Repository
 	observationRepo   observation.Repository
@@ -32,7 +31,7 @@ type handler struct {
 	status            string
 }
 
-func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, error) {
+func (w *worker) loadEnnoblements(servers []string) (map[string]ennoblements, error) {
 	m := make(map[string]ennoblements)
 
 	if len(servers) == 0 {
@@ -62,12 +61,12 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 
 	resp := make(map[string]ennoblements)
 
-	if err := h.api.Post(fmt.Sprintf(`query { %s }`, query), &resp); err != nil {
+	if err := w.api.Post(fmt.Sprintf(`query { %s }`, query), &resp); err != nil {
 		return m, errors.Wrap(err, "loadEnnoblements")
 	}
 
 	for server, ennoblements := range resp {
-		lastEnnoblementAt, ok := h.lastEnnoblementAt[server]
+		lastEnnoblementAt, ok := w.lastEnnoblementAt[server]
 		if !ok {
 			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
 		}
@@ -81,13 +80,13 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 		if lastEnnoblement != nil {
 			lastEnnoblementAt = lastEnnoblement.EnnobledAt
 		}
-		h.lastEnnoblementAt[server] = lastEnnoblementAt
+		w.lastEnnoblementAt[server] = lastEnnoblementAt
 	}
 
 	return m, nil
 }
 
-func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersion, error) {
+func (w *worker) loadLangVersions(servers []string) ([]*shared_models.LangVersion, error) {
 	languageTags := []shared_models.LanguageTag{}
 	cache := make(map[shared_models.LanguageTag]bool)
 	for _, server := range servers {
@@ -98,7 +97,7 @@ func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersi
 		}
 	}
 
-	langVersionList, err := h.api.LangVersions.Browse(&shared_models.LangVersionFilter{
+	langVersionList, err := w.api.LangVersions.Browse(&shared_models.LangVersionFilter{
 		Tag: languageTags,
 	})
 	if err != nil {
@@ -108,32 +107,43 @@ func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersi
 	return langVersionList.Items, nil
 }
 
-func (h *handler) checkEnnoblements() {
+func (w *worker) checkEnnoblements() {
 	start := time.Now()
+	log.
+		Infoln("checkEnnoblements: called")
 
-	servers, err := h.observationRepo.FetchServers(context.Background())
+	servers, err := w.observationRepo.FetchServers(context.Background())
 	if err != nil {
-		log.Print("checkEnnoblements error: " + err.Error())
+		log.Errorln("checkEnnoblements:", err.Error())
 		return
 	}
-	log.Print("checkEnnoblements: servers: ", servers)
+	log.
+		WithField("servers", servers).
+		Info("checkEnnoblements: Loaded servers")
 
-	groups, total, err := h.groupRepo.Fetch(context.Background(), nil)
+	groups, total, err := w.groupRepo.Fetch(context.Background(), nil)
 	if err != nil {
-		log.Print("checkEnnoblements error: " + err.Error())
+		log.Errorln("checkEnnoblements:", err.Error())
 		return
 	}
-	log.Print("checkEnnoblements: number of loaded groups: ", total)
+	log.
+		WithField("numberOfGroups", total).
+		Info("checkEnnoblements: Loaded groups")
 
-	langVersions, err := h.loadLangVersions(servers)
+	langVersions, err := w.loadLangVersions(servers)
 	if err != nil {
-		log.Print(err)
+		log.Errorln("checkEnnoblements:", err)
 		return
 	}
-	ennoblementsByServerKey, err := h.loadEnnoblements(servers)
+	log.
+		WithField("numberOfLangVersions", len(langVersions)).
+		Info("checkEnnoblements: Loaded lang versions")
+
+	ennoblementsByServerKey, err := w.loadEnnoblements(servers)
 	if err != nil {
-		log.Print(err)
+		log.Errorln("checkEnnoblements:", err)
 	}
+	log.Info("checkEnnoblements: Loaded ennoblements")
 
 	for _, group := range groups {
 		if group.ConqueredVillagesChannelID == "" && group.LostVillagesChannelID == "" {
@@ -191,7 +201,7 @@ func (h *handler) checkEnnoblements() {
 				DefaultMessage: message.FallbackMsg(message.CronConqueredVillagesTitle,
 					"Conquered villages"),
 			})
-			go h.discord.SendEmbed(group.ConqueredVillagesChannelID,
+			go w.discord.SendEmbed(group.ConqueredVillagesChannelID,
 				discord.
 					NewEmbed().
 					SetTitle(title).
@@ -207,7 +217,7 @@ func (h *handler) checkEnnoblements() {
 				DefaultMessage: message.FallbackMsg(message.CronLostVillagesTitle,
 					"Lost villages"),
 			})
-			go h.discord.SendEmbed(group.LostVillagesChannelID,
+			go w.discord.SendEmbed(group.LostVillagesChannelID,
 				discord.
 					NewEmbed().
 					SetTitle(title).
@@ -218,50 +228,69 @@ func (h *handler) checkEnnoblements() {
 		}
 	}
 
-	log.Printf("checkEnnoblements: finished in %s", time.Since(start).String())
+	log.
+		WithField("executionTime", time.Since(start).String()).
+		Infoln("checkEnnoblements: finished executing")
 }
 
-func (h *handler) checkBotServers() {
-	servers, total, err := h.serverRepo.Fetch(context.Background(), nil)
+func (w *worker) checkBotServers() {
+	start := time.Now()
+	log.Info("checkBotServers: called")
+
+	servers, total, err := w.serverRepo.Fetch(context.Background(), nil)
 	if err != nil {
-		log.Print("checkBotServers error: " + err.Error())
+		log.Error("checkBotServers: " + err.Error())
 		return
 	}
-	log.Print("checkBotServers: total number of loaded discord servers: ", total)
+	log.
+		WithField("executionTime", time.Since(start)).
+		WithField("numberOfServers", total).
+		Info("checkBotServers: loaded servers")
 
 	idsToDelete := []string{}
 	for _, server := range servers {
-		if isGuildMember, _ := h.discord.IsGuildMember(server.ID); !isGuildMember {
+		if isGuildMember, _ := w.discord.IsGuildMember(server.ID); !isGuildMember {
 			idsToDelete = append(idsToDelete, server.ID)
 		}
 	}
 
 	if len(idsToDelete) > 0 {
-		deleted, err := h.serverRepo.Delete(context.Background(), &models.ServerFilter{
+		deleted, err := w.serverRepo.Delete(context.Background(), &models.ServerFilter{
 			ID: idsToDelete,
 		})
 		if err != nil {
-			log.Print("checkBotServers error: " + err.Error())
+			log.Error("checkBotServers: " + err.Error())
 		} else {
-			log.Printf("checkBotServers: total number of deleted discord servers: %d", len(deleted))
+			log.
+				WithField("numberOfDeletedServers", len(deleted)).
+				Info("checkBotServers: deleted servers")
 		}
 	}
+
+	log.
+		WithField("executionTime", time.Since(start).String()).
+		Infoln("checkBotServers: finished executing")
 }
 
-func (h *handler) deleteClosedTribalWarsServers() {
-	servers, err := h.observationRepo.FetchServers(context.Background())
+func (w *worker) deleteClosedTribalWarsServers() {
+	start := time.Now()
+	log.Info("deleteClosedTribalWarsServers: called")
+
+	servers, err := w.observationRepo.FetchServers(context.Background())
 	if err != nil {
-		log.Print("deleteClosedTribalWarsServers: " + err.Error())
+		log.Error("deleteClosedTribalWarsServers: " + err.Error())
 		return
 	}
-	log.Print("deleteClosedTribalWarsServers: servers: ", servers)
+	log.
+		WithField("servers", servers).
+		Info("deleteClosedTribalWarsServers: loaded servers")
 
-	list, err := h.api.Servers.Browse(&shared_models.ServerFilter{
+	list, err := w.api.Servers.Browse(&shared_models.ServerFilter{
 		Key:    servers,
 		Status: []shared_models.ServerStatus{shared_models.ServerStatusClosed},
 	}, nil)
 	if err != nil {
-		log.Print("deleteClosedTribalWarsServers: " + err.Error())
+		log.Errorln("deleteClosedTribalWarsServers: " + err.Error())
 		return
 	}
 	if list == nil || list.Items == nil {
@@ -274,19 +303,32 @@ func (h *handler) deleteClosedTribalWarsServers() {
 	}
 
 	if len(keys) > 0 {
-		deleted, err := h.observationRepo.Delete(context.Background(), &models.ObservationFilter{
+		deleted, err := w.observationRepo.Delete(context.Background(), &models.ObservationFilter{
 			Server: keys,
 		})
 		if err != nil {
-			log.Print("deleteClosedTribalWarsServers error: " + err.Error())
+			log.Errorln("deleteClosedTribalWarsServers: " + err.Error())
 		} else {
-			log.Printf("deleteClosedTribalWarsServers: total number of deleted observations: %d", len(deleted))
+			log.
+				WithField("numberOfDeletedObservations", len(deleted)).
+				Infof("deleteClosedTribalWarsServers: deleted observations")
 		}
 	}
+
+	log.
+		WithField("executionTime", time.Since(start).String()).
+		Infoln("deleteClosedTribalWarsServers: finished executing")
 }
 
-func (h *handler) updateBotStatus() {
-	if err := h.discord.UpdateStatus(h.status); err != nil {
-		log.Print("updateBotStatus: " + err.Error())
+func (w *worker) updateBotStatus() {
+	start := time.Now()
+	log.Info("updateBotStatus: updating bot status...")
+
+	if err := w.discord.UpdateStatus(w.status); err != nil {
+		log.Error("updateBotStatus: " + err.Error())
 	}
+
+	log.
+		WithField("executionTime", time.Since(start).String()).
+		Infoln("updateBotStatus: bot status has been updated")
 }
