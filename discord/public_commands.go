@@ -13,6 +13,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/tribalwarshelp/dcbot/utils"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
+	sharedutils "github.com/tribalwarshelp/shared/utils"
 )
 
 const (
@@ -397,7 +398,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		return
 	}
 
-	langTag := utils.LanguageTagFromServerKey(world)
+	langTag := sharedutils.LanguageTagFromServerKey(world)
 	langVersion, err := s.cfg.API.LangVersions.Read(langTag)
 	if err != nil || langVersion == nil {
 		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{

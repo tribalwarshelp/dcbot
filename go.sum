@@ -129,8 +129,8 @@ github.com/tribalwarshelp/golang-sdk v0.0.0-20200903125555-7b6975e64f6f h1:TZfJ3
 github.com/tribalwarshelp/golang-sdk v0.0.0-20200903125555-7b6975e64f6f/go.mod h1:o1ViLff0Fwg4LH86VDaBtUQqIIMIqp+leUBx+fZLz/U=
 github.com/tribalwarshelp/shared v0.0.0-20200809125423-2bc2e8dfde95 h1:mO3ZR+o5UlYN8uGX4L32H5HNpB0uHpLdZ3YiDA6ciW4=
 github.com/tribalwarshelp/shared v0.0.0-20200809125423-2bc2e8dfde95/go.mod h1:SSWchTkQdgeIDr0C68C7zopEIcBLCUa8Ic2CHenUaac=
-github.com/tribalwarshelp/shared v0.0.0-20200824102353-ef15dea9c1a3 h1:KNH15DdQLxZAahSfX+4U4KUhsqRWj7uxjuOkxxhrQZk=
-github.com/tribalwarshelp/shared v0.0.0-20200824102353-ef15dea9c1a3/go.mod h1:SSWchTkQdgeIDr0C68C7zopEIcBLCUa8Ic2CHenUaac=
+github.com/tribalwarshelp/shared v0.0.0-20201024182030-eeb4645da4ca h1:YUm2O7+N75k3Oyu7GKqyxW6G1TmThh2N0LdbkZN67ZU=
+github.com/tribalwarshelp/shared v0.0.0-20201024182030-eeb4645da4ca/go.mod h1:EsUl4FRcNDPvJg7ig3t0pEHOPxZnw5SXKYbxaI0IQJU=
 github.com/vmihailenco/bufpool v0.1.11 h1:gOq2WmBrq0i2yW5QJ16ykccQ4wH9UyEsgLm6czKAd94=
 github.com/vmihailenco/bufpool v0.1.11/go.mod h1:AFf/MOy3l2CFTKbxwt0mp2MwnqjNEs5H/UxrkA5jxTQ=
 github.com/vmihailenco/msgpack/v4 v4.3.11 h1:Q47CePddpNGNhk4GCnAx9DDtASi2rasatE0cd26cZoE=

@@ -3,6 +3,8 @@ package cron
 import (
 	"time"
 
+	sharedutils "github.com/tribalwarshelp/shared/utils"
+
 	"github.com/sirupsen/logrus"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 	"github.com/tribalwarshelp/shared/mode"
@@ -27,7 +29,7 @@ type Config struct {
 }
 
 func Attach(c *cron.Cron, cfg Config) {
-	w := &worker{
+	h := &handler{
 		lastEnnoblementAt: make(map[string]time.Time),
 		serverRepo:        cfg.ServerRepo,
 		observationRepo:   cfg.ObservationRepo,
@@ -36,16 +38,22 @@ func Attach(c *cron.Cron, cfg Config) {
 		api:               cfg.API,
 		status:            cfg.Status,
 	}
-	c.AddFunc("@every 1m", w.checkEnnoblements)
-	c.AddFunc("@every 30m", w.checkBotServers)
-	c.AddFunc("@every 2h10m", w.deleteClosedTribalWarsServers)
-	c.AddFunc("@every 2h", w.updateBotStatus)
+	checkEnnoblements := sharedutils.TrackExecutionTime(log, h.checkEnnoblements, "checkEnnoblements")
+	checkBotServers := sharedutils.TrackExecutionTime(log, h.checkBotServers, "checkBotServers")
+	deleteClosedTribalWarsServers := sharedutils.TrackExecutionTime(log,
+		h.deleteClosedTribalWarsServers,
+		"deleteClosedTribalWarsServers")
+	updateBotStatus := sharedutils.TrackExecutionTime(log, h.updateBotStatus, "updateBotStatus")
+	c.AddFunc("@every 1m", checkEnnoblements)
+	c.AddFunc("@every 30m", checkBotServers)
+	c.AddFunc("@every 2h10m", deleteClosedTribalWarsServers)
+	c.AddFunc("@every 2h", updateBotStatus)
 	go func() {
-		w.checkBotServers()
-		w.deleteClosedTribalWarsServers()
-		w.updateBotStatus()
+		checkBotServers()
+		deleteClosedTribalWarsServers()
+		updateBotStatus()
 		if mode.Get() == mode.DevelopmentMode {
-			w.checkEnnoblements()
+			checkEnnoblements()
 		}
 	}()
 }

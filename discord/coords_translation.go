@@ -4,6 +4,8 @@ import (
 	"context"
 	"regexp"
 
+	sharedutils "github.com/tribalwarshelp/shared/utils"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/tribalwarshelp/dcbot/message"
@@ -85,7 +87,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 	coords := extractAllCoordsFromMessage(m.Content)
 	coordsLen := len(coords)
 	if coordsLen > 0 {
-		langVersion, err := s.cfg.API.LangVersions.Read(utils.LanguageTagFromServerKey(ctx.server.CoordsTranslation))
+		langVersion, err := s.cfg.API.LangVersions.Read(sharedutils.LanguageTagFromServerKey(ctx.server.CoordsTranslation))
 		if err != nil || langVersion == nil {
 			return
 		}
