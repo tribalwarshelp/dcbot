@@ -65,8 +65,8 @@
 
   "observe.invalidGroupID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
   "observe.invalidTribeID": "{{.Mention}} ID plemienia musi być liczbą większą od 0.",
-  "observe.serwerIsClosed": "{{.Mention}} Sewer jest zamknięty.",
-  "observe.serwerNotFound": "{{.Mention}} Serwer nie został znaleziony.",
+  "observe.serverIsClosed": "{{.Mention}} Sewer jest zamknięty.",
+  "observe.serverNotFound": "{{.Mention}} Serwer nie został znaleziony.",
   "observe.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
   "observe.tribeNotFound": "{{.Mention}} Plemię nie zostało znalezione.",
   "observe.observationLimitHasBeenReached": "{{.Mention}} Limit obserwacji dla grupy został osiągnięty ({{.Total}}/{{.Limit}}).",
