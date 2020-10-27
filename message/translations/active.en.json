@@ -105,9 +105,9 @@
   "cron.conqueredVillages.title": "Conquered villages",
   "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] has conquered {{.Village}} (Old owner: {{.OldOwner}} [{{.OldOwnerTribe}}])",
 
-  "api.defaultError": "{{.Mention}} There was an error fetching data from the API, please try again later.",
+  "api.defaultError": "{{.Mention}} Couldn't fetch data from the API, please try again later.",
 
   "pagination.labelDisplayedPage": "Page: {{.Page}} of {{.MaxPage}}",
 
-  "internalServerError": "{{.Mention}} Internal server error occurred, please try again later."
+  "internalServerError": "{{.Mention}} An internal server error has occurred, please try again later."
 }

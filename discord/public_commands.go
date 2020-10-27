@@ -366,7 +366,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ApiDefaultError,
 				DefaultMessage: message.FallbackMsg(message.ApiDefaultError,
-					"{{.Mention}} There was an error fetching data from the API, please try again later."),
+					"{{.Mention}} Couldn't fetch data from the API, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -404,7 +404,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.InternalServerError,
 			DefaultMessage: message.FallbackMsg(message.InternalServerError,
-				"{{.Mention}} Internal server error occurred, please try again later."),
+				"{{.Mention}} An internal server error has occurred, please try again later."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
