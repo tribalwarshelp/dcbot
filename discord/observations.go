@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	sharedutils "github.com/tribalwarshelp/shared/utils"
+	"github.com/tribalwarshelp/shared/tw"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -688,7 +688,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 	langTags := []shared_models.LanguageTag{}
 	for _, observation := range observations {
 		tribeIDsByServer[observation.Server] = append(tribeIDsByServer[observation.Server], observation.TribeID)
-		currentLangTag := sharedutils.LanguageTagFromServerKey(observation.Server)
+		currentLangTag := tw.LanguageTagFromServerKey(observation.Server)
 		unique := true
 		for _, langTag := range langTags {
 			if langTag == currentLangTag {
@@ -738,10 +738,10 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			if observation.Tribe != nil {
 				tag = observation.Tribe.Tag
 			}
-			lv := utils.FindLangVersionByTag(langVersionList.Items, sharedutils.LanguageTagFromServerKey(observation.Server))
+			lv := utils.FindLangVersionByTag(langVersionList.Items, tw.LanguageTagFromServerKey(observation.Server))
 			tribeURL := ""
 			if lv != nil {
-				tribeURL = utils.FormatTribeURL(observation.Server, lv.Host, observation.TribeID)
+				tribeURL = tw.BuildTribeURL(observation.Server, lv.Host, observation.TribeID)
 			}
 			msg.Append(fmt.Sprintf("**%d** | %d - %s - [``%s``](%s)\n", i+1, observation.ID,
 				observation.Server,

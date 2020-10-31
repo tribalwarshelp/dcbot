@@ -9,11 +9,10 @@ import (
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	shared_models "github.com/tribalwarshelp/shared/models"
+	"github.com/tribalwarshelp/shared/tw"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/tribalwarshelp/dcbot/utils"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
-	sharedutils "github.com/tribalwarshelp/shared/utils"
 )
 
 const (
@@ -41,7 +40,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODA,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA."),
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand + " " + TopODACommand,
+				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopODACommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -49,7 +48,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODD,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD."),
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand + " " + TopODDCommand,
+				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopODDCommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -57,7 +56,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODS,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS."),
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand + " " + TopODSCommand,
+				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopODSCommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -65,7 +64,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopOD,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD."),
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand + " " + TopODCommand,
+				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopODCommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -73,7 +72,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopPoints,
 				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points."),
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand + " " + TopPointsCommand,
+				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopPointsCommand,
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -398,7 +397,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		return
 	}
 
-	langTag := sharedutils.LanguageTagFromServerKey(world)
+	langTag := tw.LanguageTagFromServerKey(world)
 	langVersion, err := s.cfg.API.LangVersions.Read(langTag)
 	if err != nil || langVersion == nil {
 		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -442,7 +441,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		tribeURL := "-"
 		if player.Tribe != nil {
 			tribeTag = player.Tribe.Tag
-			tribeURL = utils.FormatTribeURL(world, langVersion.Host, player.Tribe.ID)
+			tribeURL = tw.BuildTribeURL(world, langVersion.Host, player.Tribe.ID)
 		}
 
 		msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -452,7 +451,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 			TemplateData: map[string]interface{}{
 				"Index":      offset + i + 1,
 				"PlayerName": player.Name,
-				"PlayerURL":  utils.FormatPlayerURL(world, langVersion.Host, player.ID),
+				"PlayerURL":  tw.BuildPlayerURL(world, langVersion.Host, player.ID),
 				"TribeTag":   tribeTag,
 				"TribeURL":   tribeURL,
 				"Rank":       rank,

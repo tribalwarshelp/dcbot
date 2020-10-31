@@ -4,14 +4,13 @@ import (
 	"context"
 	"regexp"
 
-	sharedutils "github.com/tribalwarshelp/shared/utils"
-
 	"github.com/bwmarrin/discordgo"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/tribalwarshelp/dcbot/message"
 	"github.com/tribalwarshelp/dcbot/utils"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 	"github.com/tribalwarshelp/shared/models"
+	"github.com/tribalwarshelp/shared/tw"
 )
 
 const (
@@ -87,7 +86,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 	coords := extractAllCoordsFromMessage(m.Content)
 	coordsLen := len(coords)
 	if coordsLen > 0 {
-		langVersion, err := s.cfg.API.LangVersions.Read(sharedutils.LanguageTagFromServerKey(ctx.server.CoordsTranslation))
+		langVersion, err := s.cfg.API.LangVersions.Read(tw.LanguageTagFromServerKey(ctx.server.CoordsTranslation))
 		if err != nil || langVersion == nil {
 			return
 		}
@@ -110,18 +109,18 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 
 		msg := &MessageEmbed{}
 		for _, village := range list.Items {
-			villageURL := utils.FormatVillageURL(ctx.server.CoordsTranslation, langVersion.Host, village.ID)
+			villageURL := tw.BuildVillageURL(ctx.server.CoordsTranslation, langVersion.Host, village.ID)
 			playerName := "-"
 			playerURL := ""
 			if !utils.IsPlayerNil(village.Player) {
 				playerName = village.Player.Name
-				playerURL = utils.FormatPlayerURL(ctx.server.CoordsTranslation, langVersion.Host, village.Player.ID)
+				playerURL = tw.BuildPlayerURL(ctx.server.CoordsTranslation, langVersion.Host, village.Player.ID)
 			}
 			tribeName := "-"
 			tribeURL := ""
 			if !utils.IsPlayerTribeNil(village.Player) {
 				tribeName = village.Player.Tribe.Name
-				tribeURL = utils.FormatTribeURL(ctx.server.CoordsTranslation, langVersion.Host, village.Player.Tribe.ID)
+				tribeURL = tw.BuildTribeURL(ctx.server.CoordsTranslation, langVersion.Host, village.Player.Tribe.ID)
 			}
 
 			msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -129,9 +128,9 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 				DefaultMessage: message.FallbackMsg(message.CoordsTranslationMessage,
 					"{{.Village}} owned by {{.Player}} (Tribe: {{.Tribe}})."),
 				TemplateData: map[string]interface{}{
-					"Village": FormatLink(village.FullName(), villageURL),
-					"Player":  FormatLink(playerName, playerURL),
-					"Tribe":   FormatLink(tribeName, tribeURL),
+					"Village": BuildLink(village.FullName(), villageURL),
+					"Player":  BuildLink(playerName, playerURL),
+					"Tribe":   BuildLink(tribeName, tribeURL),
 				},
 			}) + "\n")
 		}

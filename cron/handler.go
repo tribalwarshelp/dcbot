@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	sharedutils "github.com/tribalwarshelp/shared/utils"
+	"github.com/tribalwarshelp/shared/tw"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/tribalwarshelp/dcbot/message"
@@ -92,7 +92,7 @@ func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersi
 	languageTags := []shared_models.LanguageTag{}
 	cache := make(map[shared_models.LanguageTag]bool)
 	for _, server := range servers {
-		languageTag := sharedutils.LanguageTagFromServerKey(server)
+		languageTag := tw.LanguageTagFromServerKey(server)
 		if languageTag.IsValid() && !cache[languageTag] {
 			cache[languageTag] = true
 			languageTags = append(languageTags, languageTag)
@@ -156,7 +156,7 @@ func (h *handler) checkEnnoblements() {
 		conqueredVillagesMsg := &discord.MessageEmbed{}
 		for _, observation := range group.Observations {
 			ennoblements, ok := ennoblementsByServerKey[observation.Server]
-			langVersion := utils.FindLangVersionByTag(langVersions, sharedutils.LanguageTagFromServerKey(observation.Server))
+			langVersion := utils.FindLangVersionByTag(langVersions, tw.LanguageTagFromServerKey(observation.Server))
 			if ok && langVersion != nil && langVersion.Host != "" {
 				if group.LostVillagesChannelID != "" {
 					for _, ennoblement := range ennoblements.getLostVillagesByTribe(observation.TribeID) {

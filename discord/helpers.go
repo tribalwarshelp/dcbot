@@ -33,7 +33,7 @@ func isValidLanguageTag(lang string) bool {
 	return valid
 }
 
-func FormatLink(text string, url string) string {
+func BuildLink(text string, url string) string {
 	if url == "" {
 		return text
 	}
