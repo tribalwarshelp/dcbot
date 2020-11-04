@@ -73,7 +73,7 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
 		}
 		if mode.Get() == mode.DevelopmentMode {
-			lastEnnoblementAt = time.Now().Add(-60 * time.Minute)
+			lastEnnoblementAt = time.Now().Add(-60 * time.Minute * 23)
 		}
 
 		m[server] = filterEnnoblements(ennoblements, lastEnnoblementAt)

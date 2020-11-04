@@ -194,24 +194,29 @@ func (s *Session) SendEmbed(channelID string, message *discordgo.MessageEmbed) e
 	splittedFields := [][]*discordgo.MessageEmbedField{}
 	characters := baseNumberOfCharacters
 	fromIndex := 0
+	fieldsLen := len(fields)
 	for index, field := range fields {
-		if characters+len(field.Name)+len(field.Value) > EmbedLimit || index == len(fields)-1 {
+		fNameLen := len(field.Name)
+		fValLen := len(field.Value)
+		if characters+fNameLen+fValLen > EmbedSizeLimit || index == fieldsLen-1 {
 			splittedFields = append(splittedFields, fields[fromIndex:index+1])
 			fromIndex = index
 			characters = baseNumberOfCharacters
 		}
-		characters += len(field.Name)
-		characters += len(field.Value)
+		characters += fNameLen
+		characters += fValLen
 	}
 	for _, fields := range splittedFields {
-		for i := 0; i < len(fields); i += EmbedLimitField {
+		fieldsLen := len(fields)
+		for i := 0; i < fieldsLen; i += EmbedLimitField {
 			end := i + EmbedLimitField
 
-			if end > len(fields) {
-				end = len(fields)
+			if end > fieldsLen {
+				end = fieldsLen
 			}
 			message.Fields = fields[i:end]
 			if _, err := s.dg.ChannelMessageSendEmbed(channelID, message); err != nil {
+				log.Warnln("Couldn't send embed:", err)
 				return err
 			}
 		}
