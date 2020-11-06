@@ -88,29 +88,29 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 	return m, nil
 }
 
-func (h *handler) loadLangVersions(servers []string) ([]*shared_models.LangVersion, error) {
-	languageTags := []shared_models.LanguageTag{}
-	cache := make(map[shared_models.LanguageTag]bool)
+func (h *handler) loadVersions(servers []string) ([]*shared_models.Version, error) {
+	versionCodes := []shared_models.VersionCode{}
+	cache := make(map[shared_models.VersionCode]bool)
 	for _, server := range servers {
-		languageTag := tw.LanguageTagFromServerKey(server)
+		languageTag := tw.VersionCodeFromServerKey(server)
 		if languageTag.IsValid() && !cache[languageTag] {
 			cache[languageTag] = true
-			languageTags = append(languageTags, languageTag)
+			versionCodes = append(versionCodes, languageTag)
 		}
 	}
 
-	if len(languageTags) == 0 {
-		return []*shared_models.LangVersion{}, nil
+	if len(versionCodes) == 0 {
+		return []*shared_models.Version{}, nil
 	}
 
-	langVersionList, err := h.api.LangVersions.Browse(&shared_models.LangVersionFilter{
-		Tag: languageTags,
+	versionList, err := h.api.Version.Browse(&shared_models.VersionFilter{
+		Code: versionCodes,
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "Cannot load lang versions")
 	}
 
-	return langVersionList.Items, nil
+	return versionList.Items, nil
 }
 
 func (h *handler) checkEnnoblements() {
@@ -132,13 +132,13 @@ func (h *handler) checkEnnoblements() {
 		WithField("numberOfGroups", total).
 		Info("checkEnnoblements: Loaded groups")
 
-	langVersions, err := h.loadLangVersions(servers)
+	versions, err := h.loadVersions(servers)
 	if err != nil {
 		log.Errorln("checkEnnoblements:", err)
 		return
 	}
 	log.
-		WithField("numberOfLangVersions", len(langVersions)).
+		WithField("numberOfVersions", len(versions)).
 		Info("checkEnnoblements: Loaded lang versions")
 
 	ennoblementsByServerKey, err := h.loadEnnoblements(servers)
@@ -156,8 +156,8 @@ func (h *handler) checkEnnoblements() {
 		conqueredVillagesMsg := &discord.MessageEmbed{}
 		for _, observation := range group.Observations {
 			ennoblements, ok := ennoblementsByServerKey[observation.Server]
-			langVersion := utils.FindLangVersionByTag(langVersions, tw.LanguageTagFromServerKey(observation.Server))
-			if ok && langVersion != nil && langVersion.Host != "" {
+			version := utils.FindVersionByCode(versions, tw.VersionCodeFromServerKey(observation.Server))
+			if ok && version != nil && version.Host != "" {
 				if group.LostVillagesChannelID != "" {
 					for _, ennoblement := range ennoblements.getLostVillagesByTribe(observation.TribeID) {
 						if !utils.IsPlayerTribeNil(ennoblement.NewOwner) &&
@@ -165,7 +165,7 @@ func (h *handler) checkEnnoblements() {
 							continue
 						}
 						newMsgDataConfig := newMessageConfig{
-							host:        langVersion.Host,
+							host:        version.Host,
 							server:      observation.Server,
 							ennoblement: ennoblement,
 							t:           messageTypeLost,
@@ -185,7 +185,7 @@ func (h *handler) checkEnnoblements() {
 						}
 
 						newMsgDataConfig := newMessageConfig{
-							host:        langVersion.Host,
+							host:        version.Host,
 							server:      observation.Server,
 							ennoblement: ennoblement,
 							t:           messageTypeConquer,
@@ -272,7 +272,7 @@ func (h *handler) deleteClosedTribalWarsServers() {
 		WithField("servers", servers).
 		Info("deleteClosedTribalWarsServers: loaded servers")
 
-	list, err := h.api.Servers.Browse(&shared_models.ServerFilter{
+	list, err := h.api.Server.Browse(&shared_models.ServerFilter{
 		Key:    servers,
 		Status: []shared_models.ServerStatus{shared_models.ServerStatusClosed},
 	}, nil)

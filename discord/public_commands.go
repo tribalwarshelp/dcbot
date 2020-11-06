@@ -277,7 +277,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 	}
 
 	command := Command(args[0])
-	world := args[1]
+	server := args[1]
 	page, err := strconv.Atoi(args[2])
 	if err != nil || page <= 0 {
 		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -357,7 +357,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		return
 	}
 
-	playerList, err := s.cfg.API.Players.Browse(world, filter, &sdk.PlayerInclude{
+	playerList, err := s.cfg.API.Player.Browse(server, filter, &sdk.PlayerInclude{
 		Tribe: true,
 	})
 	if err != nil {
@@ -397,9 +397,9 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		return
 	}
 
-	langTag := tw.LanguageTagFromServerKey(world)
-	langVersion, err := s.cfg.API.LangVersions.Read(langTag)
-	if err != nil || langVersion == nil {
+	code := tw.VersionCodeFromServerKey(server)
+	version, err := s.cfg.API.Version.Read(code)
+	if err != nil || version == nil {
 		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.InternalServerError,
 			DefaultMessage: message.FallbackMsg(message.InternalServerError,
@@ -441,7 +441,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		tribeURL := "-"
 		if player.Tribe != nil {
 			tribeTag = player.Tribe.Tag
-			tribeURL = tw.BuildTribeURL(world, langVersion.Host, player.Tribe.ID)
+			tribeURL = tw.BuildTribeURL(server, version.Host, player.Tribe.ID)
 		}
 
 		msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -451,7 +451,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 			TemplateData: map[string]interface{}{
 				"Index":      offset + i + 1,
 				"PlayerName": player.Name,
-				"PlayerURL":  tw.BuildPlayerURL(world, langVersion.Host, player.ID),
+				"PlayerURL":  tw.BuildPlayerURL(server, version.Host, player.ID),
 				"TribeTag":   tribeTag,
 				"TribeURL":   tribeURL,
 				"Rank":       rank,

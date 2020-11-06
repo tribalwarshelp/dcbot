@@ -461,7 +461,7 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	server, err := s.cfg.API.Servers.Read(serverKey, nil)
+	server, err := s.cfg.API.Server.Read(serverKey, nil)
 	if err != nil || server == nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -485,7 +485,7 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	tribe, err := s.cfg.API.Tribes.Read(server.Key, tribeID)
+	tribe, err := s.cfg.API.Tribe.Read(server.Key, tribeID)
 	if err != nil || tribe == nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -685,23 +685,23 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 	}
 
 	tribeIDsByServer := make(map[string][]int)
-	langTags := []shared_models.LanguageTag{}
+	versionCodes := []shared_models.VersionCode{}
 	for _, observation := range observations {
 		tribeIDsByServer[observation.Server] = append(tribeIDsByServer[observation.Server], observation.TribeID)
-		currentLangTag := tw.LanguageTagFromServerKey(observation.Server)
+		currentLangTag := tw.VersionCodeFromServerKey(observation.Server)
 		unique := true
-		for _, langTag := range langTags {
+		for _, langTag := range versionCodes {
 			if langTag == currentLangTag {
 				unique = false
 				break
 			}
 		}
 		if unique {
-			langTags = append(langTags, currentLangTag)
+			versionCodes = append(versionCodes, currentLangTag)
 		}
 	}
 	for server, tribeIDs := range tribeIDsByServer {
-		list, err := s.cfg.API.Tribes.Browse(server, &shared_models.TribeFilter{
+		list, err := s.cfg.API.Tribe.Browse(server, &shared_models.TribeFilter{
 			ID: tribeIDs,
 		})
 		if err != nil {
@@ -725,12 +725,12 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			}
 		}
 	}
-	langVersionList, err := s.cfg.API.LangVersions.Browse(&shared_models.LangVersionFilter{
-		Tag: langTags,
+	versionList, err := s.cfg.API.Version.Browse(&shared_models.VersionFilter{
+		Code: versionCodes,
 	})
 
 	msg := &MessageEmbed{}
-	if len(observations) <= 0 || err != nil || langVersionList == nil || langVersionList.Items == nil {
+	if len(observations) <= 0 || err != nil || versionList == nil || versionList.Items == nil {
 		msg.Append("-")
 	} else {
 		for i, observation := range observations {
@@ -738,7 +738,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			if observation.Tribe != nil {
 				tag = observation.Tribe.Tag
 			}
-			lv := utils.FindLangVersionByTag(langVersionList.Items, tw.LanguageTagFromServerKey(observation.Server))
+			lv := utils.FindVersionByCode(versionList.Items, tw.VersionCodeFromServerKey(observation.Server))
 			tribeURL := ""
 			if lv != nil {
 				tribeURL = tw.BuildTribeURL(observation.Server, lv.Host, observation.TribeID)

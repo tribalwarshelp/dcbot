@@ -37,7 +37,7 @@ func (s *Session) handleCoordsTranslationCommand(ctx *commandCtx, m *discordgo.M
 	}
 
 	serverKey := args[0]
-	server, err := s.cfg.API.Servers.Read(serverKey, nil)
+	server, err := s.cfg.API.Server.Read(serverKey, nil)
 	if err != nil || server == nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -86,14 +86,14 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 	coords := extractAllCoordsFromMessage(m.Content)
 	coordsLen := len(coords)
 	if coordsLen > 0 {
-		langVersion, err := s.cfg.API.LangVersions.Read(tw.LanguageTagFromServerKey(ctx.server.CoordsTranslation))
-		if err != nil || langVersion == nil {
+		version, err := s.cfg.API.Version.Read(tw.VersionCodeFromServerKey(ctx.server.CoordsTranslation))
+		if err != nil || version == nil {
 			return
 		}
 		if coordsLen > coordsLimit {
 			coords = coords[0:coordsLimit]
 		}
-		list, err := s.cfg.API.Villages.Browse(ctx.server.CoordsTranslation,
+		list, err := s.cfg.API.Village.Browse(ctx.server.CoordsTranslation,
 			&models.VillageFilter{
 				XY: coords,
 			},
@@ -109,18 +109,18 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 
 		msg := &MessageEmbed{}
 		for _, village := range list.Items {
-			villageURL := tw.BuildVillageURL(ctx.server.CoordsTranslation, langVersion.Host, village.ID)
+			villageURL := tw.BuildVillageURL(ctx.server.CoordsTranslation, version.Host, village.ID)
 			playerName := "-"
 			playerURL := ""
 			if !utils.IsPlayerNil(village.Player) {
 				playerName = village.Player.Name
-				playerURL = tw.BuildPlayerURL(ctx.server.CoordsTranslation, langVersion.Host, village.Player.ID)
+				playerURL = tw.BuildPlayerURL(ctx.server.CoordsTranslation, version.Host, village.Player.ID)
 			}
 			tribeName := "-"
 			tribeURL := ""
 			if !utils.IsPlayerTribeNil(village.Player) {
 				tribeName = village.Player.Tribe.Name
-				tribeURL = tw.BuildTribeURL(ctx.server.CoordsTranslation, langVersion.Host, village.Player.Tribe.ID)
+				tribeURL = tw.BuildTribeURL(ctx.server.CoordsTranslation, version.Host, village.Player.Tribe.ID)
 			}
 
 			msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
