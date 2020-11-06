@@ -1,6 +1,6 @@
 # TWHelp DC Bot
 
-Discord bot for the online game Tribal Wars.
+A Discord bot for the online game Tribal Wars.
 
 Features:
 
