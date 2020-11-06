@@ -107,7 +107,7 @@ func (h *handler) loadVersions(servers []string) ([]*shared_models.Version, erro
 		Code: versionCodes,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "Cannot load lang versions")
+		return nil, errors.Wrap(err, "Couldn't load versions")
 	}
 
 	return versionList.Items, nil
@@ -139,7 +139,7 @@ func (h *handler) checkEnnoblements() {
 	}
 	log.
 		WithField("numberOfVersions", len(versions)).
-		Info("checkEnnoblements: Loaded lang versions")
+		Info("checkEnnoblements: Loaded versions")
 
 	ennoblementsByServerKey, err := h.loadEnnoblements(servers)
 	if err != nil {
