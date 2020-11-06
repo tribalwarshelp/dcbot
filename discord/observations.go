@@ -688,16 +688,16 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 	versionCodes := []shared_models.VersionCode{}
 	for _, observation := range observations {
 		tribeIDsByServer[observation.Server] = append(tribeIDsByServer[observation.Server], observation.TribeID)
-		currentLangTag := tw.VersionCodeFromServerKey(observation.Server)
+		currentCode := tw.VersionCodeFromServerKey(observation.Server)
 		unique := true
-		for _, langTag := range versionCodes {
-			if langTag == currentLangTag {
+		for _, code := range versionCodes {
+			if code == currentCode {
 				unique = false
 				break
 			}
 		}
 		if unique {
-			versionCodes = append(versionCodes, currentLangTag)
+			versionCodes = append(versionCodes, currentCode)
 		}
 	}
 	for server, tribeIDs := range tribeIDsByServer {
