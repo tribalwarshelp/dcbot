@@ -94,6 +94,9 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 			coords = coords[0:coordsLimit]
 		}
 		list, err := s.cfg.API.Village.Browse(ctx.server.CoordsTranslation,
+			0,
+			0,
+			[]string{},
 			&models.VillageFilter{
 				XY: coords,
 			},

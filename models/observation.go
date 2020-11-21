@@ -41,16 +41,16 @@ type ObservationFilter struct {
 func (f *ObservationFilter) ApplyWithPrefix(prefix string) func(q *orm.Query) (*orm.Query, error) {
 	return func(q *orm.Query) (*orm.Query, error) {
 		if len(f.ID) > 0 {
-			field := addPrefixToFieldName("id", prefix)
-			q = q.Where(field+" = ANY(?)", pg.Array(f.ID))
+			column := addPrefixToColumnName("id", prefix)
+			q = q.Where(column+" = ANY(?)", pg.Array(f.ID))
 		}
 		if len(f.Server) > 0 {
-			field := addPrefixToFieldName("server", prefix)
-			q = q.Where(field+" = ANY(?)", pg.Array(f.Server))
+			column := addPrefixToColumnName("server", prefix)
+			q = q.Where(column+" = ANY(?)", pg.Array(f.Server))
 		}
 		if len(f.GroupID) > 0 {
-			field := addPrefixToFieldName("group_id", prefix)
-			q = q.Where(field+" = ANY(?)", pg.Array(f.GroupID))
+			column := addPrefixToColumnName("group_id", prefix)
+			q = q.Where(column+" = ANY(?)", pg.Array(f.GroupID))
 		}
 		return f.DefaultFilter.Apply(q)
 	}

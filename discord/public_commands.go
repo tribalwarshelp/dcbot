@@ -318,37 +318,38 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		Offset:  offset,
 	}
 	title := ""
+	sort := ""
 	switch command {
 	case TopODACommand:
 		filter.RankAttGTE = 1
-		filter.Sort = "rankAtt ASC"
+		sort = "rankAtt ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.TribeTitleOrderedByODA,
 			DefaultMessage: message.FallbackMsg(message.TribeTitleOrderedByODA, "Ordered by ODA"),
 		})
 	case TopODDCommand:
 		filter.RankDefGTE = 1
-		filter.Sort = "rankDef ASC"
+		sort = "rankDef ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.TribeTitleOrderedByODD,
 			DefaultMessage: message.FallbackMsg(message.TribeTitleOrderedByODD, "Ordered by ODD"),
 		})
 	case TopODSCommand:
 		filter.RankSupGTE = 1
-		filter.Sort = "rankSup ASC"
+		sort = "rankSup ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.TribeTitleOrderedByODS,
 			DefaultMessage: message.FallbackMsg(message.TribeTitleOrderedByODS, "Ordered by ODS"),
 		})
 	case TopODCommand:
 		filter.RankTotalGTE = 1
-		filter.Sort = "rankTotal ASC"
+		sort = "rankTotal ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.TribeTitleOrderedByOD,
 			DefaultMessage: message.FallbackMsg(message.TribeTitleOrderedByOD, "Ordered by OD"),
 		})
 	case TopPointsCommand:
-		filter.Sort = "rank ASC"
+		sort = "rank ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.TribeTitleOrderedByPoints,
 			DefaultMessage: message.FallbackMsg(message.TribeTitleOrderedByPoints, "Ordered by points"),
@@ -357,9 +358,14 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		return
 	}
 
-	playerList, err := s.cfg.API.Player.Browse(server, filter, &sdk.PlayerInclude{
-		Tribe: true,
-	})
+	playerList, err := s.cfg.API.Player.Browse(server,
+		limit,
+		offset,
+		[]string{sort},
+		filter,
+		&sdk.PlayerInclude{
+			Tribe: true,
+		})
 	if err != nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{

@@ -2,13 +2,13 @@ package models
 
 import "strings"
 
-func addPrefixToFieldName(field, prefix string) string {
-	if prefix != "" && !strings.HasPrefix(field, prefix+".") {
-		field = wrapStringInDoubleQuotes(prefix) + "." + wrapStringInDoubleQuotes(field)
+func addPrefixToColumnName(column, prefix string) string {
+	if prefix != "" && !strings.HasPrefix(column, prefix+".") {
+		column = wrapStringInDoubleQuotes(prefix) + "." + wrapStringInDoubleQuotes(column)
 	} else {
-		field = wrapStringInDoubleQuotes(field)
+		column = wrapStringInDoubleQuotes(column)
 	}
-	return field
+	return column
 }
 
 func wrapStringInDoubleQuotes(str string) string {

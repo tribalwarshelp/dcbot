@@ -701,7 +701,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 		}
 	}
 	for server, tribeIDs := range tribeIDsByServer {
-		list, err := s.cfg.API.Tribe.Browse(server, &shared_models.TribeFilter{
+		list, err := s.cfg.API.Tribe.Browse(server, 0, 0, []string{}, &shared_models.TribeFilter{
 			ID: tribeIDs,
 		})
 		if err != nil {
@@ -725,7 +725,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			}
 		}
 	}
-	versionList, err := s.cfg.API.Version.Browse(&shared_models.VersionFilter{
+	versionList, err := s.cfg.API.Version.Browse(0, 0, []string{}, &shared_models.VersionFilter{
 		Code: versionCodes,
 	})
 

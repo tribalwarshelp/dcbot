@@ -22,8 +22,8 @@ type ServerFilter struct {
 func (f *ServerFilter) ApplyWithPrefix(prefix string) func(q *orm.Query) (*orm.Query, error) {
 	return func(q *orm.Query) (*orm.Query, error) {
 		if len(f.ID) > 0 {
-			field := addPrefixToFieldName("id", prefix)
-			q = q.Where(field+" = ANY(?)", pg.Array(f.ID))
+			column := addPrefixToColumnName("id", prefix)
+			q = q.Where(column+" = ANY(?)", pg.Array(f.ID))
 		}
 		return f.DefaultFilter.Apply(q)
 	}

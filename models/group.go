@@ -25,12 +25,12 @@ type GroupFilter struct {
 func (f *GroupFilter) ApplyWithPrefix(prefix string) func(q *orm.Query) (*orm.Query, error) {
 	return func(q *orm.Query) (*orm.Query, error) {
 		if len(f.ID) > 0 {
-			field := addPrefixToFieldName("id", prefix)
-			q = q.Where(field+" = ANY(?)", pg.Array(f.ID))
+			column := addPrefixToColumnName("id", prefix)
+			q = q.Where(column+" = ANY(?)", pg.Array(f.ID))
 		}
 		if len(f.ServerID) > 0 {
-			field := addPrefixToFieldName("server_id", prefix)
-			q = q.Where(field+" = ANY(?)", pg.Array(f.ServerID))
+			column := addPrefixToColumnName("server_id", prefix)
+			q = q.Where(column+" = ANY(?)", pg.Array(f.ServerID))
 		}
 		return f.DefaultFilter.Apply(q)
 	}

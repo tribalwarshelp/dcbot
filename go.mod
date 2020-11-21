@@ -11,7 +11,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.7.0
-	github.com/tribalwarshelp/golang-sdk v0.0.0-20201107124947-cbd143be38f3
+	github.com/tribalwarshelp/golang-sdk v0.0.0-20201121120032-580460eeae1b
 	github.com/tribalwarshelp/shared v0.0.0-20201107073846-5e8e2d44d75c
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897 // indirect
 	golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0 // indirect

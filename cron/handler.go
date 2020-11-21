@@ -103,7 +103,7 @@ func (h *handler) loadVersions(servers []string) ([]*shared_models.Version, erro
 		return []*shared_models.Version{}, nil
 	}
 
-	versionList, err := h.api.Version.Browse(&shared_models.VersionFilter{
+	versionList, err := h.api.Version.Browse(0, 0, []string{"code ASC"}, &shared_models.VersionFilter{
 		Code: versionCodes,
 	})
 	if err != nil {
@@ -272,7 +272,7 @@ func (h *handler) deleteClosedTribalWarsServers() {
 		WithField("servers", servers).
 		Info("deleteClosedTribalWarsServers: loaded servers")
 
-	list, err := h.api.Server.Browse(&shared_models.ServerFilter{
+	list, err := h.api.Server.Browse(0, 0, []string{"key ASC"}, &shared_models.ServerFilter{
 		Key:    servers,
 		Status: []shared_models.ServerStatus{shared_models.ServerStatusClosed},
 	}, nil)
