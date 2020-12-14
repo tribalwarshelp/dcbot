@@ -79,7 +79,7 @@
 
   "observations.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
   "observations.groupNotFound": "{{.Mention}} Group not found.",
-  "observations.title": "monitored tribes\nIndex | ID - Server - Tribe",
+  "observations.title": "Monitored tribes\nIndex | ID - Server - Tribe",
 
   "showEnnobledBarbs.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
   "showEnnobledBarbs.groupNotFound": "{{.Mention}} Group not found.",

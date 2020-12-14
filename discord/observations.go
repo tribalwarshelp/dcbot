@@ -753,7 +753,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.ObservationsTitle,
 			DefaultMessage: message.FallbackMsg(message.ObservationsTitle,
-				"monitored tribes\nIndex | ID - Server - Tribe"),
+				"Monitored tribes\nIndex | ID - Server - Tribe"),
 		})).
 		SetFields(msg.ToMessageEmbedFields()).
 		MessageEmbed)
