@@ -314,8 +314,6 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 	filter := &shared_models.PlayerFilter{
 		Exists:  &exists,
 		TribeID: ids,
-		Limit:   limit,
-		Offset:  offset,
 	}
 	title := ""
 	sort := ""
