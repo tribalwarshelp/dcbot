@@ -83,7 +83,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 	if ctx.server.CoordsTranslation == "" {
 		return
 	}
-	coords := extractAllCoordsFromMessage(m.Content)
+	coords := coordsRegex.FindAllString(m.Content, -1)
 	coordsLen := len(coords)
 	if coordsLen > 0 {
 		version, err := s.cfg.API.Version.Read(tw.VersionCodeFromServerKey(ctx.server.CoordsTranslation))
@@ -146,12 +146,4 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 			SetFields(msg.ToMessageEmbedFields()).
 			MessageEmbed)
 	}
-}
-
-func extractAllCoordsFromMessage(msg string) []string {
-	coords := []string{}
-	for _, bytes := range coordsRegex.FindAll([]byte(msg), -1) {
-		coords = append(coords, string(bytes))
-	}
-	return coords
 }
