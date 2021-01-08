@@ -10,7 +10,7 @@ Features:
 
 2. Near real-time notifications about conquers
 
-   ![Screenshot](/screenshots/notifications.png?raw=true)
+   ![Screenshot](/screenshots/notifications2.png?raw=true)
 
 3. Tribe members ordered by OD/ODA/ODD/ODS/points
 4. Translated into 3 languages: Polish, English, Dutch
