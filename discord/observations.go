@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 
+	"github.com/tribalwarshelp/golang-sdk/sdk"
 	"github.com/tribalwarshelp/shared/tw"
 
 	"github.com/bwmarrin/discordgo"
@@ -155,7 +157,7 @@ func (s *Session) handleGroupsCommand(ctx *commandCtx, m *discordgo.MessageCreat
 		msg = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.GroupsNoGroupsAdded,
 			DefaultMessage: message.FallbackMsg(message.GroupsNoGroupsAdded,
-				"On this server hasn't been added any groups."),
+				"No records to display."),
 		})
 	}
 
@@ -424,7 +426,7 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpObserve,
 				DefaultMessage: message.FallbackMsg(message.HelpObserve,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - command adds a tribe to the observation group."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id or tribe tag] - command adds a tribe to the observation group."),
 				TemplateData: map[string]interface{}{
 					"Command":       ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -447,13 +449,14 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 	serverKey := args[1]
-	tribeID, err := strconv.Atoi(args[2])
-	if err != nil || tribeID <= 0 {
+	tribeTag := strings.TrimSpace(args[2])
+	tribeID, err := strconv.Atoi(tribeTag)
+	if (err != nil || tribeID <= 0) && tribeTag == "" {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ObserveInvalidTribeID,
 				DefaultMessage: message.FallbackMsg(message.ObserveInvalidTribeID,
-					"{{.Mention}} The tribe ID must be a number greater than 0."),
+					"{{.Mention}} The third parameter must be a number greater than 0 or a valid string."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -485,7 +488,18 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	tribe, err := s.cfg.API.Tribe.Read(server.Key, tribeID)
+	var tribe *shared_models.Tribe
+	if tribeID > 0 {
+		tribe, err = s.cfg.API.Tribe.Read(server.Key, tribeID)
+	} else {
+		list := &sdk.TribeList{}
+		list, err = s.cfg.API.Tribe.Browse(server.Key, 1, 0, []string{}, &shared_models.TribeFilter{
+			Tag: []string{tribeTag},
+		})
+		if list != nil && list.Items != nil && len(list.Items) > 0 {
+			tribe = list.Items[0]
+		}
+	}
 	if err != nil || tribe == nil {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -526,23 +540,11 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	err = s.cfg.ObservationRepository.Store(context.Background(), &models.Observation{
+	go s.cfg.ObservationRepository.Store(context.Background(), &models.Observation{
 		Server:  server.Key,
-		TribeID: tribeID,
+		TribeID: tribe.ID,
 		GroupID: groupID,
 	})
-	if err != nil {
-		s.SendMessage(m.ChannelID,
-			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.InternalServerError,
-				DefaultMessage: message.FallbackMsg(message.InternalServerError,
-					"{{.Mention}} An internal server error has occurred, please try again later."),
-				TemplateData: map[string]interface{}{
-					"Mention": m.Author.Mention(),
-				},
-			}))
-		return
-	}
 
 	s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 		MessageID:      message.ObserveSuccess,
@@ -738,10 +740,10 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			if observation.Tribe != nil {
 				tag = observation.Tribe.Tag
 			}
-			lv := utils.FindVersionByCode(versionList.Items, tw.VersionCodeFromServerKey(observation.Server))
+			version := utils.FindVersionByCode(versionList.Items, tw.VersionCodeFromServerKey(observation.Server))
 			tribeURL := ""
-			if lv != nil {
-				tribeURL = tw.BuildTribeURL(observation.Server, lv.Host, observation.TribeID)
+			if version != nil {
+				tribeURL = tw.BuildTribeURL(observation.Server, version.Host, observation.TribeID)
 			}
 			msg.Append(fmt.Sprintf("**%d** | %d - %s - [``%s``](%s)\n", i+1, observation.ID,
 				observation.Server,
@@ -753,7 +755,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.ObservationsTitle,
 			DefaultMessage: message.FallbackMsg(message.ObservationsTitle,
-				"Monitored tribes\nIndex | ID - Server - Tribe"),
+				"Observed tribes\nIndex | ID - Server - Tribe"),
 		})).
 		SetFields(msg.ToMessageEmbedFields()).
 		MessageEmbed)

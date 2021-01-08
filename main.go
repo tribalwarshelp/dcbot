@@ -131,9 +131,9 @@ func main() {
 	})
 	c.Start()
 	defer c.Stop()
-	logrus.Info("Started cron worker")
+	logrus.Info("Started the cron scheduler")
 
-	logrus.Info("Bot is waiting for your actions!")
+	logrus.Info("Bot is waiting for actions!")
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT)

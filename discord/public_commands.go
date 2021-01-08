@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"strings"
 
 	"github.com/tribalwarshelp/dcbot/message"
 
@@ -38,7 +39,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopODA,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODA,
-				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODA."),
+				"**{{.Command}}** [server] [page] [tribe id or tribe tag, you can enter more than one] - generates a player list from selected tribes ordered by ODA."),
 			TemplateData: map[string]interface{}{
 				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopODACommand,
 			},
@@ -46,7 +47,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopODD,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODD,
-				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODD."),
+				"**{{.Command}}** [server] [page] [tribe id or tribe tag, you can enter more than one] - generates a player list from selected tribes ordered by ODD."),
 			TemplateData: map[string]interface{}{
 				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopODDCommand,
 			},
@@ -54,7 +55,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopODS,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopODS,
-				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by ODS."),
+				"**{{.Command}}** [server] [page] [tribe id or tribe tag, you can enter more than one] - generates a player list from selected tribes ordered by ODS."),
 			TemplateData: map[string]interface{}{
 				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopODSCommand,
 			},
@@ -62,7 +63,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopOD,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopOD,
-				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by OD."),
+				"**{{.Command}}** [server] [page] [tribe id or tribe tag, you can enter more than one] - generates a player list from selected tribes ordered by OD."),
 			TemplateData: map[string]interface{}{
 				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopODCommand,
 			},
@@ -70,7 +71,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopPoints,
 			DefaultMessage: message.FallbackMsg(message.HelpTribeTopPoints,
-				"**{{.Command}}** [server] [page] [id1] [id2] [id3] [n id] - generates a player list from selected tribes ordered by points."),
+				"**{{.Command}}** [server] [page] [tribe id or tribe tag, you can enter more than one] - generates a player list from selected tribes ordered by points."),
 			TemplateData: map[string]interface{}{
 				"Command": TribeCommand.WithPrefix(s.cfg.CommandPrefix) + " " + TopPointsCommand,
 			},
@@ -133,7 +134,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpObserve,
 			DefaultMessage: message.FallbackMsg(message.HelpObserve,
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id] - adds a tribe to the observation group."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id or tribe tag] - adds a tribe to the observation group."),
 			TemplateData: map[string]interface{}{
 				"Command":       ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -290,17 +291,23 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		return
 	}
 	ids := []int{}
+	tags := []string{}
 	for _, arg := range args[3:argsLength] {
-		id, err := strconv.Atoi(arg)
-		if err != nil || id <= 0 {
+		trimmed := strings.TrimSpace(arg)
+		if trimmed == "" {
 			continue
 		}
-		ids = append(ids, id)
+		id, err := strconv.Atoi(trimmed)
+		if err != nil || id <= 0 {
+			tags = append(tags, trimmed)
+		} else {
+			ids = append(ids, id)
+		}
 	}
-	if len(ids) == 0 {
+	if len(ids) == 0 && len(tags) == 0 {
 		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.TribeNoTribeID,
-			DefaultMessage: message.FallbackMsg(message.TribeNoTribeID, "{{.Mention}} You haven't entered the tribe ID."),
+			DefaultMessage: message.FallbackMsg(message.TribeNoTribeID, "{{.Mention}} At least one tribe id/tag is required."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
@@ -312,8 +319,13 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 	limit := 10
 	offset := (page - 1) * limit
 	filter := &shared_models.PlayerFilter{
-		Exists:  &exists,
-		TribeID: ids,
+		Exists: &exists,
+		TribeFilter: &shared_models.TribeFilter{
+			Or: &shared_models.TribeFilterOr{
+				ID:  ids,
+				Tag: tags,
+			},
+		},
 	}
 	title := ""
 	sort := ""
