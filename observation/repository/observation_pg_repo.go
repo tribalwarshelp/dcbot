@@ -20,7 +20,7 @@ func NewPgRepo(db *pg.DB) (observation.Repository, error) {
 		IfNotExists:   true,
 		FKConstraints: true,
 	}); err != nil {
-		return nil, errors.Wrap(err, "Cannot create 'observations' table")
+		return nil, errors.Wrap(err, "cannot create 'observations' table")
 	}
 	return &pgRepo{db}, nil
 }

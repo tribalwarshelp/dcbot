@@ -19,7 +19,7 @@ func NewPgRepo(db *pg.DB) (server.Repository, error) {
 	if err := db.Model((*models.Server)(nil)).CreateTable(&orm.CreateTableOptions{
 		IfNotExists: true,
 	}); err != nil {
-		return nil, errors.Wrap(err, "Cannot create 'servers' table")
+		return nil, errors.Wrap(err, "cannot create 'servers' table")
 	}
 	return &pgRepo{db}, nil
 }

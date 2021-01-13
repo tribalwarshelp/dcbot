@@ -20,7 +20,7 @@ func NewPgRepo(db *pg.DB) (group.Repository, error) {
 		IfNotExists:   true,
 		FKConstraints: true,
 	}); err != nil {
-		return nil, errors.Wrap(err, "Cannot create 'groups' table")
+		return nil, errors.Wrap(err, "cannot create 'groups' table")
 	}
 	return &pgRepo{db}, nil
 }

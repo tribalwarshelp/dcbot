@@ -107,7 +107,7 @@ func (h *handler) loadVersions(servers []string) ([]*shared_models.Version, erro
 		Code: versionCodes,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "Couldn't load versions")
+		return nil, errors.Wrap(err, "cannot load versions")
 	}
 
 	return versionList.Items, nil
