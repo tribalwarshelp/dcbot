@@ -381,7 +381,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ApiDefaultError,
 				DefaultMessage: message.FallbackMsg(message.ApiDefaultError,
-					"{{.Mention}} Couldn't fetch data from the API, please try again later."),
+					"{{.Mention}} Can't fetch data from the API at the moment, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
