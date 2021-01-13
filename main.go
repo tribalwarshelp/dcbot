@@ -31,7 +31,7 @@ const (
 	commandPrefix = "tw!"
 )
 
-var status = "Tribal Wars | " + discord.HelpCommand.WithPrefix(commandPrefix).String()
+var status = "tribalwarshelp.com | " + discord.HelpCommand.WithPrefix(commandPrefix).String()
 
 func init() {
 	os.Setenv("TZ", "UTC")
@@ -81,7 +81,6 @@ func main() {
 			Verbose: true,
 		})
 	}
-	logrus.WithFields(dbFields).Info("Connected to the database")
 
 	serverRepo, err := server_repository.NewPgRepo(db)
 	if err != nil {
@@ -95,7 +94,7 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	logrus.Info("Loaded all repositories")
+	logrus.WithFields(dbFields).Info("Connected to the database")
 
 	api := sdk.New(os.Getenv("API_URL"))
 
@@ -133,7 +132,7 @@ func main() {
 	defer c.Stop()
 	logrus.Info("Started the cron scheduler")
 
-	logrus.Info("Bot is waiting for actions!")
+	logrus.Info("Bot is running!")
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT)

@@ -19,23 +19,6 @@ import (
 
 var log = logrus.WithField("package", "discord")
 
-type handler struct {
-	cmd                   Command
-	requireAdmPermissions bool
-	fn                    func(ctx *commandCtx, m *discordgo.MessageCreate, args ...string)
-}
-
-type handlers []*handler
-
-func (hs handlers) find(cmd Command) *handler {
-	for _, h := range hs {
-		if h.cmd == cmd {
-			return h
-		}
-	}
-	return nil
-}
-
 type SessionConfig struct {
 	Token                 string
 	CommandPrefix         string
@@ -49,7 +32,7 @@ type SessionConfig struct {
 type Session struct {
 	dg       *discordgo.Session
 	cfg      SessionConfig
-	handlers handlers
+	handlers commandHandlers
 }
 
 func New(cfg SessionConfig) (*Session, error) {
@@ -68,90 +51,90 @@ func New(cfg SessionConfig) (*Session, error) {
 }
 
 func (s *Session) init() error {
-	s.handlers = handlers{
-		&handler{
+	s.handlers = commandHandlers{
+		&commandHandler{
 			cmd: HelpCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:  s.handleHelpCommand,
 		},
-		&handler{
+		&commandHandler{
 			cmd: AuthorCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:  s.handleAuthorCommand,
 		},
-		&handler{
+		&commandHandler{
 			cmd: TribeCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:  s.handleTribeCommand,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleChangeLanguageCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleAddGroupCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleDeleteGroupCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleGroupsCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleObserveCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleDeleteObservationCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleObservationsCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleConqueredVillagesCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleDisableConqueredVillagesCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleLostVillagesCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleDisableLostVillagesCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleShowEnnobledBarbariansCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleShowInternalsCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   CoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleCoordsTranslationCommand,
 			requireAdmPermissions: true,
 		},
-		&handler{
+		&commandHandler{
 			cmd:                   DisableCoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
 			fn:                    s.handleDisableCoordsTranslationCommand,
 			requireAdmPermissions: true,

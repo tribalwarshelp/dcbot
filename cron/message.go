@@ -21,7 +21,6 @@ const (
 type checkEnnoblementsMsg struct {
 	t                messageType
 	server           string
-	date             string
 	village          string
 	villageURL       string
 	oldOwnerName     string
@@ -46,7 +45,6 @@ type newMessageConfig struct {
 func newMessage(cfg newMessageConfig) checkEnnoblementsMsg {
 	data := checkEnnoblementsMsg{
 		t:                cfg.t,
-		date:             formatDateOfConquest(cfg.ennoblement.EnnobledAt),
 		server:           cfg.server,
 		village:          "-",
 		oldOwnerName:     "-",

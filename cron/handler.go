@@ -76,7 +76,7 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 			lastEnnoblementAt = time.Now().Add(-60 * time.Minute * 23)
 		}
 
-		m[server] = filterEnnoblements(ennoblements, lastEnnoblementAt)
+		m[server] = getRecentEnnoblements(ennoblements, lastEnnoblementAt)
 
 		lastEnnoblement := m[server].getLastEnnoblement()
 		if lastEnnoblement != nil {
@@ -130,7 +130,7 @@ func (h *handler) checkEnnoblements() {
 	}
 	log.
 		WithField("numberOfGroups", total).
-		Info("checkEnnoblements: Loaded groups")
+		Info("checkEnnoblements: loaded groups")
 
 	versions, err := h.loadVersions(servers)
 	if err != nil {
@@ -139,13 +139,13 @@ func (h *handler) checkEnnoblements() {
 	}
 	log.
 		WithField("numberOfVersions", len(versions)).
-		Info("checkEnnoblements: Loaded versions")
+		Info("checkEnnoblements: loaded versions")
 
 	ennoblementsByServerKey, err := h.loadEnnoblements(servers)
 	if err != nil {
 		log.Errorln("checkEnnoblements:", err)
 	}
-	log.Info("checkEnnoblements: Loaded ennoblements")
+	log.Info("checkEnnoblements: loaded ennoblements")
 
 	for _, group := range groups {
 		if group.ConqueredVillagesChannelID == "" && group.LostVillagesChannelID == "" {
@@ -197,6 +197,7 @@ func (h *handler) checkEnnoblements() {
 			}
 		}
 
+		timestamp := time.Now().Format(time.RFC3339)
 		if group.ConqueredVillagesChannelID != "" && !conqueredVillagesMsg.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CronConqueredVillagesTitle,
@@ -209,7 +210,7 @@ func (h *handler) checkEnnoblements() {
 					SetTitle(title).
 					SetColor(colorConqueredVillages).
 					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
-					SetTimestamp(formatDateOfConquest(time.Now())).
+					SetTimestamp(timestamp).
 					MessageEmbed)
 		}
 
@@ -225,7 +226,7 @@ func (h *handler) checkEnnoblements() {
 					SetTitle(title).
 					SetColor(colorLostVillages).
 					SetFields(lostVillagesMsg.ToMessageEmbedFields()).
-					SetTimestamp(formatDateOfConquest(time.Now())).
+					SetTimestamp(timestamp).
 					MessageEmbed)
 		}
 	}
