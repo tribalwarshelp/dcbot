@@ -50,7 +50,6 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 		if mode.Get() == mode.DevelopmentMode {
 			lastEnnoblementAt = time.Now().Add(-1 * time.Hour * 2)
 		}
-		log.Println(h.lastEnnoblementAt)
 		lastEnnoblementAtJSON, err := lastEnnoblementAt.MarshalJSON()
 		if err != nil {
 			continue
