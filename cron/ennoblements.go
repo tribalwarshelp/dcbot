@@ -5,9 +5,9 @@ import (
 	shared_models "github.com/tribalwarshelp/shared/models"
 )
 
-type ennoblements []*shared_models.LiveEnnoblement
+type ennoblements []*shared_models.Ennoblement
 
-func (e ennoblements) getLastEnnoblement() *shared_models.LiveEnnoblement {
+func (e ennoblements) getLastEnnoblement() *shared_models.Ennoblement {
 	length := len(e)
 	if length <= 0 {
 		return nil

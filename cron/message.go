@@ -38,7 +38,7 @@ type newMessageConfig struct {
 	t           messageType
 	host        string
 	server      string
-	ennoblement *shared_models.LiveEnnoblement
+	ennoblement *shared_models.Ennoblement
 	localizer   *i18n.Localizer
 }
 

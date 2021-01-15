@@ -42,47 +42,56 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 
 	query := ""
 
-	for _, w := range servers {
-		query += fmt.Sprintf(`
-			%s: liveEnnoblements(server: "%s") {
-				%s
-				ennobledAt
-			}
-		`, w, w, sdk.LiveEnnoblementInclude{
-			NewOwner: true,
-			Village:  true,
-			NewOwnerInclude: sdk.PlayerInclude{
-				Tribe: true,
-			},
-			OldOwner: true,
-			OldOwnerInclude: sdk.PlayerInclude{
-				Tribe: true,
-			},
-		}.String())
-	}
-
-	resp := make(map[string]ennoblements)
-
-	if err := h.api.Post(fmt.Sprintf(`query { %s }`, query), &resp); err != nil {
-		return m, errors.Wrap(err, "loadEnnoblements")
-	}
-
-	for server, ennoblements := range resp {
+	for _, server := range servers {
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[server]
 		if !ok {
 			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
 		}
 		if mode.Get() == mode.DevelopmentMode {
-			lastEnnoblementAt = time.Now().Add(-60 * time.Minute * 23)
+			lastEnnoblementAt = time.Now().Add(-1 * time.Hour * 2)
 		}
+		log.Println(h.lastEnnoblementAt)
+		lastEnnoblementAtJSON, err := lastEnnoblementAt.MarshalJSON()
+		if err != nil {
+			continue
+		}
+		query += fmt.Sprintf(`
+			%s: ennoblements(server: "%s", filter: { ennobledAtGT: %s }) {
+				items {
+					%s
+					ennobledAt
+				}
+			}
+		`, server,
+			server,
+			string(lastEnnoblementAtJSON),
+			sdk.EnnoblementInclude{
+				NewOwner: true,
+				Village:  true,
+				NewOwnerInclude: sdk.PlayerInclude{
+					Tribe: true,
+				},
+				OldOwner: true,
+				OldOwnerInclude: sdk.PlayerInclude{
+					Tribe: true,
+				},
+			}.String())
+	}
 
-		m[server] = getRecentEnnoblements(ennoblements, lastEnnoblementAt)
+	resp := make(map[string]*sdk.EnnoblementList)
+	if err := h.api.Post(fmt.Sprintf(`query { %s }`, query), &resp); err != nil {
+		return m, errors.Wrap(err, "loadEnnoblements")
+	}
 
+	for server, singleServerResp := range resp {
+		if singleServerResp == nil {
+			continue
+		}
+		m[server] = ennoblements(singleServerResp.Items)
 		lastEnnoblement := m[server].getLastEnnoblement()
 		if lastEnnoblement != nil {
-			lastEnnoblementAt = lastEnnoblement.EnnobledAt
+			h.lastEnnoblementAt[server] = lastEnnoblement.EnnobledAt
 		}
-		h.lastEnnoblementAt[server] = lastEnnoblementAt
 	}
 
 	return m, nil

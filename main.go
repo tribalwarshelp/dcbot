@@ -38,6 +38,7 @@ func init() {
 
 	if mode.Get() == mode.DevelopmentMode {
 		godotenv.Load(".env.development")
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 
 	customFormatter := new(logrus.TextFormatter)

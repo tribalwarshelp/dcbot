@@ -102,10 +102,10 @@ github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc h1:9lRDQMhESg+zvGYmW5DyG0UqvY96Bu5QYsTLvCHdrgo=
 github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc/go.mod h1:bciPuU6GHm1iF1pBvUfxfsH0Wmnc2VbpgvbI9ZWuIRs=
-github.com/tribalwarshelp/golang-sdk v0.0.0-20210109140547-96a34cf3e791 h1:fkNzajsxRT1A9AtKQBcpdfS8EwhYrjdDpOq8+niLioQ=
-github.com/tribalwarshelp/golang-sdk v0.0.0-20210109140547-96a34cf3e791/go.mod h1:X2RzUUQuCWXS+CU67g0Pdjndfaao6xKzIVSlhta/glI=
-github.com/tribalwarshelp/shared v0.0.0-20210109140005-237443e96235 h1:VMc5zgClXx9IPMK4ttyVpElrOr4dWZ/gKMlASzpiuzA=
-github.com/tribalwarshelp/shared v0.0.0-20210109140005-237443e96235/go.mod h1:vtDs7EjEysk4dpFPfu3c4lkICXZYIRV0BrT7rsqG0dw=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20210115181344-377475f6124a h1:FgGlIfBeZUvX12GfBVKL5urrHA50mozrCqnp0f+tYlM=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20210115181344-377475f6124a/go.mod h1:5TV566+A6eY09l+6UfUVdWTJTLnFAHj+n956azq1hkM=
+github.com/tribalwarshelp/shared v0.0.0-20210115163415-972e2df3f7db h1:RzMEF4BP3YJ7jJOyYO00TdeB6DY7g0Dp/8cQ8t6WKzw=
+github.com/tribalwarshelp/shared v0.0.0-20210115163415-972e2df3f7db/go.mod h1:vtDs7EjEysk4dpFPfu3c4lkICXZYIRV0BrT7rsqG0dw=
 github.com/vmihailenco/bufpool v0.1.11 h1:gOq2WmBrq0i2yW5QJ16ykccQ4wH9UyEsgLm6czKAd94=
 github.com/vmihailenco/bufpool v0.1.11/go.mod h1:AFf/MOy3l2CFTKbxwt0mp2MwnqjNEs5H/UxrkA5jxTQ=
 github.com/vmihailenco/msgpack/v4 v4.3.11 h1:Q47CePddpNGNhk4GCnAx9DDtASi2rasatE0cd26cZoE=
