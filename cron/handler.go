@@ -46,6 +46,7 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 		lastEnnoblementAt, ok := h.lastEnnoblementAt[server]
 		if !ok {
 			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
+			h.lastEnnoblementAt[server] = lastEnnoblementAt
 		}
 		if mode.Get() == mode.DevelopmentMode {
 			lastEnnoblementAt = time.Now().Add(-1 * time.Hour * 2)
