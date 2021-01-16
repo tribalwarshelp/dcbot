@@ -267,7 +267,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 
 func (s *Session) handleAuthorCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	s.SendMessage(m.ChannelID,
-		fmt.Sprintf("%s Discord: Kichiyaki#2064 | https://dawid-wysokinski.pl/#contact.",
+		fmt.Sprintf("%s Discord: Kichiyaki#2064 | https://dwysokinski.me/#contact.",
 			m.Author.Mention()))
 }
 
