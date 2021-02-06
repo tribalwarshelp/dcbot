@@ -13,6 +13,6 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/tribalwarshelp/golang-sdk v0.0.0-20210115181344-377475f6124a
-	github.com/tribalwarshelp/shared v0.0.0-20210115163415-972e2df3f7db
+	github.com/tribalwarshelp/shared v0.0.0-20210116195235-d8d19c3e6558
 	golang.org/x/text v0.3.3
 )
