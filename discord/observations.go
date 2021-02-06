@@ -745,10 +745,9 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			if version != nil {
 				tribeURL = tw.BuildTribeURL(observation.Server, version.Host, observation.TribeID)
 			}
-			msg.Append(fmt.Sprintf("**%d** | %d - %s - [``%s``](%s)\n", i+1, observation.ID,
+			msg.Append(fmt.Sprintf("**%d** | %d - %s - %s\n", i+1, observation.ID,
 				observation.Server,
-				tag,
-				tribeURL))
+				BuildLink(tag, tribeURL)))
 		}
 	}
 	s.SendEmbed(m.ChannelID, NewEmbed().

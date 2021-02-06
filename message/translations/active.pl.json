@@ -35,7 +35,7 @@
   "tribe.title.orderedByPoints": "Gracze posortowani według punktów",
   "tribe.tribesNotFound": "{{.Mention}} Plemię nie zostało znalezione.",
   "tribe.exceededMaximumNumberOfPages": "{{.Mention}} Przekroczyłeś limit stron ({{.Page}}/{{.MaxPage}}).",
-  "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Plemię: [``{{.TribeTag}}``]({{.TribeURL}}) | Ranking: **{{.Rank}}** | Wynik: **{{.Score}}**)\n",
+  "tribe.messageLine": "**{{.Index}}**. [`{{.PlayerName}}`]({{.PlayerURL}}) (Plemię: [`{{.TribeTag}}`]({{.TribeURL}}) | Ranking: **{{.Rank}}** | Wynik: **{{.Score}}**)\n",
 
   "addGroup.groupLimitHasBeenReached": "{{.Mention}} Osiągnięto limit grup ({{.Total}}/{{.Limit}}).",
   "addGroup.success": "{{.Mention}} Nowa grupa została utworzona (ID: {{.ID}}).",

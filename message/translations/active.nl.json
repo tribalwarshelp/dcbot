@@ -35,7 +35,7 @@
   "tribe.title.orderedByPoints": "geranschikt op points",
   "tribe.tribesNotFound": "{{.Mention}} Stammen niet gevonden.",
   "tribe.exceededMaximumNumberOfPages": "{{.Mention}} Je hebt de maximale aantal pagina's overschreden ({{.Page}}/{{.MaxPage}}).",
-  "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Stam: [``{{.TribeTag}}``]({{.TribeURL}}) | Rang: **{{.Rank}}** | Score: **{{.Score}}**)\n",
+  "tribe.messageLine": "**{{.Index}}**. [`{{.PlayerName}}`]({{.PlayerURL}}) (Stam: [`{{.TribeTag}}`]({{.TribeURL}}) | Rang: **{{.Rank}}** | Score: **{{.Score}}**)\n",
 
   "addGroup.groupLimitHasBeenReached": "{{.Mention}} De groeplimiet is bereikt ({{.Total}}/{{.Limit}}).",
   "addGroup.success": "{{.Mention}} Een nieuwe groep is gemaakt (ID: {{.ID}}).",

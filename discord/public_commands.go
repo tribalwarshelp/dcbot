@@ -13,6 +13,7 @@ import (
 	"github.com/tribalwarshelp/shared/tw"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/dustin/go-humanize"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 )
 
@@ -463,7 +464,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.TribeMessageLine,
 			DefaultMessage: message.FallbackMsg(message.TribeMessageLine,
-				"**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Tribe: [``{{.TribeTag}}``]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n"),
+				"**{{.Index}}**. [`{{.PlayerName}}`]({{.PlayerURL}}) (Tribe: [`{{.TribeTag}}`]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n"),
 			TemplateData: map[string]interface{}{
 				"Index":      offset + i + 1,
 				"PlayerName": player.Name,
@@ -471,7 +472,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 				"TribeTag":   tribeTag,
 				"TribeURL":   tribeURL,
 				"Rank":       rank,
-				"Score":      score,
+				"Score":      humanize.Comma(int64(score)),
 			},
 		}))
 	}

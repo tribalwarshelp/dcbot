@@ -35,7 +35,7 @@
   "tribe.title.orderedByPoints": "Ordered by points",
   "tribe.tribesNotFound": "{{.Mention}} Tribes not found.",
   "tribe.exceededMaximumNumberOfPages": "{{.Mention}} You have exceeded the maximum number of pages ({{.Page}}/{{.MaxPage}}).",
-  "tribe.messageLine": "**{{.Index}}**. [``{{.PlayerName}}``]({{.PlayerURL}}) (Tribe: [``{{.TribeTag}}``]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n",
+  "tribe.messageLine": "**{{.Index}}**. [`{{.PlayerName}}`]({{.PlayerURL}}) (Tribe: [`{{.TribeTag}}`]({{.TribeURL}}) | Rank: **{{.Rank}}** | Score: **{{.Score}}**)\n",
 
   "addGroup.groupLimitHasBeenReached": "{{.Mention}} The group limit has been reached ({{.Total}}/{{.Limit}}).",
   "addGroup.success": "{{.Mention}} A new group has been created (ID: {{.ID}}).",

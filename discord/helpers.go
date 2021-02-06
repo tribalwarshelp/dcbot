@@ -37,5 +37,5 @@ func BuildLink(text string, url string) string {
 	if url == "" {
 		return text
 	}
-	return fmt.Sprintf("[``%s``](%s)", text, url)
+	return fmt.Sprintf("[`%s`](%s)", text, url)
 }
