@@ -1,6 +1,6 @@
 module github.com/tribalwarshelp/dcbot
 
-go 1.15
+go 1.16
 
 require (
 	github.com/bwmarrin/discordgo v0.22.0
