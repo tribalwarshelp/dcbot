@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/sirupsen/logrus"
+
 	"github.com/tribalwarshelp/dcbot/message"
 
 	"github.com/tribalwarshelp/golang-sdk/sdk"
@@ -21,7 +22,7 @@ import (
 
 	"github.com/tribalwarshelp/shared/mode"
 
-	"github.com/go-pg/pg/extra/pgdebug"
+	gopglogrusquerylogger "github.com/Kichiyaki/go-pg-logrus-query-logger/v10"
 	"github.com/go-pg/pg/v10"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
@@ -37,14 +38,10 @@ func init() {
 	os.Setenv("TZ", "UTC")
 
 	if mode.Get() == mode.DevelopmentMode {
-		godotenv.Load(".env.development")
-		logrus.SetLevel(logrus.DebugLevel)
+		godotenv.Load(".env.local")
 	}
 
-	customFormatter := new(logrus.TextFormatter)
-	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
-	customFormatter.FullTimestamp = true
-	logrus.SetFormatter(customFormatter)
+	setupLogger()
 }
 
 func main() {
@@ -78,8 +75,8 @@ func main() {
 		}
 	}()
 	if strings.ToUpper(os.Getenv("LOG_DB_QUERIES")) == "TRUE" {
-		db.AddQueryHook(pgdebug.DebugHook{
-			Verbose: true,
+		db.AddQueryHook(gopglogrusquerylogger.QueryLogger{
+			Entry: logrus.NewEntry(logrus.StandardLogger()),
 		})
 	}
 
@@ -95,7 +92,7 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	logrus.WithFields(dbFields).Info("Connected to the database")
+	logrus.WithFields(dbFields).Info("Connection with the database has been established")
 
 	api := sdk.New(os.Getenv("API_URL"))
 
@@ -116,7 +113,7 @@ func main() {
 		"api":           os.Getenv("API_URL"),
 		"commandPrefix": commandPrefix,
 		"status":        status,
-	}).Info("Initialized new Discord session")
+	}).Info("The Discord session has been initialized")
 
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cron.VerbosePrintfLogger(log.New(os.Stdout, "cron: ", log.LstdFlags))),
@@ -140,4 +137,22 @@ func main() {
 	<-channel
 
 	logrus.Info("shutting down")
+}
+
+func setupLogger() {
+	if mode.Get() == mode.DevelopmentMode {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
+
+	timestampFormat := "2006-01-02 15:04:05"
+	if mode.Get() == mode.ProductionMode {
+		customFormatter := new(logrus.JSONFormatter)
+		customFormatter.TimestampFormat = timestampFormat
+		logrus.SetFormatter(customFormatter)
+	} else {
+		customFormatter := new(logrus.TextFormatter)
+		customFormatter.TimestampFormat = timestampFormat
+		customFormatter.FullTimestamp = true
+		logrus.SetFormatter(customFormatter)
+	}
 }
