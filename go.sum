@@ -4,6 +4,8 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210423175217-c83fa01c60d7 h1:7IdSzhdupqm4AC3UDH9b5gdCDE2SlX6qkVC0zwqAuLA=
 github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210423175217-c83fa01c60d7/go.mod h1:ADHVWnGlWcRn1aGthuh7I1Lrn6zzsjkVJju151dXyDw=
+github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210428180109-fb97298564d9 h1:S/08K0AD4bXYeSPJKei8ZbumDy1JNARZsgYbNZgr9Tk=
+github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210428180109-fb97298564d9/go.mod h1:ADHVWnGlWcRn1aGthuh7I1Lrn6zzsjkVJju151dXyDw=
 github.com/Kichiyaki/gqlgen-client v0.0.0-20200604145848-274796c104f4 h1:QiOarkkKHdFYI+0m6F1H3rRzP6DqJsKJVLirGXEHGSU=
 github.com/Kichiyaki/gqlgen-client v0.0.0-20200604145848-274796c104f4/go.mod h1:weCVl47ZANyeX60sdsSl0bWHf8HWXyVFmlGHHCR/i5M=
 github.com/bwmarrin/discordgo v0.22.0 h1:uBxY1HmlVCsW1IuaPjpCGT6A2DBwRn0nvOguQIxDdFM=
