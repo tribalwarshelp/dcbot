@@ -12,11 +12,6 @@ import (
 var lang = language.English
 var bundle = i18n.NewBundle(lang)
 
-func SetDefaultLanguage(tag language.Tag) {
-	lang = tag
-	bundle = i18n.NewBundle(tag)
-}
-
 func GetDefaultLanguage() language.Tag {
 	return lang
 }
@@ -29,7 +24,7 @@ func LanguageTags() []language.Tag {
 	return bundle.LanguageTags()
 }
 
-func LoadMessageFiles(root string) error {
+func LoadMessages(root string) error {
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if path != root {
 			bundle.MustLoadMessageFile(path)

@@ -3,17 +3,16 @@
 A Discord bot for the online game Tribal Wars.
 
 Features:
-
 1. Coords translation
 
    ![Screenshot](/screenshots/coordstranslation.png?raw=true)
 
-2. Near real-time notifications about conquers
+2. Live conquer notifications
 
    ![Screenshot](/screenshots/notifications2.png?raw=true)
 
-3. Tribe members ordered by OD/ODA/ODD/ODS/points
-4. Translated into 3 languages: Polish, English, Dutch
+3. List of tribe members ordered by OD/ODA/ODD/ODS/points
+4. Translated into 4 languages: Polish, Czech, English, Dutch
 
 [You can check all available commands here.](https://dcbot.tribalwarshelp.com/commands/)
 

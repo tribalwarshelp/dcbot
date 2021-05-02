@@ -50,28 +50,22 @@ func main() {
 		logrus.Fatal(err)
 	}
 	dirWithMessages := path.Join(dir, "message", "translations")
-	if err := message.LoadMessageFiles(dirWithMessages); err != nil {
+	if err := message.LoadMessages(dirWithMessages); err != nil {
 		logrus.Fatal(err)
 	}
 	logrus.WithField("dir", dirWithMessages).
 		WithField("languages", message.LanguageTags()).
 		Info("Loaded messages")
 
-	dbOptions := &pg.Options{
+	db := pg.Connect(&pg.Options{
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
 		Database: os.Getenv("DB_NAME"),
 		Addr:     os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT"),
-	}
-	dbFields := logrus.Fields{
-		"user":     dbOptions.User,
-		"database": dbOptions.Database,
-		"addr":     dbOptions.Addr,
-	}
-	db := pg.Connect(dbOptions)
+	})
 	defer func() {
 		if err := db.Close(); err != nil {
-			logrus.WithFields(dbFields).Fatalln(err)
+			logrus.Fatalln(err)
 		}
 	}()
 	if strings.ToUpper(os.Getenv("LOG_DB_QUERIES")) == "TRUE" {
@@ -93,7 +87,6 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	logrus.WithFields(dbFields).Info("Connection with the database has been established")
 
 	api := sdk.New(os.Getenv("API_URL"))
 

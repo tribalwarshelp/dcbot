@@ -1,0 +1,113 @@
+{
+  "help.title": "Nápověda",
+  "help.description": "Příkazy k použití bota.",
+  "help.footer": "",
+  "help.forAllUsers": "Pro všechny",
+  "help.forAdmins": "Pro správce",
+  "help.tribe.topoda": "**{{.Command}}** [server] [stránka] [kmenové id nebo kmenový tag, lze použít více než jeden] - vygeneruje ODA seznam hráčů z vybraných kmenů.",
+  "help.tribe.topodd": "**{{.Command}}** [server] [stránka] [kmenové id nebo kmenový tag, lze použít více než jeden] - vygeneruje ODD seznam hráčů z vybraných kmenů.",
+  "help.tribe.topods": "**{{.Command}}** [server] [stránka] [kmenové id nebo kmenový tag, lze použít více než jeden] - vygeneruje ODS seznam hráčů z vybraných kmenů.",
+  "help.tribe.topod": "**{{.Command}}** [server] [stránka] [kmenové id nebo kmenový tag, lze použít více než jeden] - vygeneruje OD seznam hráčů z vybraných kmenů.",
+  "help.tribe.toppoints": "**{{.Command}}** [server] [stránka] [kmenové id nebo kmenový tag, lze použít více než jeden] - vygeneruje seznam hráčů z vybraných kmenů, seřazený podle bodů.",
+  "help.author": "**{{.Command}}** - ukáže jak kontaktovat autora.",
+  "help.addgroup": "**{{.Command}}** - přidat novou pozorovací skupinu.",
+  "help.groups": "**{{.Command}}** - ukázat seznam skupin vytvořených pro tento server.",
+  "help.deletegroup": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] - vymazat pozorovací skupinu.",
+  "help.showennobledbarbs": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] - zapnout/vypnout notifikace o zabírání barbarských vesnic.",
+  "help.observe": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] [server] [kmenové id nebo kmenový tag] - přidat kmen do pozorovací skupiny.",
+  "help.observations": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] - ukázat seznam pozorovaných kmenů, které jsou přidány do této skupiny.",
+  "help.deleteobservation": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] [id z {{.ObservationsCommand}}] - odebrat kmen z pozorovací skupiny.",
+  "help.conqueredvillages": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] - změnit textový channel, ve kterém se ukazují notifikace o dobytých vesnicích. **DŮLEŽITÉ!** Použij tento příkaz pouze v textovém channelu, ve kterém chceš, aby se ti tyto notifikace ukazovaly.",
+  "help.disableconqueredvillages": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] - vypnout notifikace o dobytých vesnicích.",
+  "help.lostvillages": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] - změnit textový channel, ve kterém se ukazují notifikace o ztracených vesnicích. **DŮLEŽITÉ!** Použij tento příkaz pouze v textovém channelu, ve kterém chceš, aby se ti tyto notifikace ukazovaly.",
+  "help.disablelostvillages": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] - vypnout notifikace o ztracených vesnicích.",
+  "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - změnit jazyk.",
+  "help.showinternals": "**{{.Command}}** [id skupiny z {{.GroupsCommand}}] - zapnout/vypnout notifikace o skupinovém/kmenovém zabírání.",
+  "help.coordstranslation": "**{{.Command}}** [server] - zapnout možnost překladu souřadnic.",
+  "help.disablecoordstranslation": "**{{.Command}}** - vypnout možnost překladu souřadnic.",
+
+  "tribe.invalidPage": "{{.Mention}} Stránka musí být číslo větší než 0.",
+  "tribe.noTribeID": "{{.Mention}} Alespoň jedno skupinové id/tag je potřeba.",
+  "tribe.title.orderedByOD": "Seřazeno podle OD",
+  "tribe.title.orderedByODA": "Seřazeno podle ODA",
+  "tribe.title.orderedByODD": "Seřazeno podle ODD",
+  "tribe.title.orderedByODS": "Seřazeno podle ODS",
+  "tribe.title.orderedByPoints": "Seřazeno podle bodů",
+  "tribe.tribesNotFound": "{{.Mention}} Kmen nebyl nalezen.",
+  "tribe.exceededMaximumNumberOfPages": "{{.Mention}} Překročil jsi maximální počet stránek ({{.Page}}/{{.MaxPage}}).",
+  "tribe.messageLine": "**{{.Index}}**. [`{{.PlayerName}}`]({{.PlayerURL}}) (Kmen: [`{{.TribeTag}}`]({{.TribeURL}}) | Umístění: **{{.Rank}}** | Skóre: **{{.Score}}**)\n",
+
+  "addGroup.groupLimitHasBeenReached": "{{.Mention}} Byl dosažen limit skupiny ({{.Total}}/{{.Limit}}).",
+  "addGroup.success": "{{.Mention}} Nová skupina byla vytvořena (ID: {{.ID}}).",
+
+  "deleteGroup.invalidID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "deleteGroup.success": "{{.Mention}} Skupina byla vymazána.",
+
+  "groups.noGroupsAdded": "Žádné záznamy k zobrazení.",
+  "groups.title": "Seznam skupin",
+  "groups.fieldTitle": "Index | ID | Dobytí | Ztráty | Barbarky | Interní",
+
+  "conqueredVillages.invalidID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "conqueredVillages.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "conqueredVillages.success": "{{.Mention}} Textový channel se úspěšně změnil.",
+
+  "disableConqueredVillages.invalidID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "disableConqueredVillages.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "disableConqueredVillages.success": "{{.Mention}} Notifikace o dobytých vesnicích nadále nebudou zobrazovány.",
+
+  "lostVillages.invalidID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "lostVillages.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "lostVillages.success": "{{.Mention}} Textový channel se úspěšně změnil.",
+
+  "disableLostVillages.invalidID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "disableLostVillages.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "disableLostVillages.success": "{{.Mention}} Notifikace o ztracených vesnicích nadále nebudou zobrazovány.",
+
+  "observe.invalidGroupID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "observe.invalidTribeID": "{{.Mention}} Třetí parametr musí být číslo větší než 0 nebo platná kombinace.",
+  "observe.serverIsClosed": "{{.Mention}} Server je vypnutý.",
+  "observe.serverNotFound": "{{.Mention}} Server nebyl nalezen.",
+  "observe.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "observe.tribeNotFound": "{{.Mention}} Kmen nebyl nalezen.",
+  "observe.observationLimitHasBeenReached": "{{.Mention}} Pozorovací limit pro tuto skupinu byl dosažen ({{.Total}}/{{.Limit}}).",
+  "observe.success": "{{.Mention}} Přidáno.",
+
+  "deleteObservation.invalidGroupID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "deleteObservation.invalidObservationID": "{{.Mention}} Pozorovací ID musí být číslo větší než 0.",
+  "deleteObservation.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "deleteObservation.success": "{{.Mention}} Smazáno.",
+
+  "observations.invalidGroupID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "observations.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "observations.title": "Spravované kmeny\nIndex | ID - Server - Kmen",
+
+  "showEnnobledBarbs.invalidGroupID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "showEnnobledBarbs.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "showEnnobledBarbs.success_1": "{{.Mention}} Notifikace o dobytých barbarských vesnicích nadále nebudou zobrazovány.",
+  "showEnnobledBarbs.success_2": "{{.Mention}} Byly zapnuty notifikace o dobytí barbarských vesnic.",
+
+  "changeLanguage.languageNotSupported": "{{.Mention}} Jazyk není podporován.",
+  "changeLanguage.success": "{{.Mention}} Jazyk byl změněn.",
+
+  "showInternals.invalidGroupID": "{{.Mention}} Skupinové ID musí být číslo větší než 0.",
+  "showInternals.groupNotFound": "{{.Mention}} Skupina nebyla nalezena.",
+  "showInternals.success_1": "{{.Mention}} Interní notifikace nadále nebudou zobrazovány.",
+  "showInternals.success_2": "{{.Mention}} Byly zapnuty interní notifikace.",
+
+  "coordsTranslation.title": "Vesnice",
+  "coordsTranslation.message": "{{.Village}} majitel {{.Player}} (Kmen: {{.Tribe}}).",
+  "coordsTranslation.serverNotFound": "{{.Mention}} Server nebyl nalezen.",
+  "coordsTranslation.success": "{{.Mention}} Překládaní souřadnic bylo zapnuto.",
+
+  "disableCoordsTranslation.success": "{{.Mention}} Překládání souřadnic bylo vypnuto.",
+
+  "cron.lostVillages.title": "Ztracené vesnice",
+  "cron.conqueredVillages.title": "Dobyté vesnice",
+  "cron.checkEnnoblements.msgLine": "{{.NewOwner}} [{{.NewOwnerTribe}}] dobyl {{.Village}} (Vlastnil: {{.OldOwner}} [{{.OldOwnerTribe}}])",
+
+  "api.defaultError": "{{.Mention}} Momentálně nelze načíst data z API, zkus prosím později.",
+
+  "pagination.labelDisplayedPage": "Stránka: {{.Page}} z {{.MaxPage}}",
+
+  "internalServerError": "{{.Mention}} Došlo k interní chybě serveru, zkus prosím později."
+}
