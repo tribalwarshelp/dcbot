@@ -7,7 +7,7 @@ import (
 
 	"github.com/tribalwarshelp/dcbot/discord"
 	"github.com/tribalwarshelp/dcbot/message"
-	"github.com/tribalwarshelp/dcbot/utils"
+	"github.com/tribalwarshelp/dcbot/tw/twutil"
 )
 
 type messageType string
@@ -54,23 +54,23 @@ func newMessage(cfg newMessageConfig) checkEnnoblementsMsg {
 		newOwnerTribeTag: "-",
 		localizer:        cfg.localizer,
 	}
-	if !utils.IsVillageNil(cfg.ennoblement.Village) {
+	if !twutil.IsVillageNil(cfg.ennoblement.Village) {
 		data.village = cfg.ennoblement.Village.FullName()
 		data.villageURL = twurlbuilder.BuildVillageURL(cfg.server, cfg.host, cfg.ennoblement.Village.ID)
 	}
-	if !utils.IsPlayerNil(cfg.ennoblement.OldOwner) {
+	if !twutil.IsPlayerNil(cfg.ennoblement.OldOwner) {
 		data.oldOwnerName = cfg.ennoblement.OldOwner.Name
 		data.oldOwnerURL = twurlbuilder.BuildPlayerURL(cfg.server, cfg.host, cfg.ennoblement.OldOwner.ID)
 	}
-	if !utils.IsPlayerTribeNil(cfg.ennoblement.OldOwner) {
+	if !twutil.IsPlayerTribeNil(cfg.ennoblement.OldOwner) {
 		data.oldOwnerTribeTag = cfg.ennoblement.OldOwner.Tribe.Tag
 		data.oldOwnerTribeURL = twurlbuilder.BuildTribeURL(cfg.server, cfg.host, cfg.ennoblement.OldOwner.Tribe.ID)
 	}
-	if !utils.IsPlayerNil(cfg.ennoblement.NewOwner) {
+	if !twutil.IsPlayerNil(cfg.ennoblement.NewOwner) {
 		data.newOwnerName = cfg.ennoblement.NewOwner.Name
 		data.newOwnerURL = twurlbuilder.BuildPlayerURL(cfg.server, cfg.host, cfg.ennoblement.NewOwner.ID)
 	}
-	if !utils.IsPlayerTribeNil(cfg.ennoblement.NewOwner) {
+	if !twutil.IsPlayerTribeNil(cfg.ennoblement.NewOwner) {
 		data.newOwnerTribeTag = cfg.ennoblement.NewOwner.Tribe.Tag
 		data.newOwnerTribeURL = twurlbuilder.BuildTribeURL(cfg.server, cfg.host, cfg.ennoblement.NewOwner.Tribe.ID)
 	}

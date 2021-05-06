@@ -11,7 +11,7 @@ import (
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 
 	"github.com/tribalwarshelp/dcbot/message"
-	"github.com/tribalwarshelp/dcbot/utils"
+	"github.com/tribalwarshelp/dcbot/tw/twutil"
 )
 
 const (
@@ -117,13 +117,13 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 			villageURL := twurlbuilder.BuildVillageURL(ctx.server.CoordsTranslation, version.Host, village.ID)
 			playerName := "-"
 			playerURL := ""
-			if !utils.IsPlayerNil(village.Player) {
+			if !twutil.IsPlayerNil(village.Player) {
 				playerName = village.Player.Name
 				playerURL = twurlbuilder.BuildPlayerURL(ctx.server.CoordsTranslation, version.Host, village.Player.ID)
 			}
 			tribeName := "-"
 			tribeURL := ""
-			if !utils.IsPlayerTribeNil(village.Player) {
+			if !twutil.IsPlayerTribeNil(village.Player) {
 				tribeName = village.Player.Tribe.Name
 				tribeURL = twurlbuilder.BuildTribeURL(ctx.server.CoordsTranslation, version.Host, village.Player.Tribe.ID)
 			}

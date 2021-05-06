@@ -9,9 +9,10 @@ import (
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
-	"github.com/tribalwarshelp/dcbot/message"
-
 	"github.com/pkg/errors"
+
+	"github.com/tribalwarshelp/dcbot/message"
+	"github.com/tribalwarshelp/dcbot/tw/twutil"
 
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 
@@ -20,7 +21,6 @@ import (
 	"github.com/tribalwarshelp/dcbot/models"
 	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
-	"github.com/tribalwarshelp/dcbot/utils"
 )
 
 type handler struct {
@@ -116,7 +116,7 @@ func (h *handler) loadVersions(servers []string) ([]*twmodel.Version, error) {
 		Code: versionCodes,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "cannot load versions")
+		return nil, errors.Wrap(err, "couldn't load versions")
 	}
 
 	return versionList.Items, nil
@@ -130,7 +130,7 @@ func (h *handler) checkEnnoblements() {
 	}
 	log.
 		WithField("servers", servers).
-		Info("checkEnnoblements: loaded servers")
+		Info("checkEnnoblements: servers have been loaded")
 
 	groups, total, err := h.groupRepo.Fetch(context.Background(), nil)
 	if err != nil {
@@ -139,7 +139,7 @@ func (h *handler) checkEnnoblements() {
 	}
 	log.
 		WithField("numberOfGroups", total).
-		Info("checkEnnoblements: loaded groups")
+		Info("checkEnnoblements: groups have been loaded")
 
 	versions, err := h.loadVersions(servers)
 	if err != nil {
@@ -148,13 +148,13 @@ func (h *handler) checkEnnoblements() {
 	}
 	log.
 		WithField("numberOfVersions", len(versions)).
-		Info("checkEnnoblements: loaded versions")
+		Info("checkEnnoblements: versions have been loaded")
 
 	ennoblementsByServerKey, err := h.loadEnnoblements(servers)
 	if err != nil {
 		log.Errorln("checkEnnoblements:", err)
 	}
-	log.Info("checkEnnoblements: loaded ennoblements")
+	log.Info("checkEnnoblements: ennoblements have been loaded")
 
 	for _, g := range groups {
 		if g.ConqueredVillagesChannelID == "" && g.LostVillagesChannelID == "" {
@@ -165,11 +165,11 @@ func (h *handler) checkEnnoblements() {
 		conqueredVillagesMsg := &discord.MessageEmbed{}
 		for _, obs := range g.Observations {
 			enblmnts, ok := ennoblementsByServerKey[obs.Server]
-			version := utils.FindVersionByCode(versions, twmodel.VersionCodeFromServerKey(obs.Server))
+			version := twutil.FindVersionByCode(versions, twmodel.VersionCodeFromServerKey(obs.Server))
 			if ok && version != nil && version.Host != "" {
 				if g.LostVillagesChannelID != "" {
 					for _, ennoblement := range enblmnts.getLostVillagesByTribe(obs.TribeID) {
-						if !utils.IsPlayerTribeNil(ennoblement.NewOwner) &&
+						if !twutil.IsPlayerTribeNil(ennoblement.NewOwner) &&
 							g.Observations.Contains(obs.Server, ennoblement.NewOwner.Tribe.ID) {
 							continue
 						}
@@ -186,7 +186,7 @@ func (h *handler) checkEnnoblements() {
 
 				if g.ConqueredVillagesChannelID != "" {
 					for _, ennoblement := range enblmnts.getConqueredVillagesByTribe(obs.TribeID, g.ShowInternals) {
-						isInTheSameGroup := !utils.IsPlayerTribeNil(ennoblement.OldOwner) &&
+						isInTheSameGroup := !twutil.IsPlayerTribeNil(ennoblement.OldOwner) &&
 							g.Observations.Contains(obs.Server, ennoblement.OldOwner.Tribe.ID)
 						if (!g.ShowInternals && isInTheSameGroup) ||
 							(!g.ShowEnnobledBarbarians && isBarbarian(ennoblement.OldOwner)) {
@@ -267,27 +267,27 @@ func (h *handler) checkBotServers() {
 		} else {
 			log.
 				WithField("numberOfDeletedServers", len(deleted)).
-				Info("checkBotServers: deleted servers")
+				Info("checkBotServers: some of the servers have been deleted")
 		}
 	}
 }
 
-func (h *handler) deleteClosedTribalWarsServers() {
+func (h *handler) deleteClosedTWServers() {
 	servers, err := h.observationRepo.FetchServers(context.Background())
 	if err != nil {
-		log.Error("deleteClosedTribalWarsServers: " + err.Error())
+		log.Error("deleteClosedTWServers: " + err.Error())
 		return
 	}
 	log.
 		WithField("servers", servers).
-		Info("deleteClosedTribalWarsServers: loaded servers")
+		Info("deleteClosedTWServers: loaded servers")
 
 	list, err := h.api.Server.Browse(0, 0, []string{"key ASC"}, &twmodel.ServerFilter{
 		Key:    servers,
 		Status: []twmodel.ServerStatus{twmodel.ServerStatusClosed},
 	}, nil)
 	if err != nil {
-		log.Errorln("deleteClosedTribalWarsServers: " + err.Error())
+		log.Errorln("deleteClosedTWServers: " + err.Error())
 		return
 	}
 	if list == nil || list.Items == nil {
@@ -304,11 +304,11 @@ func (h *handler) deleteClosedTribalWarsServers() {
 			Server: keys,
 		})
 		if err != nil {
-			log.Errorln("deleteClosedTribalWarsServers: " + err.Error())
+			log.Errorln("deleteClosedTWServers: " + err.Error())
 		} else {
 			log.
 				WithField("numberOfDeletedObservations", len(deleted)).
-				Infof("deleteClosedTribalWarsServers: deleted observations")
+				Infof("deleteClosedTWServers: some of the observations have been deleted")
 		}
 	}
 }

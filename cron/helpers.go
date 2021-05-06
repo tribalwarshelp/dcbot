@@ -5,11 +5,11 @@ import (
 	"github.com/tribalwarshelp/shared/tw/twmodel"
 	"time"
 
-	"github.com/tribalwarshelp/dcbot/utils"
+	"github.com/tribalwarshelp/dcbot/tw/twutil"
 )
 
 func isBarbarian(p *twmodel.Player) bool {
-	return utils.IsPlayerNil(p) || p.ID == 0
+	return twutil.IsPlayerNil(p) || p.ID == 0
 }
 
 func trackDuration(log *logrus.Entry, fn func(), fnName string) func() {

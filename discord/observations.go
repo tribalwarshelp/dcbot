@@ -15,7 +15,7 @@ import (
 
 	"github.com/tribalwarshelp/dcbot/message"
 	"github.com/tribalwarshelp/dcbot/models"
-	"github.com/tribalwarshelp/dcbot/utils"
+	"github.com/tribalwarshelp/dcbot/tw/twutil"
 )
 
 const (
@@ -741,7 +741,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			if observation.Tribe != nil {
 				tag = observation.Tribe.Tag
 			}
-			version := utils.FindVersionByCode(versionList.Items, twmodel.VersionCodeFromServerKey(observation.Server))
+			version := twutil.FindVersionByCode(versionList.Items, twmodel.VersionCodeFromServerKey(observation.Server))
 			tribeURL := ""
 			if version != nil {
 				tribeURL = twurlbuilder.BuildTribeURL(observation.Server, version.Host, observation.TribeID)

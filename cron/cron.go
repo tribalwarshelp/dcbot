@@ -39,8 +39,8 @@ func Attach(c *cron.Cron, cfg Config) {
 	checkEnnoblements := trackDuration(log, h.checkEnnoblements, "checkEnnoblements")
 	checkBotServers := trackDuration(log, h.checkBotServers, "checkBotServers")
 	deleteClosedTribalWarsServers := trackDuration(log,
-		h.deleteClosedTribalWarsServers,
-		"deleteClosedTribalWarsServers")
+		h.deleteClosedTWServers,
+		"deleteClosedTWServers")
 	updateBotStatus := trackDuration(log, h.updateBotStatus, "updateBotStatus")
 	c.AddFunc("@every 1m", checkEnnoblements)
 	c.AddFunc("@every 30m", checkBotServers)
