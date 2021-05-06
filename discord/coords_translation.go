@@ -108,7 +108,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 				},
 			},
 		)
-		if err != nil || list == nil || list.Items == nil {
+		if err != nil || list == nil || len(list.Items) <= 0 {
 			return
 		}
 

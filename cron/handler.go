@@ -290,7 +290,7 @@ func (h *handler) deleteClosedTWServers() {
 		log.Errorln("deleteClosedTWServers: " + err.Error())
 		return
 	}
-	if list == nil || list.Items == nil {
+	if list == nil || len(list.Items) <= 0 {
 		return
 	}
 
