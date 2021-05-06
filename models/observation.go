@@ -39,7 +39,7 @@ type ObservationFilter struct {
 	DefaultFilter
 }
 
-func (f *ObservationFilter) ApplyWithPrefix(q *orm.Query, alias string) (*orm.Query, error) {
+func (f *ObservationFilter) ApplyWithAlias(q *orm.Query, alias string) (*orm.Query, error) {
 	if len(f.ID) > 0 {
 		q = q.Where(gopgutil.BuildConditionArray("?"), gopgutil.AddAliasToColumnName("id", alias), pg.Array(f.ID))
 	}
@@ -53,5 +53,5 @@ func (f *ObservationFilter) ApplyWithPrefix(q *orm.Query, alias string) (*orm.Qu
 }
 
 func (f *ObservationFilter) Apply(q *orm.Query) (*orm.Query, error) {
-	return f.ApplyWithPrefix(q, "observation")
+	return f.ApplyWithAlias(q, "observation")
 }
