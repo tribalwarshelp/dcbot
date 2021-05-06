@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"github.com/Kichiyaki/appmode"
+	"github.com/Kichiyaki/goutil/envutil"
 	"os"
 	"os/signal"
 	"path"
@@ -16,13 +17,11 @@ import (
 
 	_cron "github.com/tribalwarshelp/dcbot/cron"
 	"github.com/tribalwarshelp/dcbot/discord"
-	group_repository "github.com/tribalwarshelp/dcbot/group/repository"
-	observation_repository "github.com/tribalwarshelp/dcbot/observation/repository"
-	server_repository "github.com/tribalwarshelp/dcbot/server/repository"
+	grouprepository "github.com/tribalwarshelp/dcbot/group/repository"
+	observationrepository "github.com/tribalwarshelp/dcbot/observation/repository"
+	serverepository "github.com/tribalwarshelp/dcbot/server/repository"
 
-	"github.com/tribalwarshelp/shared/mode"
-
-	gopglogrusquerylogger "github.com/Kichiyaki/go-pg-logrus-query-logger/v10"
+	"github.com/Kichiyaki/go-pg-logrus-query-logger/v10"
 	"github.com/go-pg/pg/v10"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
@@ -37,7 +36,7 @@ var status = "tribalwarshelp.com | " + discord.HelpCommand.WithPrefix(commandPre
 func init() {
 	os.Setenv("TZ", "UTC")
 
-	if mode.Get() == mode.DevelopmentMode {
+	if appmode.Equals(appmode.DevelopmentMode) {
 		godotenv.Load(".env.local")
 	}
 
@@ -51,17 +50,14 @@ func main() {
 	}
 	dirWithMessages := path.Join(dir, "message", "translations")
 	if err := message.LoadMessages(dirWithMessages); err != nil {
-		logrus.Fatal(err)
+		logrus.WithField("dir", dirWithMessages).Fatal(err)
 	}
-	logrus.WithField("dir", dirWithMessages).
-		WithField("languages", message.LanguageTags()).
-		Info("Loaded messages")
 
 	db := pg.Connect(&pg.Options{
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		Database: os.Getenv("DB_NAME"),
-		Addr:     os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT"),
+		User:     envutil.GetenvString("DB_USER"),
+		Password: envutil.GetenvString("DB_PASSWORD"),
+		Database: envutil.GetenvString("DB_NAME"),
+		Addr:     envutil.GetenvString("DB_HOST") + ":" + os.Getenv("DB_PORT"),
 	})
 	defer func() {
 		if err := db.Close(); err != nil {
@@ -75,23 +71,23 @@ func main() {
 		})
 	}
 
-	serverRepo, err := server_repository.NewPgRepo(db)
+	serverRepo, err := serverepository.NewPgRepo(db)
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	groupRepo, err := group_repository.NewPgRepo(db)
+	groupRepo, err := grouprepository.NewPgRepo(db)
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	observationRepo, err := observation_repository.NewPgRepo(db)
+	observationRepo, err := observationrepository.NewPgRepo(db)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
-	api := sdk.New(os.Getenv("API_URL"))
+	api := sdk.New(envutil.GetenvString("API_URL"))
 
 	sess, err := discord.New(discord.SessionConfig{
-		Token:                 os.Getenv("BOT_TOKEN"),
+		Token:                 envutil.GetenvString("BOT_TOKEN"),
 		CommandPrefix:         commandPrefix,
 		Status:                status,
 		ObservationRepository: observationRepo,
@@ -100,18 +96,23 @@ func main() {
 		API:                   api,
 	})
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.
+			WithFields(logrus.Fields{
+				"api":           envutil.GetenvString("API_URL"),
+				"commandPrefix": commandPrefix,
+				"status":        status,
+			}).
+			Fatal(err)
 	}
 	defer sess.Close()
-	logrus.WithFields(logrus.Fields{
-		"api":           os.Getenv("API_URL"),
-		"commandPrefix": commandPrefix,
-		"status":        status,
-	}).Info("The Discord session has been initialized")
 
-	c := cron.New(cron.WithChain(
-		cron.SkipIfStillRunning(cron.VerbosePrintfLogger(log.New(os.Stdout, "cron: ", log.LstdFlags))),
-	))
+	c := cron.New(
+		cron.WithChain(
+			cron.SkipIfStillRunning(
+				cron.PrintfLogger(logrus.StandardLogger()),
+			),
+		),
+	)
 	_cron.Attach(c, _cron.Config{
 		ServerRepo:      serverRepo,
 		ObservationRepo: observationRepo,
@@ -122,24 +123,23 @@ func main() {
 	})
 	c.Start()
 	defer c.Stop()
-	logrus.Info("Started the cron scheduler")
 
-	logrus.Info("Bot is running!")
+	logrus.Info("The bot is up and running!")
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT)
 	<-channel
 
-	logrus.Info("shutting down")
+	logrus.Info("shutting down...")
 }
 
 func setupLogger() {
-	if mode.Get() == mode.DevelopmentMode {
+	if appmode.Equals(appmode.DevelopmentMode) {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 
 	timestampFormat := "2006-01-02 15:04:05"
-	if mode.Get() == mode.ProductionMode {
+	if appmode.Equals(appmode.ProductionMode) {
 		customFormatter := new(logrus.JSONFormatter)
 		customFormatter.TimestampFormat = timestampFormat
 		logrus.SetFormatter(customFormatter)

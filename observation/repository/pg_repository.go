@@ -20,7 +20,7 @@ func NewPgRepo(db *pg.DB) (observation.Repository, error) {
 		IfNotExists:   true,
 		FKConstraints: true,
 	}); err != nil {
-		return nil, errors.Wrap(err, "cannot create 'observations' table")
+		return nil, errors.Wrap(err, "couldn't create the 'observations' table")
 	}
 	return &pgRepo{db}, nil
 }
@@ -53,7 +53,7 @@ func (repo *pgRepo) Update(ctx context.Context, observation *models.Observation)
 
 func (repo *pgRepo) Fetch(ctx context.Context, f *models.ObservationFilter) ([]*models.Observation, int, error) {
 	var err error
-	data := []*models.Observation{}
+	var data []*models.Observation
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {
@@ -72,10 +72,9 @@ func (repo *pgRepo) Fetch(ctx context.Context, f *models.ObservationFilter) ([]*
 }
 
 func (repo *pgRepo) FetchServers(ctx context.Context) ([]string, error) {
-	data := []*models.Observation{}
-	res := []string{}
+	var res []string
 	err := repo.
-		Model(&data).
+		Model(&models.Observation{}).
 		Column("server").
 		Context(ctx).
 		Group("server").
@@ -85,7 +84,7 @@ func (repo *pgRepo) FetchServers(ctx context.Context) ([]string, error) {
 }
 
 func (repo *pgRepo) Delete(ctx context.Context, f *models.ObservationFilter) ([]*models.Observation, error) {
-	data := []*models.Observation{}
+	var data []*models.Observation
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {

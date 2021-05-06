@@ -2,6 +2,8 @@ package discord
 
 import (
 	"fmt"
+	"github.com/tribalwarshelp/shared/tw/twmodel"
+	"github.com/tribalwarshelp/shared/tw/twurlbuilder"
 	"math"
 	"strconv"
 	"strings"
@@ -9,8 +11,6 @@ import (
 	"github.com/tribalwarshelp/dcbot/message"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	shared_models "github.com/tribalwarshelp/shared/models"
-	"github.com/tribalwarshelp/shared/tw"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/dustin/go-humanize"
@@ -163,7 +163,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpConqueredVillages,
 			DefaultMessage: message.FallbackMsg(message.HelpConqueredVillages,
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - sets the channel on which notifications about conquered village will be displayed. IMPORTANT! Call this command on the channel you want to display these notifications."),
 			TemplateData: map[string]interface{}{
 				"Command":       ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -191,7 +191,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpLostVillages,
 			DefaultMessage: message.FallbackMsg(message.HelpLostVillages,
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - sets the channel on which notifications about lost village will be displayed. IMPORTANT! Call this command on the channel you want to display these notifications."),
 			TemplateData: map[string]interface{}{
 				"Command":       LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -200,7 +200,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpDisableLostVillages,
 			DefaultMessage: message.FallbackMsg(message.HelpDisableLostVillages,
-				"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. IMPORTANT! Call this command on the channel you want to display these notifications."),
+				"**{{.Command}}** [group id from {{.GroupsCommand}}] - sets the channel on which notifications about lost village will be displayed. IMPORTANT! Call this command on the channel you want to display these notifications."),
 			TemplateData: map[string]interface{}{
 				"Command":       DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 				"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -255,7 +255,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		SetURL("https://dcbot.tribalwarshelp.com/").
 		SetDescription(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.HelpDescription,
-			DefaultMessage: message.FallbackMsg(message.HelpDescription, "Commands offered by bot"),
+			DefaultMessage: message.FallbackMsg(message.HelpDescription, "Command list"),
 		})).
 		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.HelpForAllUsers,
@@ -291,8 +291,8 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		}))
 		return
 	}
-	ids := []int{}
-	tags := []string{}
+	var ids []int
+	var tags []string
 	for _, arg := range args[3:argsLength] {
 		trimmed := strings.TrimSpace(arg)
 		if trimmed == "" {
@@ -319,10 +319,10 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 	exists := true
 	limit := 10
 	offset := (page - 1) * limit
-	filter := &shared_models.PlayerFilter{
+	filter := &twmodel.PlayerFilter{
 		Exists: &exists,
-		TribeFilter: &shared_models.TribeFilter{
-			Or: &shared_models.TribeFilterOr{
+		TribeFilter: &twmodel.TribeFilter{
+			Or: &twmodel.TribeFilterOr{
 				ID:  ids,
 				Tag: tags,
 			},
@@ -414,7 +414,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		return
 	}
 
-	code := tw.VersionCodeFromServerKey(server)
+	code := twmodel.VersionCodeFromServerKey(server)
 	version, err := s.cfg.API.Version.Read(code)
 	if err != nil || version == nil {
 		s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -458,7 +458,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		tribeURL := "-"
 		if player.Tribe != nil {
 			tribeTag = player.Tribe.Tag
-			tribeURL = tw.BuildTribeURL(server, version.Host, player.Tribe.ID)
+			tribeURL = twurlbuilder.BuildTribeURL(server, version.Host, player.Tribe.ID)
 		}
 
 		msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -468,7 +468,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 			TemplateData: map[string]interface{}{
 				"Index":      offset + i + 1,
 				"PlayerName": player.Name,
-				"PlayerURL":  tw.BuildPlayerURL(server, version.Host, player.ID),
+				"PlayerURL":  twurlbuilder.BuildPlayerURL(server, version.Host, player.ID),
 				"TribeTag":   tribeTag,
 				"TribeURL":   tribeURL,
 				"Rank":       rank,

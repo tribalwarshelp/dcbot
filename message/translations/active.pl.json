@@ -1,6 +1,6 @@
 {
   "help.title": "Pomoc",
-  "help.description": "Komendy oferowane przez bota.",
+  "help.description": "Lista komend",
   "help.footer": "",
   "help.forAllUsers": "Dla wszystkich",
   "help.forAdmins": "Dla adminów",
@@ -17,9 +17,9 @@
   "help.observe": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] [serwer] [id lub skrót plemienia] - dodaje plemię do grupy.",
   "help.observations": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - pokazuje plemiona należące do wybranej grupy.",
   "help.deleteobservation": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - usuwa plemię z grupy.",
-  "help.conqueredvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - zmienia kanał na którym będą się pojawiać informację o podbitych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
+  "help.conqueredvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - ustawia kanał na którym będą się pojawiać informację o podbitych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
   "help.disableconqueredvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o podbitych wioskach w danej grupie.",
-  "help.lostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - zmienia kanał na którym będą się pojawiać informację o straconych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
+  "help.lostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - ustawia kanał na którym będą się pojawiać informację o straconych wioskach w danej grupie. **WAŻNE!** Wywołaj tę komendę na kanale na którym chcesz dostawać te powiadomienia.",
   "help.disablelostvillages": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - wyłącza powiadomienia o straconych wioskach w danej grupie.",
   "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - zmień język bota.",
   "help.showinternals": "**{{.Command}}** [id grupy z {{.GroupsCommand}}] - włącza/wyłącza notyfikacje o podbiciach plemion należących do jednej grupy.",
@@ -49,7 +49,7 @@
 
   "conqueredVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
   "conqueredVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
-  "conqueredVillages.success": "{{.Mention}} Kanał został pomyślnie zmieniony.",
+  "conqueredVillages.success": "{{.Mention}} Kanał został pomyślnie ustawiony.",
 
   "disableConqueredVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
   "disableConqueredVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
@@ -57,7 +57,7 @@
 
   "lostVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
   "lostVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
-  "lostVillages.success": "{{.Mention}} Kanał został pomyślnie zmieniony.",
+  "lostVillages.success": "{{.Mention}} Kanał został pomyślnie ustawiony.",
 
   "disableLostVillages.invalidID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
   "disableLostVillages.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
@@ -70,12 +70,12 @@
   "observe.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
   "observe.tribeNotFound": "{{.Mention}} Plemię nie zostało znalezione.",
   "observe.observationLimitHasBeenReached": "{{.Mention}} Limit obserwacji dla grupy został osiągnięty ({{.Total}}/{{.Limit}}).",
-  "observe.success": "{{.Mention}} Dodano.",
+  "observe.success": "{{.Mention}} Dodano plemię do obserwowanych.",
 
   "deleteObservation.invalidGroupID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
   "deleteObservation.invalidObservationID": "{{.Mention}} ID obserwacji musi być liczbą większą od 0.",
   "deleteObservation.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
-  "deleteObservation.success": "{{.Mention}} Usunięto.",
+  "deleteObservation.success": "{{.Mention}} Usunięto plemię z grupy.",
 
   "observations.invalidGroupID": "{{.Mention}} ID grupy musi być liczbą większą od 0.",
   "observations.groupNotFound": "{{.Mention}} Grupa nie została znaleziona.",
@@ -109,5 +109,5 @@
 
   "pagination.labelDisplayedPage": "Strona: {{.Page}} z {{.MaxPage}}",
 
-  "internalServerError": "{{.Mention}} Wewnętrzny błąd serwera, prosimy spróbować później."
+  "internalServerError": "{{.Mention}} Wewnętrzny błąd serwera, prosimy spróbować później."
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/Kichiyaki/gopgutil/v10"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 )
@@ -22,20 +23,16 @@ type GroupFilter struct {
 	DefaultFilter
 }
 
-func (f *GroupFilter) ApplyWithPrefix(prefix string) func(q *orm.Query) (*orm.Query, error) {
-	return func(q *orm.Query) (*orm.Query, error) {
-		if len(f.ID) > 0 {
-			column := addPrefixToColumnName("id", prefix)
-			q = q.Where(column+" = ANY(?)", pg.Array(f.ID))
-		}
-		if len(f.ServerID) > 0 {
-			column := addPrefixToColumnName("server_id", prefix)
-			q = q.Where(column+" = ANY(?)", pg.Array(f.ServerID))
-		}
-		return f.DefaultFilter.Apply(q)
+func (f *GroupFilter) ApplyWithAlias(q *orm.Query, prefix string) (*orm.Query, error) {
+	if len(f.ID) > 0 {
+		q = q.Where(gopgutil.BuildConditionArray("?"), gopgutil.AddAliasToColumnName("id", prefix), pg.Array(f.ID))
 	}
+	if len(f.ServerID) > 0 {
+		q = q.Where(gopgutil.BuildConditionArray("?"), gopgutil.AddAliasToColumnName("server_id", prefix), pg.Array(f.ServerID))
+	}
+	return f.DefaultFilter.Apply(q)
 }
 
 func (f *GroupFilter) Apply(q *orm.Query) (*orm.Query, error) {
-	return f.ApplyWithPrefix("group")(q)
+	return f.ApplyWithAlias(q, "group")
 }

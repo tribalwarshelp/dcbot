@@ -18,7 +18,7 @@ Features:
 
 ## Development
 
-**Required env variables to run this bot:**
+**Required ENV variables:**
 
 ```
 DB_USER=your_pgdb_user

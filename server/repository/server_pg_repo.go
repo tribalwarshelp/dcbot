@@ -19,7 +19,7 @@ func NewPgRepo(db *pg.DB) (server.Repository, error) {
 	if err := db.Model((*models.Server)(nil)).CreateTable(&orm.CreateTableOptions{
 		IfNotExists: true,
 	}); err != nil {
-		return nil, errors.Wrap(err, "cannot create 'servers' table")
+		return nil, errors.Wrap(err, "couldn't create the 'servers' table")
 	}
 	return &pgRepo{db}, nil
 }
@@ -51,7 +51,7 @@ func (repo *pgRepo) Update(ctx context.Context, server *models.Server) error {
 
 func (repo *pgRepo) Fetch(ctx context.Context, f *models.ServerFilter) ([]*models.Server, int, error) {
 	var err error
-	data := []*models.Server{}
+	var data []*models.Server
 	query := repo.Model(&data).Context(ctx).Relation("Groups")
 
 	if f != nil {
@@ -70,7 +70,7 @@ func (repo *pgRepo) Fetch(ctx context.Context, f *models.ServerFilter) ([]*model
 }
 
 func (repo *pgRepo) Delete(ctx context.Context, f *models.ServerFilter) ([]*models.Server, error) {
-	data := []*models.Server{}
+	var data []*models.Server
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {
