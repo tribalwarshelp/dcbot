@@ -17,9 +17,9 @@
   "help.observe": "**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id or tribe tag] - adds a tribe to the observation group.",
   "help.observations": "**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of monitored tribes added to this group.",
   "help.deleteobservation": "**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group.",
-  "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
+  "help.conqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - sets the channel on which notifications about conquered village will be displayed. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
   "help.disableconqueredvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disables notifications about conquered villages.",
-  "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about lost village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
+  "help.lostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - sets the channel on which notifications about lost village will be displayed. **IMPORTANT!** Run this command on the channel you want to display these notifications.",
   "help.disablelostvillages": "**{{.Command}}** [group id from {{.GroupsCommand}}] - disables notifications about lost villages.",
   "help.changelanguage": "**{{.Command}}** [{{.Languages}}] - changes language.",
   "help.showinternals": "**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering.",
@@ -49,7 +49,7 @@
 
   "conqueredVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
   "conqueredVillages.groupNotFound": "{{.Mention}} Group not found.",
-  "conqueredVillages.success": "{{.Mention}} Channel changed successfully.",
+  "conqueredVillages.success": "{{.Mention}} The channel has been successfully set.",
 
   "disableConqueredVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
   "disableConqueredVillages.groupNotFound": "{{.Mention}} Group not found.",
@@ -57,7 +57,7 @@
 
   "lostVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
   "lostVillages.groupNotFound": "{{.Mention}} Group not found.",
-  "lostVillages.success": "{{.Mention}} Channel changed successfully.",
+  "lostVillages.success": "{{.Mention}} The channel has been successfully set.",
 
   "disableLostVillages.invalidID": "{{.Mention}} The group ID must be a number greater than 0.",
   "disableLostVillages.groupNotFound": "{{.Mention}} Group not found.",
@@ -70,12 +70,12 @@
   "observe.groupNotFound": "{{.Mention}} Group not found.",
   "observe.tribeNotFound": "{{.Mention}} Tribe not found.",
   "observe.observationLimitHasBeenReached": "{{.Mention}} The observation limit for this group has been reached ({{.Total}}/{{.Limit}}).",
-  "observe.success": "{{.Mention}} Added.",
+  "observe.success": "{{.Mention}} The tribe has been added to the group.",
 
   "deleteObservation.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
   "deleteObservation.invalidObservationID": "{{.Mention}} The observation ID must be a number greater than 0.",
   "deleteObservation.groupNotFound": "{{.Mention}} Group not found.",
-  "deleteObservation.success": "{{.Mention}} Deleted.",
+  "deleteObservation.success": "{{.Mention}} The tribe has been removed from the group.",
 
   "observations.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
   "observations.groupNotFound": "{{.Mention}} Group not found.",
@@ -92,7 +92,7 @@
   "showInternals.invalidGroupID": "{{.Mention}} The group ID must be a number greater than 0.",
   "showInternals.groupNotFound": "{{.Mention}} Group not found.",
   "showInternals.success_1": "{{.Mention}} Notifications about internals will no longer show up.",
-  "showInternals.success_2": "{{.Mention}} Enabled notifications about internals.",
+  "showInternals.success_2": "{{.Mention}} Notifications about internals have been enabled.",
 
   "coordsTranslation.title": "Villages",
   "coordsTranslation.message": "{{.Village}} owned by {{.Player}} (Tribe: {{.Tribe}}).",

@@ -181,7 +181,7 @@ func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.M
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpConqueredVillages,
 				DefaultMessage: message.FallbackMsg(message.HelpConqueredVillages,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - changes the channel on which notifications about conquered village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] - sets the channel on which notifications about conquered village will be displayed. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
 				TemplateData: map[string]interface{}{
 					"Command":       ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -227,7 +227,7 @@ func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.M
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.ConqueredVillagesSuccess,
 			DefaultMessage: message.FallbackMsg(message.ConqueredVillagesSuccess,
-				"{{.Mention}} Channel changed successfully."),
+				"{{.Mention}} The channel has been successfully set."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
@@ -303,7 +303,7 @@ func (s *Session) handleLostVillagesCommand(ctx *commandCtx, m *discordgo.Messag
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpLostVillages,
 				DefaultMessage: message.FallbackMsg(message.HelpLostVillages,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] changes the channel on which notifications about lost village will show. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
+					"**{{.Command}}** [group id from {{.GroupsCommand}}] sets the channel on which notifications about lost village will be displayed. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
 				TemplateData: map[string]interface{}{
 					"Command":       LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
 					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
@@ -350,7 +350,7 @@ func (s *Session) handleLostVillagesCommand(ctx *commandCtx, m *discordgo.Messag
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.LostVillagesSuccess,
 			DefaultMessage: message.FallbackMsg(message.LostVillagesSuccess,
-				"{{.Mention}} Channel changed successfully."),
+				"{{.Mention}} The channel has been successfully set."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
@@ -549,7 +549,7 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 
 	s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 		MessageID:      message.ObserveSuccess,
-		DefaultMessage: message.FallbackMsg(message.ObserveSuccess, "{{.Mention}} Added."),
+		DefaultMessage: message.FallbackMsg(message.ObserveSuccess, "{{.Mention}} The tribe has been added to the group."),
 		TemplateData: map[string]interface{}{
 			"Mention": m.Author.Mention(),
 		},
@@ -620,7 +620,7 @@ func (s *Session) handleDeleteObservationCommand(ctx *commandCtx, m *discordgo.M
 
 	s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 		MessageID:      message.DeleteObservationSuccess,
-		DefaultMessage: message.FallbackMsg(message.DeleteObservationSuccess, "{{.Mention}} Deleted."),
+		DefaultMessage: message.FallbackMsg(message.DeleteObservationSuccess, "{{.Mention}} The tribe has been removed from the group."),
 		TemplateData: map[string]interface{}{
 			"Mention": m.Author.Mention(),
 		},
@@ -970,7 +970,7 @@ func (s *Session) handleShowInternalsCommand(ctx *commandCtx, m *discordgo.Messa
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ShowInternalsSuccess2,
 				DefaultMessage: message.FallbackMsg(message.ShowInternalsSuccess2,
-					"{{.Mention}} Enabled notifications about internals."),
+					"{{.Mention}} Notifications about internals have been enabled."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
