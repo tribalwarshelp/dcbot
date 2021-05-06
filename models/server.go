@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/Kichiyaki/gopgutil/v10"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 )
@@ -19,16 +20,13 @@ type ServerFilter struct {
 	DefaultFilter
 }
 
-func (f *ServerFilter) ApplyWithPrefix(prefix string) func(q *orm.Query) (*orm.Query, error) {
-	return func(q *orm.Query) (*orm.Query, error) {
-		if len(f.ID) > 0 {
-			column := addPrefixToColumnName("id", prefix)
-			q = q.Where(column+" = ANY(?)", pg.Array(f.ID))
-		}
-		return f.DefaultFilter.Apply(q)
+func (f *ServerFilter) ApplyWithPrefix(q *orm.Query, alias string) (*orm.Query, error) {
+	if len(f.ID) > 0 {
+		q = q.Where(gopgutil.BuildConditionArray("?"), gopgutil.AddAliasToColumnName("id", alias), pg.Array(f.ID))
 	}
+	return f.DefaultFilter.Apply(q)
 }
 
 func (f *ServerFilter) Apply(q *orm.Query) (*orm.Query, error) {
-	return f.ApplyWithPrefix("server")(q)
+	return f.ApplyWithPrefix(q, "server")
 }

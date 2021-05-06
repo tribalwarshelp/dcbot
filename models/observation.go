@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/Kichiyaki/gopgutil/v10"
 	"github.com/tribalwarshelp/shared/tw/twmodel"
 	"time"
 
@@ -38,24 +39,19 @@ type ObservationFilter struct {
 	DefaultFilter
 }
 
-func (f *ObservationFilter) ApplyWithPrefix(prefix string) func(q *orm.Query) (*orm.Query, error) {
-	return func(q *orm.Query) (*orm.Query, error) {
-		if len(f.ID) > 0 {
-			column := addPrefixToColumnName("id", prefix)
-			q = q.Where(column+" = ANY(?)", pg.Array(f.ID))
-		}
-		if len(f.Server) > 0 {
-			column := addPrefixToColumnName("server", prefix)
-			q = q.Where(column+" = ANY(?)", pg.Array(f.Server))
-		}
-		if len(f.GroupID) > 0 {
-			column := addPrefixToColumnName("group_id", prefix)
-			q = q.Where(column+" = ANY(?)", pg.Array(f.GroupID))
-		}
-		return f.DefaultFilter.Apply(q)
+func (f *ObservationFilter) ApplyWithPrefix(q *orm.Query, alias string) (*orm.Query, error) {
+	if len(f.ID) > 0 {
+		q = q.Where(gopgutil.BuildConditionArray("?"), gopgutil.AddAliasToColumnName("id", alias), pg.Array(f.ID))
 	}
+	if len(f.Server) > 0 {
+		q = q.Where(gopgutil.BuildConditionArray("?"), gopgutil.AddAliasToColumnName("server", alias), pg.Array(f.Server))
+	}
+	if len(f.GroupID) > 0 {
+		q = q.Where(gopgutil.BuildConditionArray("?"), gopgutil.AddAliasToColumnName("group_id", alias), pg.Array(f.GroupID))
+	}
+	return f.DefaultFilter.Apply(q)
 }
 
 func (f *ObservationFilter) Apply(q *orm.Query) (*orm.Query, error) {
-	return f.ApplyWithPrefix("observation")(q)
+	return f.ApplyWithPrefix(q, "observation")
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/Kichiyaki/appmode"
 	"github.com/Kichiyaki/goutil/envutil"
-	"log"
 	"os"
 	"os/signal"
 	"path"
@@ -107,9 +106,13 @@ func main() {
 	}
 	defer sess.Close()
 
-	c := cron.New(cron.WithChain(
-		cron.SkipIfStillRunning(cron.VerbosePrintfLogger(log.New(os.Stdout, "cron: ", log.LstdFlags))),
-	))
+	c := cron.New(
+		cron.WithChain(
+			cron.SkipIfStillRunning(
+				cron.PrintfLogger(logrus.StandardLogger()),
+			),
+		),
+	)
 	_cron.Attach(c, _cron.Config{
 		ServerRepo:      serverRepo,
 		ObservationRepo: observationRepo,

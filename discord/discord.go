@@ -2,7 +2,7 @@ package discord
 
 import (
 	"context"
-	"fmt"
+	"github.com/pkg/errors"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -147,7 +147,7 @@ func (s *Session) init() error {
 
 	err := s.dg.Open()
 	if err != nil {
-		return fmt.Errorf("error opening ws connection: %s", err.Error())
+		return errors.Wrap(err, "error opening ws connection")
 	}
 
 	if err := s.UpdateStatus(s.cfg.Status); err != nil {
@@ -176,7 +176,7 @@ func (s *Session) SendEmbed(channelID string, message *discordgo.MessageEmbed) e
 		baseNumberOfCharacters += len(message.Footer.Text)
 	}
 
-	splittedFields := [][]*discordgo.MessageEmbedField{}
+	var splittedFields [][]*discordgo.MessageEmbedField
 	characters := baseNumberOfCharacters
 	fromIndex := 0
 	fieldsLen := len(fields)
@@ -231,8 +231,8 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		return
 	}
 
-	splitted := strings.Split(m.Content, " ")
-	args := splitted[1:]
+	parts := strings.Split(m.Content, " ")
+	args := parts[1:]
 	svr := &models.Server{
 		ID:   m.GuildID,
 		Lang: message.GetDefaultLanguage().String(),
@@ -247,7 +247,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		localizer: message.NewLocalizer(svr.Lang),
 	}
 
-	cmd := Command(splitted[0])
+	cmd := Command(parts[0])
 	h := s.handlers.find(cmd)
 	if h != nil {
 		if h.requireAdmPermissions {
