@@ -255,7 +255,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 		SetURL("https://dcbot.tribalwarshelp.com/").
 		SetDescription(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.HelpDescription,
-			DefaultMessage: message.FallbackMsg(message.HelpDescription, "Commands offered by the bot"),
+			DefaultMessage: message.FallbackMsg(message.HelpDescription, "Command list"),
 		})).
 		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.HelpForAllUsers,
