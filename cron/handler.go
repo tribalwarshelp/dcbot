@@ -3,16 +3,17 @@ package cron
 import (
 	"context"
 	"fmt"
+	"github.com/Kichiyaki/appmode"
+	"github.com/tribalwarshelp/shared/tw/twmodel"
 	"time"
 
-	"github.com/tribalwarshelp/shared/tw"
-
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+
 	"github.com/tribalwarshelp/dcbot/message"
 
 	"github.com/pkg/errors"
-	"github.com/tribalwarshelp/shared/mode"
-	shared_models "github.com/tribalwarshelp/shared/models"
+
+	"github.com/tribalwarshelp/golang-sdk/sdk"
 
 	"github.com/tribalwarshelp/dcbot/discord"
 	"github.com/tribalwarshelp/dcbot/group"
@@ -20,7 +21,6 @@ import (
 	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
 	"github.com/tribalwarshelp/dcbot/utils"
-	"github.com/tribalwarshelp/golang-sdk/sdk"
 )
 
 type handler struct {
@@ -42,13 +42,13 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 
 	query := ""
 
-	for _, server := range servers {
-		lastEnnoblementAt, ok := h.lastEnnoblementAt[server]
+	for _, s := range servers {
+		lastEnnoblementAt, ok := h.lastEnnoblementAt[s]
 		if !ok {
 			lastEnnoblementAt = time.Now().Add(-1 * time.Minute)
-			h.lastEnnoblementAt[server] = lastEnnoblementAt
+			h.lastEnnoblementAt[s] = lastEnnoblementAt
 		}
-		if mode.Get() == mode.DevelopmentMode {
+		if appmode.Equals(appmode.DevelopmentMode) {
 			lastEnnoblementAt = time.Now().Add(-1 * time.Hour * 2)
 		}
 		lastEnnoblementAtJSON, err := lastEnnoblementAt.MarshalJSON()
@@ -62,8 +62,8 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 					ennobledAt
 				}
 			}
-		`, server,
-			server,
+		`, s,
+			s,
 			string(lastEnnoblementAtJSON),
 			sdk.EnnoblementInclude{
 				NewOwner: true,
@@ -83,36 +83,36 @@ func (h *handler) loadEnnoblements(servers []string) (map[string]ennoblements, e
 		return m, errors.Wrap(err, "loadEnnoblements")
 	}
 
-	for server, singleServerResp := range resp {
+	for s, singleServerResp := range resp {
 		if singleServerResp == nil {
 			continue
 		}
-		m[server] = ennoblements(singleServerResp.Items)
-		lastEnnoblement := m[server].getLastEnnoblement()
+		m[s] = singleServerResp.Items
+		lastEnnoblement := m[s].getLastEnnoblement()
 		if lastEnnoblement != nil {
-			h.lastEnnoblementAt[server] = lastEnnoblement.EnnobledAt
+			h.lastEnnoblementAt[s] = lastEnnoblement.EnnobledAt
 		}
 	}
 
 	return m, nil
 }
 
-func (h *handler) loadVersions(servers []string) ([]*shared_models.Version, error) {
-	versionCodes := []shared_models.VersionCode{}
-	cache := make(map[shared_models.VersionCode]bool)
-	for _, server := range servers {
-		languageTag := tw.VersionCodeFromServerKey(server)
-		if languageTag.IsValid() && !cache[languageTag] {
-			cache[languageTag] = true
-			versionCodes = append(versionCodes, languageTag)
+func (h *handler) loadVersions(servers []string) ([]*twmodel.Version, error) {
+	var versionCodes []twmodel.VersionCode
+	cache := make(map[twmodel.VersionCode]bool)
+	for _, s := range servers {
+		versionCode := twmodel.VersionCodeFromServerKey(s)
+		if versionCode.IsValid() && !cache[versionCode] {
+			cache[versionCode] = true
+			versionCodes = append(versionCodes, versionCode)
 		}
 	}
 
 	if len(versionCodes) == 0 {
-		return []*shared_models.Version{}, nil
+		return []*twmodel.Version{}, nil
 	}
 
-	versionList, err := h.api.Version.Browse(0, 0, []string{"code ASC"}, &shared_models.VersionFilter{
+	versionList, err := h.api.Version.Browse(0, 0, []string{"code ASC"}, &twmodel.VersionFilter{
 		Code: versionCodes,
 	})
 	if err != nil {
@@ -156,26 +156,26 @@ func (h *handler) checkEnnoblements() {
 	}
 	log.Info("checkEnnoblements: loaded ennoblements")
 
-	for _, group := range groups {
-		if group.ConqueredVillagesChannelID == "" && group.LostVillagesChannelID == "" {
+	for _, g := range groups {
+		if g.ConqueredVillagesChannelID == "" && g.LostVillagesChannelID == "" {
 			continue
 		}
-		localizer := message.NewLocalizer(group.Server.Lang)
+		localizer := message.NewLocalizer(g.Server.Lang)
 		lostVillagesMsg := &discord.MessageEmbed{}
 		conqueredVillagesMsg := &discord.MessageEmbed{}
-		for _, observation := range group.Observations {
-			ennoblements, ok := ennoblementsByServerKey[observation.Server]
-			version := utils.FindVersionByCode(versions, tw.VersionCodeFromServerKey(observation.Server))
+		for _, obs := range g.Observations {
+			enblmnts, ok := ennoblementsByServerKey[obs.Server]
+			version := utils.FindVersionByCode(versions, twmodel.VersionCodeFromServerKey(obs.Server))
 			if ok && version != nil && version.Host != "" {
-				if group.LostVillagesChannelID != "" {
-					for _, ennoblement := range ennoblements.getLostVillagesByTribe(observation.TribeID) {
+				if g.LostVillagesChannelID != "" {
+					for _, ennoblement := range enblmnts.getLostVillagesByTribe(obs.TribeID) {
 						if !utils.IsPlayerTribeNil(ennoblement.NewOwner) &&
-							group.Observations.Contains(observation.Server, ennoblement.NewOwner.Tribe.ID) {
+							g.Observations.Contains(obs.Server, ennoblement.NewOwner.Tribe.ID) {
 							continue
 						}
 						newMsgDataConfig := newMessageConfig{
 							host:        version.Host,
-							server:      observation.Server,
+							server:      obs.Server,
 							ennoblement: ennoblement,
 							t:           messageTypeLost,
 							localizer:   localizer,
@@ -184,18 +184,18 @@ func (h *handler) checkEnnoblements() {
 					}
 				}
 
-				if group.ConqueredVillagesChannelID != "" {
-					for _, ennoblement := range ennoblements.getConqueredVillagesByTribe(observation.TribeID, group.ShowInternals) {
+				if g.ConqueredVillagesChannelID != "" {
+					for _, ennoblement := range enblmnts.getConqueredVillagesByTribe(obs.TribeID, g.ShowInternals) {
 						isInTheSameGroup := !utils.IsPlayerTribeNil(ennoblement.OldOwner) &&
-							group.Observations.Contains(observation.Server, ennoblement.OldOwner.Tribe.ID)
-						if (!group.ShowInternals && isInTheSameGroup) ||
-							(!group.ShowEnnobledBarbarians && isBarbarian(ennoblement.OldOwner)) {
+							g.Observations.Contains(obs.Server, ennoblement.OldOwner.Tribe.ID)
+						if (!g.ShowInternals && isInTheSameGroup) ||
+							(!g.ShowEnnobledBarbarians && isBarbarian(ennoblement.OldOwner)) {
 							continue
 						}
 
 						newMsgDataConfig := newMessageConfig{
 							host:        version.Host,
-							server:      observation.Server,
+							server:      obs.Server,
 							ennoblement: ennoblement,
 							t:           messageTypeConquer,
 							localizer:   localizer,
@@ -207,13 +207,13 @@ func (h *handler) checkEnnoblements() {
 		}
 
 		timestamp := time.Now().Format(time.RFC3339)
-		if group.ConqueredVillagesChannelID != "" && !conqueredVillagesMsg.IsEmpty() {
+		if g.ConqueredVillagesChannelID != "" && !conqueredVillagesMsg.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CronConqueredVillagesTitle,
 				DefaultMessage: message.FallbackMsg(message.CronConqueredVillagesTitle,
 					"Conquered villages"),
 			})
-			go h.discord.SendEmbed(group.ConqueredVillagesChannelID,
+			go h.discord.SendEmbed(g.ConqueredVillagesChannelID,
 				discord.
 					NewEmbed().
 					SetTitle(title).
@@ -223,13 +223,13 @@ func (h *handler) checkEnnoblements() {
 					MessageEmbed)
 		}
 
-		if group.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
+		if g.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CronLostVillagesTitle,
 				DefaultMessage: message.FallbackMsg(message.CronLostVillagesTitle,
 					"Lost villages"),
 			})
-			go h.discord.SendEmbed(group.LostVillagesChannelID,
+			go h.discord.SendEmbed(g.LostVillagesChannelID,
 				discord.
 					NewEmbed().
 					SetTitle(title).
@@ -251,10 +251,10 @@ func (h *handler) checkBotServers() {
 		WithField("numberOfServers", total).
 		Info("checkBotServers: loaded servers")
 
-	idsToDelete := []string{}
-	for _, server := range servers {
-		if isGuildMember, _ := h.discord.IsGuildMember(server.ID); !isGuildMember {
-			idsToDelete = append(idsToDelete, server.ID)
+	var idsToDelete []string
+	for _, s := range servers {
+		if isGuildMember, _ := h.discord.IsGuildMember(s.ID); !isGuildMember {
+			idsToDelete = append(idsToDelete, s.ID)
 		}
 	}
 
@@ -282,9 +282,9 @@ func (h *handler) deleteClosedTribalWarsServers() {
 		WithField("servers", servers).
 		Info("deleteClosedTribalWarsServers: loaded servers")
 
-	list, err := h.api.Server.Browse(0, 0, []string{"key ASC"}, &shared_models.ServerFilter{
+	list, err := h.api.Server.Browse(0, 0, []string{"key ASC"}, &twmodel.ServerFilter{
 		Key:    servers,
-		Status: []shared_models.ServerStatus{shared_models.ServerStatusClosed},
+		Status: []twmodel.ServerStatus{twmodel.ServerStatusClosed},
 	}, nil)
 	if err != nil {
 		log.Errorln("deleteClosedTribalWarsServers: " + err.Error())
@@ -294,9 +294,9 @@ func (h *handler) deleteClosedTribalWarsServers() {
 		return
 	}
 
-	keys := []string{}
-	for _, server := range list.Items {
-		keys = append(keys, server.Key)
+	var keys []string
+	for _, s := range list.Items {
+		keys = append(keys, s.Key)
 	}
 
 	if len(keys) > 0 {

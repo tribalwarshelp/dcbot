@@ -2,11 +2,12 @@ package cron
 
 import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/tribalwarshelp/shared/tw/twmodel"
+	"github.com/tribalwarshelp/shared/tw/twurlbuilder"
+
 	"github.com/tribalwarshelp/dcbot/discord"
 	"github.com/tribalwarshelp/dcbot/message"
 	"github.com/tribalwarshelp/dcbot/utils"
-	shared_models "github.com/tribalwarshelp/shared/models"
-	"github.com/tribalwarshelp/shared/tw"
 )
 
 type messageType string
@@ -38,7 +39,7 @@ type newMessageConfig struct {
 	t           messageType
 	host        string
 	server      string
-	ennoblement *shared_models.Ennoblement
+	ennoblement *twmodel.Ennoblement
 	localizer   *i18n.Localizer
 }
 
@@ -55,23 +56,23 @@ func newMessage(cfg newMessageConfig) checkEnnoblementsMsg {
 	}
 	if !utils.IsVillageNil(cfg.ennoblement.Village) {
 		data.village = cfg.ennoblement.Village.FullName()
-		data.villageURL = tw.BuildVillageURL(cfg.server, cfg.host, cfg.ennoblement.Village.ID)
+		data.villageURL = twurlbuilder.BuildVillageURL(cfg.server, cfg.host, cfg.ennoblement.Village.ID)
 	}
 	if !utils.IsPlayerNil(cfg.ennoblement.OldOwner) {
 		data.oldOwnerName = cfg.ennoblement.OldOwner.Name
-		data.oldOwnerURL = tw.BuildPlayerURL(cfg.server, cfg.host, cfg.ennoblement.OldOwner.ID)
+		data.oldOwnerURL = twurlbuilder.BuildPlayerURL(cfg.server, cfg.host, cfg.ennoblement.OldOwner.ID)
 	}
 	if !utils.IsPlayerTribeNil(cfg.ennoblement.OldOwner) {
 		data.oldOwnerTribeTag = cfg.ennoblement.OldOwner.Tribe.Tag
-		data.oldOwnerTribeURL = tw.BuildTribeURL(cfg.server, cfg.host, cfg.ennoblement.OldOwner.Tribe.ID)
+		data.oldOwnerTribeURL = twurlbuilder.BuildTribeURL(cfg.server, cfg.host, cfg.ennoblement.OldOwner.Tribe.ID)
 	}
 	if !utils.IsPlayerNil(cfg.ennoblement.NewOwner) {
 		data.newOwnerName = cfg.ennoblement.NewOwner.Name
-		data.newOwnerURL = tw.BuildPlayerURL(cfg.server, cfg.host, cfg.ennoblement.NewOwner.ID)
+		data.newOwnerURL = twurlbuilder.BuildPlayerURL(cfg.server, cfg.host, cfg.ennoblement.NewOwner.ID)
 	}
 	if !utils.IsPlayerTribeNil(cfg.ennoblement.NewOwner) {
 		data.newOwnerTribeTag = cfg.ennoblement.NewOwner.Tribe.Tag
-		data.newOwnerTribeURL = tw.BuildTribeURL(cfg.server, cfg.host, cfg.ennoblement.NewOwner.Tribe.ID)
+		data.newOwnerTribeURL = twurlbuilder.BuildTribeURL(cfg.server, cfg.host, cfg.ennoblement.NewOwner.Tribe.ID)
 	}
 
 	return data

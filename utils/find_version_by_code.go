@@ -1,9 +1,9 @@
 package utils
 
-import "github.com/tribalwarshelp/shared/models"
+import "github.com/tribalwarshelp/shared/tw/twmodel"
 
-func FindVersionByCode(versions []*models.Version, code models.VersionCode) *models.Version {
-	v := &models.Version{}
+func FindVersionByCode(versions []*twmodel.Version, code twmodel.VersionCode) *twmodel.Version {
+	var v *twmodel.Version
 	for _, version := range versions {
 		if version.Code == code {
 			v = version

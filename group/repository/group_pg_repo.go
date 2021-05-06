@@ -20,7 +20,7 @@ func NewPgRepo(db *pg.DB) (group.Repository, error) {
 		IfNotExists:   true,
 		FKConstraints: true,
 	}); err != nil {
-		return nil, errors.Wrap(err, "cannot create 'groups' table")
+		return nil, errors.Wrap(err, "couldn't create the 'groups' table")
 	}
 	return &pgRepo{db}, nil
 }
@@ -52,11 +52,11 @@ func (repo *pgRepo) Update(ctx context.Context, group *models.Group) error {
 }
 
 func (repo *pgRepo) GetByID(ctx context.Context, id int) (*models.Group, error) {
-	group := &models.Group{
+	g := &models.Group{
 		ID: id,
 	}
 	if err := repo.
-		Model(group).
+		Model(g).
 		WherePK().
 		Returning("*").
 		Relation("Observations").
@@ -64,12 +64,12 @@ func (repo *pgRepo) GetByID(ctx context.Context, id int) (*models.Group, error) 
 		Select(); err != nil {
 		return nil, err
 	}
-	return group, nil
+	return g, nil
 }
 
 func (repo *pgRepo) Fetch(ctx context.Context, f *models.GroupFilter) ([]*models.Group, int, error) {
 	var err error
-	data := []*models.Group{}
+	var data []*models.Group
 	query := repo.Model(&data).Relation("Server").Relation("Observations").Context(ctx)
 
 	if f != nil {
@@ -88,7 +88,7 @@ func (repo *pgRepo) Fetch(ctx context.Context, f *models.GroupFilter) ([]*models
 }
 
 func (repo *pgRepo) Delete(ctx context.Context, f *models.GroupFilter) ([]*models.Group, error) {
-	data := []*models.Group{}
+	var data []*models.Group
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {

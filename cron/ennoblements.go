@@ -1,13 +1,14 @@
 package cron
 
 import (
+	"github.com/tribalwarshelp/shared/tw/twmodel"
+
 	"github.com/tribalwarshelp/dcbot/utils"
-	shared_models "github.com/tribalwarshelp/shared/models"
 )
 
-type ennoblements []*shared_models.Ennoblement
+type ennoblements []*twmodel.Ennoblement
 
-func (e ennoblements) getLastEnnoblement() *shared_models.Ennoblement {
+func (e ennoblements) getLastEnnoblement() *twmodel.Ennoblement {
 	length := len(e)
 	if length <= 0 {
 		return nil

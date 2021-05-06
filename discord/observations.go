@@ -3,18 +3,19 @@ package discord
 import (
 	"context"
 	"fmt"
+	"github.com/tribalwarshelp/shared/tw/twmodel"
+	"github.com/tribalwarshelp/shared/tw/twurlbuilder"
 	"strconv"
 	"strings"
 
 	"github.com/tribalwarshelp/golang-sdk/sdk"
-	"github.com/tribalwarshelp/shared/tw"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+
 	"github.com/tribalwarshelp/dcbot/message"
 	"github.com/tribalwarshelp/dcbot/models"
 	"github.com/tribalwarshelp/dcbot/utils"
-	shared_models "github.com/tribalwarshelp/shared/models"
 )
 
 const (
@@ -476,7 +477,7 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 			}))
 		return
 	}
-	if server.Status == shared_models.ServerStatusClosed {
+	if server.Status == twmodel.ServerStatusClosed {
 		s.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID:      message.ObserveServerIsClosed,
@@ -488,12 +489,12 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	var tribe *shared_models.Tribe
+	var tribe *twmodel.Tribe
 	if tribeID > 0 {
 		tribe, err = s.cfg.API.Tribe.Read(server.Key, tribeID)
 	} else {
 		list := &sdk.TribeList{}
-		list, err = s.cfg.API.Tribe.Browse(server.Key, 1, 0, []string{}, &shared_models.TribeFilter{
+		list, err = s.cfg.API.Tribe.Browse(server.Key, 1, 0, []string{}, &twmodel.TribeFilter{
 			Tag: []string{tribeTag},
 		})
 		if list != nil && list.Items != nil && len(list.Items) > 0 {
@@ -687,10 +688,10 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 	}
 
 	tribeIDsByServer := make(map[string][]int)
-	versionCodes := []shared_models.VersionCode{}
+	versionCodes := []twmodel.VersionCode{}
 	for _, observation := range observations {
 		tribeIDsByServer[observation.Server] = append(tribeIDsByServer[observation.Server], observation.TribeID)
-		currentCode := tw.VersionCodeFromServerKey(observation.Server)
+		currentCode := twmodel.VersionCodeFromServerKey(observation.Server)
 		unique := true
 		for _, code := range versionCodes {
 			if code == currentCode {
@@ -703,7 +704,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 		}
 	}
 	for server, tribeIDs := range tribeIDsByServer {
-		list, err := s.cfg.API.Tribe.Browse(server, 0, 0, []string{}, &shared_models.TribeFilter{
+		list, err := s.cfg.API.Tribe.Browse(server, 0, 0, []string{}, &twmodel.TribeFilter{
 			ID: tribeIDs,
 		})
 		if err != nil {
@@ -727,7 +728,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			}
 		}
 	}
-	versionList, err := s.cfg.API.Version.Browse(0, 0, []string{}, &shared_models.VersionFilter{
+	versionList, err := s.cfg.API.Version.Browse(0, 0, []string{}, &twmodel.VersionFilter{
 		Code: versionCodes,
 	})
 
@@ -740,10 +741,10 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			if observation.Tribe != nil {
 				tag = observation.Tribe.Tag
 			}
-			version := utils.FindVersionByCode(versionList.Items, tw.VersionCodeFromServerKey(observation.Server))
+			version := utils.FindVersionByCode(versionList.Items, twmodel.VersionCodeFromServerKey(observation.Server))
 			tribeURL := ""
 			if version != nil {
-				tribeURL = tw.BuildTribeURL(observation.Server, version.Host, observation.TribeID)
+				tribeURL = twurlbuilder.BuildTribeURL(observation.Server, version.Host, observation.TribeID)
 			}
 			msg.Append(fmt.Sprintf("**%d** | %d - %s - %s\n", i+1, observation.ID,
 				observation.Server,

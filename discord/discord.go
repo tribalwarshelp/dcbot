@@ -6,13 +6,15 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
+
 	"github.com/tribalwarshelp/dcbot/message"
+
+	"github.com/tribalwarshelp/golang-sdk/sdk"
 
 	"github.com/tribalwarshelp/dcbot/group"
 	"github.com/tribalwarshelp/dcbot/models"
 	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
-	"github.com/tribalwarshelp/golang-sdk/sdk"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -231,18 +233,18 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 
 	splitted := strings.Split(m.Content, " ")
 	args := splitted[1:]
-	server := &models.Server{
+	svr := &models.Server{
 		ID:   m.GuildID,
 		Lang: message.GetDefaultLanguage().String(),
 	}
-	if server.ID != "" {
-		if err := s.cfg.ServerRepository.Store(context.Background(), server); err != nil {
+	if svr.ID != "" {
+		if err := s.cfg.ServerRepository.Store(context.Background(), svr); err != nil {
 			return
 		}
 	}
 	ctx := &commandCtx{
-		server:    server,
-		localizer: message.NewLocalizer(server.Lang),
+		server:    svr,
+		localizer: message.NewLocalizer(svr.Lang),
 	}
 
 	cmd := Command(splitted[0])
@@ -259,14 +261,14 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		}
 		log.
 			WithFields(logrus.Fields{
-				"serverID":       server.ID,
-				"lang":           server.Lang,
+				"serverID":       svr.ID,
+				"lang":           svr.Lang,
 				"command":        cmd,
 				"args":           args,
 				"authorID":       m.Author.ID,
 				"authorUsername": m.Author.Username,
 			}).
-			Info("handleNewMessage: Executing command")
+			Info("handleNewMessage: Executing command...")
 		h.fn(ctx, m, args...)
 		return
 	}

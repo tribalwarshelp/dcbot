@@ -1,13 +1,11 @@
 package cron
 
 import (
+	"github.com/Kichiyaki/appmode"
 	"time"
-
-	sharedutils "github.com/tribalwarshelp/shared/utils"
 
 	"github.com/sirupsen/logrus"
 	"github.com/tribalwarshelp/golang-sdk/sdk"
-	"github.com/tribalwarshelp/shared/mode"
 
 	"github.com/tribalwarshelp/dcbot/discord"
 	"github.com/tribalwarshelp/dcbot/group"
@@ -38,12 +36,12 @@ func Attach(c *cron.Cron, cfg Config) {
 		api:               cfg.API,
 		status:            cfg.Status,
 	}
-	checkEnnoblements := sharedutils.TrackExecutionTime(log, h.checkEnnoblements, "checkEnnoblements")
-	checkBotServers := sharedutils.TrackExecutionTime(log, h.checkBotServers, "checkBotServers")
-	deleteClosedTribalWarsServers := sharedutils.TrackExecutionTime(log,
+	checkEnnoblements := trackDuration(log, h.checkEnnoblements, "checkEnnoblements")
+	checkBotServers := trackDuration(log, h.checkBotServers, "checkBotServers")
+	deleteClosedTribalWarsServers := trackDuration(log,
 		h.deleteClosedTribalWarsServers,
 		"deleteClosedTribalWarsServers")
-	updateBotStatus := sharedutils.TrackExecutionTime(log, h.updateBotStatus, "updateBotStatus")
+	updateBotStatus := trackDuration(log, h.updateBotStatus, "updateBotStatus")
 	c.AddFunc("@every 1m", checkEnnoblements)
 	c.AddFunc("@every 30m", checkBotServers)
 	c.AddFunc("@every 2h10m", deleteClosedTribalWarsServers)
@@ -52,7 +50,7 @@ func Attach(c *cron.Cron, cfg Config) {
 		checkBotServers()
 		deleteClosedTribalWarsServers()
 		updateBotStatus()
-		if mode.Get() == mode.DevelopmentMode {
+		if appmode.Equals(appmode.DevelopmentMode) {
 			checkEnnoblements()
 		}
 	}()

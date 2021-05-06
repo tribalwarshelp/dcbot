@@ -2,15 +2,16 @@ package discord
 
 import (
 	"context"
+	"github.com/tribalwarshelp/shared/tw/twmodel"
+	"github.com/tribalwarshelp/shared/tw/twurlbuilder"
 	"regexp"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/tribalwarshelp/golang-sdk/sdk"
+
 	"github.com/tribalwarshelp/dcbot/message"
 	"github.com/tribalwarshelp/dcbot/utils"
-	"github.com/tribalwarshelp/golang-sdk/sdk"
-	"github.com/tribalwarshelp/shared/models"
-	"github.com/tribalwarshelp/shared/tw"
 )
 
 const (
@@ -86,7 +87,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 	coords := coordsRegex.FindAllString(m.Content, -1)
 	coordsLen := len(coords)
 	if coordsLen > 0 {
-		version, err := s.cfg.API.Version.Read(tw.VersionCodeFromServerKey(ctx.server.CoordsTranslation))
+		version, err := s.cfg.API.Version.Read(twmodel.VersionCodeFromServerKey(ctx.server.CoordsTranslation))
 		if err != nil || version == nil {
 			return
 		}
@@ -97,7 +98,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 			0,
 			0,
 			[]string{},
-			&models.VillageFilter{
+			&twmodel.VillageFilter{
 				XY: coords,
 			},
 			&sdk.VillageInclude{
@@ -105,25 +106,26 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 				PlayerInclude: sdk.PlayerInclude{
 					Tribe: true,
 				},
-			})
-		if err != nil || list == nil || list.Items == nil || len(list.Items) <= 0 {
+			},
+		)
+		if err != nil || list == nil || list.Items == nil {
 			return
 		}
 
 		msg := &MessageEmbed{}
 		for _, village := range list.Items {
-			villageURL := tw.BuildVillageURL(ctx.server.CoordsTranslation, version.Host, village.ID)
+			villageURL := twurlbuilder.BuildVillageURL(ctx.server.CoordsTranslation, version.Host, village.ID)
 			playerName := "-"
 			playerURL := ""
 			if !utils.IsPlayerNil(village.Player) {
 				playerName = village.Player.Name
-				playerURL = tw.BuildPlayerURL(ctx.server.CoordsTranslation, version.Host, village.Player.ID)
+				playerURL = twurlbuilder.BuildPlayerURL(ctx.server.CoordsTranslation, version.Host, village.Player.ID)
 			}
 			tribeName := "-"
 			tribeURL := ""
 			if !utils.IsPlayerTribeNil(village.Player) {
 				tribeName = village.Player.Tribe.Name
-				tribeURL = tw.BuildTribeURL(ctx.server.CoordsTranslation, version.Host, village.Player.Tribe.ID)
+				tribeURL = twurlbuilder.BuildTribeURL(ctx.server.CoordsTranslation, version.Host, village.Player.Tribe.ID)
 			}
 
 			msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
