@@ -7,8 +7,9 @@ github.com/Kichiyaki/appmode v0.0.0-20210502105643-0a26207c548d/go.mod h1:41p1KT
 github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210428180109-fb97298564d9 h1:S/08K0AD4bXYeSPJKei8ZbumDy1JNARZsgYbNZgr9Tk=
 github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210428180109-fb97298564d9/go.mod h1:ADHVWnGlWcRn1aGthuh7I1Lrn6zzsjkVJju151dXyDw=
 github.com/Kichiyaki/go-php-serialize v0.0.0-20200601110855-47b6982acf83/go.mod h1:+iGkf5HfOVeRVd9K7qQDucIl+/Kt3MyenMa90b/O/c4=
-github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210505093434-655fa2df248f h1:/kJmv8B59cMHdTmsko0RyAOeRC9WpsQPDmLtRXOAU6c=
 github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210505093434-655fa2df248f/go.mod h1:MSAEhr8oeK+Rhjhqyl31/8/AI88thYky80OyD8mheDA=
+github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210521204542-cc672e361b3d h1:7ZJVfFgAR0zNf5fNc6M9v2PZbXvTgGgDjQo4/+NIezQ=
+github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210521204542-cc672e361b3d/go.mod h1:MSAEhr8oeK+Rhjhqyl31/8/AI88thYky80OyD8mheDA=
 github.com/Kichiyaki/goutil v0.0.0-20210502095630-318d17091eab/go.mod h1:+HhI932Xb0xrCodNcCv5GPiCjLYhDxWhCtlEqMIJhB4=
 github.com/Kichiyaki/goutil v0.0.0-20210504132659-3d843a787db7 h1:OU3ZA5H8fHTzaYIw9UBfH3gtWRL0XmnczlhH3E2PjV4=
 github.com/Kichiyaki/goutil v0.0.0-20210504132659-3d843a787db7/go.mod h1:+HhI932Xb0xrCodNcCv5GPiCjLYhDxWhCtlEqMIJhB4=
@@ -97,8 +98,9 @@ github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc h1:9lRDQMhESg+zvGYm
 github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc/go.mod h1:bciPuU6GHm1iF1pBvUfxfsH0Wmnc2VbpgvbI9ZWuIRs=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210505172651-7dc458534a8c h1:Ip4C8G6zjdHnsHeyuajb5BZeRrls/Ym14Vww8e9jGLM=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210505172651-7dc458534a8c/go.mod h1:0VNYCWHFE5Szvd/b5RpnhtHdvYwR/6XfB/iFjgPTAtY=
-github.com/tribalwarshelp/shared v0.0.0-20210505172413-bf85190fd66d h1:aMlYOsJbYwKqHx7wAt526eIutV1Q5EnYK6b7lOzvPmk=
 github.com/tribalwarshelp/shared v0.0.0-20210505172413-bf85190fd66d/go.mod h1:GBnSKQrxL8Nmi3MViIzZVbyP9+ugd28gWArsSvw1iVU=
+github.com/tribalwarshelp/shared v0.0.0-20210521205055-fcef062f6b8a h1:nKEymuRmwv5qGS2uyURYwN6JKqdqEFsb6Q9Fbn4iQbY=
+github.com/tribalwarshelp/shared v0.0.0-20210521205055-fcef062f6b8a/go.mod h1://pyC+3J9nFBdpvNpVf1w7+LNNOw+L/kqxHlFK+kuLk=
 github.com/vmihailenco/bufpool v0.1.11 h1:gOq2WmBrq0i2yW5QJ16ykccQ4wH9UyEsgLm6czKAd94=
 github.com/vmihailenco/bufpool v0.1.11/go.mod h1:AFf/MOy3l2CFTKbxwt0mp2MwnqjNEs5H/UxrkA5jxTQ=
 github.com/vmihailenco/msgpack/v5 v5.3.0/go.mod h1:7xyJ9e+0+9SaZT0Wt1RGleJXzli6Q/V5KbhBonMG9jc=
