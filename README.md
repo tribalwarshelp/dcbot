@@ -44,7 +44,7 @@ LOG_DB_QUERIES=true
 ```
 git clone git@github.com:tribalwarshelp/dcbot.git
 ```
-2. Navigate to the directory where you have cloned this repo.
+2. Open the folder with this project in a terminal.
 3. Set the required env variables directly in your system or create .env.local file.
 4. Run the app.
 ```
