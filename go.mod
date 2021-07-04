@@ -17,5 +17,5 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tribalwarshelp/golang-sdk v0.0.0-20210505172651-7dc458534a8c
 	github.com/tribalwarshelp/shared v0.0.0-20210606172508-1eaae48e4c3e
-	golang.org/x/text v0.3.3
+	golang.org/x/text v0.3.6
 )
