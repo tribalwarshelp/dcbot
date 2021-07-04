@@ -9,7 +9,7 @@ require (
 	github.com/Kichiyaki/goutil v0.0.0-20210504132659-3d843a787db7
 	github.com/bwmarrin/discordgo v0.22.0
 	github.com/dustin/go-humanize v1.0.0
-	github.com/go-pg/pg/v10 v10.9.1
+	github.com/go-pg/pg/v10 v10.10.1
 	github.com/joho/godotenv v1.3.0
 	github.com/nicksnyder/go-i18n/v2 v2.0.3
 	github.com/pkg/errors v0.9.1
