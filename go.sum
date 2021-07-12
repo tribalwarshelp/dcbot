@@ -104,6 +104,8 @@ github.com/tribalwarshelp/golang-sdk v0.0.0-20210505172651-7dc458534a8c h1:Ip4C8
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210505172651-7dc458534a8c/go.mod h1:0VNYCWHFE5Szvd/b5RpnhtHdvYwR/6XfB/iFjgPTAtY=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210705044231-26168540b50a h1:LAru/bPO0v+vzhYhzQoDoEsQ4nNW2IQzX1xs8MnTZjY=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210705044231-26168540b50a/go.mod h1:SWLnHJnMhZcr1hpIyiwN7A5u6yaJqQ64Dv0I49f4OLc=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20210712101301-0e40924ae102 h1:a5Zb0i8m/5KDqm67vt4Z65V7ypgXK145vU5AauvfoA0=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20210712101301-0e40924ae102/go.mod h1:TuTVOLripDuR/YUXRkzC0QnbAtrabSlNF3c1Vl7S9wA=
 github.com/tribalwarshelp/shared v0.0.0-20210505172413-bf85190fd66d/go.mod h1:GBnSKQrxL8Nmi3MViIzZVbyP9+ugd28gWArsSvw1iVU=
 github.com/tribalwarshelp/shared v0.0.0-20210521205055-fcef062f6b8a h1:nKEymuRmwv5qGS2uyURYwN6JKqdqEFsb6Q9Fbn4iQbY=
 github.com/tribalwarshelp/shared v0.0.0-20210521205055-fcef062f6b8a/go.mod h1://pyC+3J9nFBdpvNpVf1w7+LNNOw+L/kqxHlFK+kuLk=
