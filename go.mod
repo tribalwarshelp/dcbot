@@ -15,7 +15,8 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/tribalwarshelp/golang-sdk v0.0.0-20210712101301-0e40924ae102
-	github.com/tribalwarshelp/shared v0.0.0-20210712092456-dcd6203b1fd9
+	github.com/tribalwarshelp/golang-sdk v0.0.0-20210717082347-98161a4b2533
+	github.com/tribalwarshelp/shared v0.0.0-20210717070514-5030d62000d4
+	go.opentelemetry.io/otel v0.20.0 // indirect
 	golang.org/x/text v0.3.6
 )
