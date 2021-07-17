@@ -12,7 +12,7 @@ import (
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 
 	"github.com/tribalwarshelp/dcbot/group"
-	"github.com/tribalwarshelp/dcbot/models"
+	"github.com/tribalwarshelp/dcbot/model"
 	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
 
@@ -233,7 +233,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 
 	parts := strings.Split(m.Content, " ")
 	args := parts[1:]
-	svr := &models.Server{
+	svr := &model.Server{
 		ID:   m.GuildID,
 		Lang: message.GetDefaultLanguage().String(),
 	}

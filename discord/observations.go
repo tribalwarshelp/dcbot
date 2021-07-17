@@ -14,8 +14,8 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
 	"github.com/tribalwarshelp/dcbot/message"
-	"github.com/tribalwarshelp/dcbot/models"
-	"github.com/tribalwarshelp/dcbot/tw/twutil"
+	"github.com/tribalwarshelp/dcbot/model"
+	"github.com/tribalwarshelp/dcbot/util/twutil"
 )
 
 const (
@@ -55,7 +55,7 @@ func (s *Session) handleAddGroupCommand(ctx *commandCtx, m *discordgo.MessageCre
 		return
 	}
 
-	group := &models.Group{
+	group := &model.Group{
 		ServerID:               m.GuildID,
 		ShowEnnobledBarbarians: true,
 	}
@@ -115,7 +115,7 @@ func (s *Session) handleDeleteGroupCommand(ctx *commandCtx, m *discordgo.Message
 		return
 	}
 
-	go s.cfg.GroupRepository.Delete(context.Background(), &models.GroupFilter{
+	go s.cfg.GroupRepository.Delete(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
@@ -132,9 +132,9 @@ func (s *Session) handleDeleteGroupCommand(ctx *commandCtx, m *discordgo.Message
 }
 
 func (s *Session) handleGroupsCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ServerID: []string{m.GuildID},
-		DefaultFilter: models.DefaultFilter{
+		DefaultFilter: model.DefaultFilter{
 			Order: []string{"id ASC"},
 		},
 	})
@@ -204,7 +204,7 @@ func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.M
 		return
 	}
 
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
@@ -264,7 +264,7 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx *commandCtx, m *disc
 		return
 	}
 
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
@@ -326,7 +326,7 @@ func (s *Session) handleLostVillagesCommand(ctx *commandCtx, m *discordgo.Messag
 		return
 	}
 
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
@@ -387,7 +387,7 @@ func (s *Session) handleDisableLostVillagesCommand(ctx *commandCtx, m *discordgo
 		return
 	}
 
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
@@ -541,7 +541,7 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	go s.cfg.ObservationRepository.Store(context.Background(), &models.Observation{
+	go s.cfg.ObservationRepository.Store(context.Background(), &model.Observation{
 		Server:  server.Key,
 		TribeID: tribe.ID,
 		GroupID: groupID,
@@ -613,7 +613,7 @@ func (s *Session) handleDeleteObservationCommand(ctx *commandCtx, m *discordgo.M
 		return
 	}
 
-	go s.cfg.ObservationRepository.Delete(context.Background(), &models.ObservationFilter{
+	go s.cfg.ObservationRepository.Delete(context.Background(), &model.ObservationFilter{
 		GroupID: []int{groupID},
 		ID:      []int{observationID},
 	})
@@ -668,9 +668,9 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			}))
 		return
 	}
-	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &models.ObservationFilter{
+	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &model.ObservationFilter{
 		GroupID: []int{groupID},
-		DefaultFilter: models.DefaultFilter{
+		DefaultFilter: model.DefaultFilter{
 			Order: []string{"id ASC"},
 		},
 	})

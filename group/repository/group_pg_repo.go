@@ -4,42 +4,44 @@ import (
 	"context"
 
 	"github.com/tribalwarshelp/dcbot/group"
-	"github.com/tribalwarshelp/dcbot/models"
+	"github.com/tribalwarshelp/dcbot/model"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 	"github.com/pkg/errors"
 )
 
-type pgRepo struct {
+type PGRepository struct {
 	*pg.DB
 }
 
-func NewPgRepo(db *pg.DB) (group.Repository, error) {
-	if err := db.Model((*models.Group)(nil)).CreateTable(&orm.CreateTableOptions{
+var _ group.Repository = &PGRepository{}
+
+func NewPgRepo(db *pg.DB) (*PGRepository, error) {
+	if err := db.Model((*model.Group)(nil)).CreateTable(&orm.CreateTableOptions{
 		IfNotExists:   true,
 		FKConstraints: true,
 	}); err != nil {
 		return nil, errors.Wrap(err, "couldn't create the 'groups' table")
 	}
-	return &pgRepo{db}, nil
+	return &PGRepository{db}, nil
 }
 
-func (repo *pgRepo) Store(ctx context.Context, group *models.Group) error {
+func (repo *PGRepository) Store(ctx context.Context, group *model.Group) error {
 	if _, err := repo.Model(group).Returning("*").Context(ctx).Insert(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *pgRepo) StoreMany(ctx context.Context, groups []*models.Group) error {
+func (repo *PGRepository) StoreMany(ctx context.Context, groups []*model.Group) error {
 	if _, err := repo.Model(&groups).Returning("*").Context(ctx).Insert(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *pgRepo) Update(ctx context.Context, group *models.Group) error {
+func (repo *PGRepository) Update(ctx context.Context, group *model.Group) error {
 	if _, err := repo.
 		Model(group).
 		WherePK().
@@ -51,8 +53,8 @@ func (repo *pgRepo) Update(ctx context.Context, group *models.Group) error {
 	return nil
 }
 
-func (repo *pgRepo) GetByID(ctx context.Context, id int) (*models.Group, error) {
-	g := &models.Group{
+func (repo *PGRepository) GetByID(ctx context.Context, id int) (*model.Group, error) {
+	g := &model.Group{
 		ID: id,
 	}
 	if err := repo.
@@ -67,9 +69,9 @@ func (repo *pgRepo) GetByID(ctx context.Context, id int) (*models.Group, error) 
 	return g, nil
 }
 
-func (repo *pgRepo) Fetch(ctx context.Context, f *models.GroupFilter) ([]*models.Group, int, error) {
+func (repo *PGRepository) Fetch(ctx context.Context, f *model.GroupFilter) ([]*model.Group, int, error) {
 	var err error
-	var data []*models.Group
+	var data []*model.Group
 	query := repo.Model(&data).Relation("Server").Relation("Observations").Context(ctx)
 
 	if f != nil {
@@ -87,8 +89,8 @@ func (repo *pgRepo) Fetch(ctx context.Context, f *models.GroupFilter) ([]*models
 	return data, total, nil
 }
 
-func (repo *pgRepo) Delete(ctx context.Context, f *models.GroupFilter) ([]*models.Group, error) {
-	var data []*models.Group
+func (repo *PGRepository) Delete(ctx context.Context, f *model.GroupFilter) ([]*model.Group, error) {
+	var data []*model.Group
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {

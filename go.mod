@@ -17,6 +17,5 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tribalwarshelp/golang-sdk v0.0.0-20210717112029-bb518cbee33d
 	github.com/tribalwarshelp/shared v0.0.0-20210717094429-6efa1a4f614c
-	go.opentelemetry.io/otel v0.20.0 // indirect
 	golang.org/x/text v0.3.6
 )

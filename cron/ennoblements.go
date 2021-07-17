@@ -3,7 +3,7 @@ package cron
 import (
 	"github.com/tribalwarshelp/shared/tw/twmodel"
 
-	"github.com/tribalwarshelp/dcbot/tw/twutil"
+	"github.com/tribalwarshelp/dcbot/util/twutil"
 )
 
 type ennoblements []*twmodel.Ennoblement

@@ -12,13 +12,13 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/tribalwarshelp/dcbot/message"
-	"github.com/tribalwarshelp/dcbot/tw/twutil"
+	"github.com/tribalwarshelp/dcbot/util/twutil"
 
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 
 	"github.com/tribalwarshelp/dcbot/discord"
 	"github.com/tribalwarshelp/dcbot/group"
-	"github.com/tribalwarshelp/dcbot/models"
+	"github.com/tribalwarshelp/dcbot/model"
 	"github.com/tribalwarshelp/dcbot/observation"
 	"github.com/tribalwarshelp/dcbot/server"
 )
@@ -259,7 +259,7 @@ func (h *handler) checkBotServers() {
 	}
 
 	if len(idsToDelete) > 0 {
-		deleted, err := h.serverRepo.Delete(context.Background(), &models.ServerFilter{
+		deleted, err := h.serverRepo.Delete(context.Background(), &model.ServerFilter{
 			ID: idsToDelete,
 		})
 		if err != nil {
@@ -300,7 +300,7 @@ func (h *handler) deleteClosedTWServers() {
 	}
 
 	if len(keys) > 0 {
-		deleted, err := h.observationRepo.Delete(context.Background(), &models.ObservationFilter{
+		deleted, err := h.observationRepo.Delete(context.Background(), &model.ObservationFilter{
 			Server: keys,
 		})
 		if err != nil {

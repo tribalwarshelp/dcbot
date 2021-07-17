@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/tribalwarshelp/dcbot/models"
+	"github.com/tribalwarshelp/dcbot/model"
 	"github.com/tribalwarshelp/dcbot/server"
 
 	"github.com/go-pg/pg/v10"
@@ -11,20 +11,22 @@ import (
 	"github.com/pkg/errors"
 )
 
-type pgRepo struct {
+type PGRepository struct {
 	*pg.DB
 }
 
-func NewPgRepo(db *pg.DB) (server.Repository, error) {
-	if err := db.Model((*models.Server)(nil)).CreateTable(&orm.CreateTableOptions{
+var _ server.Repository = &PGRepository{}
+
+func NewPgRepository(db *pg.DB) (*PGRepository, error) {
+	if err := db.Model((*model.Server)(nil)).CreateTable(&orm.CreateTableOptions{
 		IfNotExists: true,
 	}); err != nil {
 		return nil, errors.Wrap(err, "couldn't create the 'servers' table")
 	}
-	return &pgRepo{db}, nil
+	return &PGRepository{db}, nil
 }
 
-func (repo *pgRepo) Store(ctx context.Context, server *models.Server) error {
+func (repo *PGRepository) Store(ctx context.Context, server *model.Server) error {
 	if _, err := repo.
 		Model(server).
 		Where("id = ?id").
@@ -37,7 +39,7 @@ func (repo *pgRepo) Store(ctx context.Context, server *models.Server) error {
 	return nil
 }
 
-func (repo *pgRepo) Update(ctx context.Context, server *models.Server) error {
+func (repo *PGRepository) Update(ctx context.Context, server *model.Server) error {
 	if _, err := repo.
 		Model(server).
 		WherePK().
@@ -49,9 +51,9 @@ func (repo *pgRepo) Update(ctx context.Context, server *models.Server) error {
 	return nil
 }
 
-func (repo *pgRepo) Fetch(ctx context.Context, f *models.ServerFilter) ([]*models.Server, int, error) {
+func (repo *PGRepository) Fetch(ctx context.Context, f *model.ServerFilter) ([]*model.Server, int, error) {
 	var err error
-	var data []*models.Server
+	var data []*model.Server
 	query := repo.Model(&data).Context(ctx).Relation("Groups")
 
 	if f != nil {
@@ -69,8 +71,8 @@ func (repo *pgRepo) Fetch(ctx context.Context, f *models.ServerFilter) ([]*model
 	return data, total, nil
 }
 
-func (repo *pgRepo) Delete(ctx context.Context, f *models.ServerFilter) ([]*models.Server, error) {
-	var data []*models.Server
+func (repo *PGRepository) Delete(ctx context.Context, f *model.ServerFilter) ([]*model.Server, error) {
+	var data []*model.Server
 	query := repo.Model(&data).Context(ctx)
 
 	if f != nil {

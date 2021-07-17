@@ -71,7 +71,7 @@ func main() {
 		})
 	}
 
-	serverRepo, err := serverepository.NewPgRepo(db)
+	serverRepo, err := serverepository.NewPgRepository(db)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -79,7 +79,7 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	observationRepo, err := observationrepository.NewPgRepo(db)
+	observationRepo, err := observationrepository.NewPgRepository(db)
 	if err != nil {
 		logrus.Fatal(err)
 	}

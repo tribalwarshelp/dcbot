@@ -3,7 +3,8 @@ package discord
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/tribalwarshelp/dcbot/models"
+
+	"github.com/tribalwarshelp/dcbot/model"
 )
 
 type Command string
@@ -17,7 +18,7 @@ func (cmd Command) WithPrefix(prefix string) Command {
 }
 
 type commandCtx struct {
-	server    *models.Server
+	server    *model.Server
 	localizer *i18n.Localizer
 }
 
