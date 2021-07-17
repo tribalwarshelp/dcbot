@@ -187,7 +187,6 @@ func (e *Embed) InlineAllFields() *Embed {
 	return e
 }
 
-// Truncate truncates any embed value over the character limit.
 func (e *Embed) Truncate() *Embed {
 	e.TruncateDescription()
 	e.TruncateFields()
@@ -196,7 +195,6 @@ func (e *Embed) Truncate() *Embed {
 	return e
 }
 
-// TruncateFields truncates fields that are too long
 func (e *Embed) TruncateFields() *Embed {
 	if len(e.Fields) > 25 {
 		e.Fields = e.Fields[:EmbedLimitField]
@@ -216,7 +214,6 @@ func (e *Embed) TruncateFields() *Embed {
 	return e
 }
 
-// TruncateDescription ...
 func (e *Embed) TruncateDescription() *Embed {
 	if len(e.Description) > EmbedLimitDescription {
 		e.Description = e.Description[:EmbedLimitDescription]
@@ -224,7 +221,6 @@ func (e *Embed) TruncateDescription() *Embed {
 	return e
 }
 
-// TruncateTitle ...
 func (e *Embed) TruncateTitle() *Embed {
 	if len(e.Title) > EmbedLimitTitle {
 		e.Title = e.Title[:EmbedLimitTitle]
@@ -232,7 +228,6 @@ func (e *Embed) TruncateTitle() *Embed {
 	return e
 }
 
-// TruncateFooter ...
 func (e *Embed) TruncateFooter() *Embed {
 	if e.Footer != nil && len(e.Footer.Text) > EmbedLimitFooter {
 		e.Footer.Text = e.Footer.Text[:EmbedLimitFooter]
