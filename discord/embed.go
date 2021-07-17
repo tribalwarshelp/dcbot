@@ -6,7 +6,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// Constants for message embed character limits
 const (
 	EmbedColor            = 0x00ff00
 	EmbedLimitTitle       = 256
@@ -29,7 +28,6 @@ func NewEmbed() *Embed {
 	}}
 }
 
-//SetTitle ...
 func (e *Embed) SetTitle(name string) *Embed {
 	e.Title = name
 	return e
@@ -40,7 +38,6 @@ func (e *Embed) SetTimestamp(timestamp string) *Embed {
 	return e
 }
 
-//SetDescription [desc]
 func (e *Embed) SetDescription(description string) *Embed {
 	if len(description) > EmbedLimitDescription {
 		description = description[:EmbedLimitDescription]
@@ -49,7 +46,6 @@ func (e *Embed) SetDescription(description string) *Embed {
 	return e
 }
 
-//AddField [name] [value]
 func (e *Embed) AddField(name, value string) *Embed {
 	if len(value) > EmbedLimitFieldValue {
 		value = value[:EmbedLimitFieldValue]
@@ -71,10 +67,8 @@ func (e *Embed) AddField(name, value string) *Embed {
 func (e *Embed) SetFields(fields []*discordgo.MessageEmbedField) *Embed {
 	e.Fields = fields
 	return e
-
 }
 
-//SetFooter [Text] [iconURL]
 func (e *Embed) SetFooter(args ...string) *Embed {
 	iconURL := ""
 	text := ""
@@ -102,7 +96,6 @@ func (e *Embed) SetFooter(args ...string) *Embed {
 	return e
 }
 
-//SetImage ...
 func (e *Embed) SetImage(args ...string) *Embed {
 	var URL string
 	var proxyURL string
@@ -123,7 +116,6 @@ func (e *Embed) SetImage(args ...string) *Embed {
 	return e
 }
 
-//SetThumbnail ...
 func (e *Embed) SetThumbnail(args ...string) *Embed {
 	var URL string
 	var proxyURL string
@@ -144,7 +136,6 @@ func (e *Embed) SetThumbnail(args ...string) *Embed {
 	return e
 }
 
-//SetAuthor ...
 func (e *Embed) SetAuthor(args ...string) *Embed {
 	var (
 		name     string
@@ -179,19 +170,16 @@ func (e *Embed) SetAuthor(args ...string) *Embed {
 	return e
 }
 
-//SetURL ...
 func (e *Embed) SetURL(URL string) *Embed {
 	e.URL = URL
 	return e
 }
 
-//SetColor ...
 func (e *Embed) SetColor(clr int) *Embed {
 	e.Color = clr
 	return e
 }
 
-// InlineAllFields sets all fields in the embed to be inline
 func (e *Embed) InlineAllFields() *Embed {
 	for _, v := range e.Fields {
 		v.Inline = true
@@ -281,7 +269,7 @@ func (msg *MessageEmbed) Append(m string) {
 func (msg *MessageEmbed) ToMessageEmbedFields() []*discordgo.MessageEmbedField {
 	msg.mutex.Lock()
 	defer msg.mutex.Unlock()
-	fields := []*discordgo.MessageEmbedField{}
+	var fields []*discordgo.MessageEmbedField
 	for _, chunk := range msg.chunks {
 		fields = append(fields, &discordgo.MessageEmbedField{
 			Name:  "-",
