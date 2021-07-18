@@ -109,6 +109,8 @@ type procTranslateCoords struct {
 	*Session
 }
 
+var _ messageProcessor = &procTranslateCoords{}
+
 func (p *procTranslateCoords) process(ctx *commandCtx, m *discordgo.MessageCreate) {
 	if ctx.server.CoordsTranslation == "" {
 		return
