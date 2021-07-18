@@ -115,66 +115,69 @@ func (p *procTranslateCoords) process(ctx *commandCtx, m *discordgo.MessageCreat
 	if ctx.server.CoordsTranslation == "" {
 		return
 	}
+
 	coords := coordsRegex.FindAllString(m.Content, -1)
 	coordsLen := len(coords)
-	if coordsLen > 0 {
-		version, err := p.cfg.API.Version.Read(twmodel.VersionCodeFromServerKey(ctx.server.CoordsTranslation))
-		if err != nil || version == nil {
-			return
-		}
-		if coordsLen > coordsLimit {
-			coords = coords[0:coordsLimit]
-		}
-		list, err := p.cfg.API.Village.Browse(ctx.server.CoordsTranslation,
-			0,
-			0,
-			[]string{},
-			&twmodel.VillageFilter{
-				XY: coords,
-			},
-			&sdk.VillageInclude{
-				Player: true,
-				PlayerInclude: sdk.PlayerInclude{
-					Tribe: true,
-				},
-			},
-		)
-		if err != nil || list == nil || len(list.Items) <= 0 {
-			return
-		}
-
-		bldr := &MessageEmbedFieldBuilder{}
-		for _, village := range list.Items {
-			villageURL := twurlbuilder.BuildVillageURL(ctx.server.CoordsTranslation, version.Host, village.ID)
-			playerName := "-"
-			playerURL := ""
-			if !twutil.IsPlayerNil(village.Player) {
-				playerName = village.Player.Name
-				playerURL = twurlbuilder.BuildPlayerURL(ctx.server.CoordsTranslation, version.Host, village.Player.ID)
-			}
-			tribeName := "-"
-			tribeURL := ""
-			if !twutil.IsPlayerTribeNil(village.Player) {
-				tribeName = village.Player.Tribe.Name
-				tribeURL = twurlbuilder.BuildTribeURL(ctx.server.CoordsTranslation, version.Host, village.Player.Tribe.ID)
-			}
-
-			bldr.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.CoordsTranslationMessage,
-				TemplateData: map[string]interface{}{
-					"Village": BuildLink(village.FullName(), villageURL),
-					"Player":  BuildLink(playerName, playerURL),
-					"Tribe":   BuildLink(tribeName, tribeURL),
-				},
-			}) + "\n")
-		}
-
-		title := ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: message.CoordsTranslationTitle,
-		})
-		bldr.SetName(title)
-		p.SendEmbed(m.ChannelID, NewEmbed().
-			SetTitle(title).
-			SetFields(bldr.ToMessageEmbedFields()))
+	if coordsLen <= 0 {
+		return
 	}
+
+	version, err := p.cfg.API.Version.Read(twmodel.VersionCodeFromServerKey(ctx.server.CoordsTranslation))
+	if err != nil || version == nil {
+		return
+	}
+	if coordsLen > coordsLimit {
+		coords = coords[0:coordsLimit]
+	}
+	list, err := p.cfg.API.Village.Browse(ctx.server.CoordsTranslation,
+		0,
+		0,
+		[]string{},
+		&twmodel.VillageFilter{
+			XY: coords,
+		},
+		&sdk.VillageInclude{
+			Player: true,
+			PlayerInclude: sdk.PlayerInclude{
+				Tribe: true,
+			},
+		},
+	)
+	if err != nil || list == nil || len(list.Items) <= 0 {
+		return
+	}
+
+	bldr := &MessageEmbedFieldBuilder{}
+	for _, village := range list.Items {
+		villageURL := twurlbuilder.BuildVillageURL(ctx.server.CoordsTranslation, version.Host, village.ID)
+		playerName := "-"
+		playerURL := ""
+		if !twutil.IsPlayerNil(village.Player) {
+			playerName = village.Player.Name
+			playerURL = twurlbuilder.BuildPlayerURL(ctx.server.CoordsTranslation, version.Host, village.Player.ID)
+		}
+		tribeName := "-"
+		tribeURL := ""
+		if !twutil.IsPlayerTribeNil(village.Player) {
+			tribeName = village.Player.Tribe.Name
+			tribeURL = twurlbuilder.BuildTribeURL(ctx.server.CoordsTranslation, version.Host, village.Player.Tribe.ID)
+		}
+
+		bldr.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: message.CoordsTranslationMessage,
+			TemplateData: map[string]interface{}{
+				"Village": BuildLink(village.FullName(), villageURL),
+				"Player":  BuildLink(playerName, playerURL),
+				"Tribe":   BuildLink(tribeName, tribeURL),
+			},
+		}) + "\n")
+	}
+
+	title := ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+		MessageID: message.CoordsTranslationTitle,
+	})
+	bldr.SetName(title)
+	p.SendEmbed(m.ChannelID, NewEmbed().
+		SetTitle(title).
+		SetFields(bldr.ToMessageEmbedFields()))
 }
