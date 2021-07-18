@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"path"
-	"strings"
 	"syscall"
 
 	"github.com/sirupsen/logrus"
@@ -15,7 +14,7 @@ import (
 
 	"github.com/tribalwarshelp/golang-sdk/sdk"
 
-	_cron "github.com/tribalwarshelp/dcbot/cron"
+	"github.com/tribalwarshelp/dcbot/cron"
 	"github.com/tribalwarshelp/dcbot/discord"
 	grouprepository "github.com/tribalwarshelp/dcbot/group/repository"
 	observationrepository "github.com/tribalwarshelp/dcbot/observation/repository"
@@ -24,14 +23,12 @@ import (
 	"github.com/Kichiyaki/go-pg-logrus-query-logger/v10"
 	"github.com/go-pg/pg/v10"
 	"github.com/joho/godotenv"
-	"github.com/robfig/cron/v3"
 )
 
 const (
 	commandPrefix = "tw!"
+	status        = "tribalwarshelp.com | tw!help"
 )
-
-var status = "tribalwarshelp.com | " + discord.HelpCommand.WithPrefix(commandPrefix).String()
 
 func init() {
 	os.Setenv("TZ", "UTC")
@@ -40,7 +37,7 @@ func init() {
 		godotenv.Load(".env.local")
 	}
 
-	setupLogger()
+	prepareLogger()
 }
 
 func main() {
@@ -64,14 +61,14 @@ func main() {
 			logrus.Fatalln(err)
 		}
 	}()
-	if strings.ToUpper(os.Getenv("LOG_DB_QUERIES")) == "TRUE" {
+	if envutil.GetenvBool("LOG_DB_QUERIES") {
 		db.AddQueryHook(gopglogrusquerylogger.QueryLogger{
 			Log:            logrus.NewEntry(logrus.StandardLogger()),
 			MaxQueryLength: 5000,
 		})
 	}
 
-	serverRepo, err := serverepository.NewPgRepo(db)
+	serverRepo, err := serverepository.NewPgRepository(db)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -79,7 +76,7 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	observationRepo, err := observationrepository.NewPgRepo(db)
+	observationRepo, err := observationrepository.NewPgRepository(db)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -106,14 +103,7 @@ func main() {
 	}
 	defer sess.Close()
 
-	c := cron.New(
-		cron.WithChain(
-			cron.SkipIfStillRunning(
-				cron.PrintfLogger(logrus.StandardLogger()),
-			),
-		),
-	)
-	_cron.Attach(c, _cron.Config{
+	c := cron.New(cron.Config{
 		ServerRepo:      serverRepo,
 		ObservationRepo: observationRepo,
 		Discord:         sess,
@@ -133,7 +123,7 @@ func main() {
 	logrus.Info("shutting down...")
 }
 
-func setupLogger() {
+func prepareLogger() {
 	if appmode.Equals(appmode.DevelopmentMode) {
 		logrus.SetLevel(logrus.DebugLevel)
 	}

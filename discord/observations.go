@@ -14,8 +14,8 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
 	"github.com/tribalwarshelp/dcbot/message"
-	"github.com/tribalwarshelp/dcbot/models"
-	"github.com/tribalwarshelp/dcbot/tw/twutil"
+	"github.com/tribalwarshelp/dcbot/model"
+	"github.com/tribalwarshelp/dcbot/util/twutil"
 )
 
 const (
@@ -24,28 +24,39 @@ const (
 )
 
 const (
-	AddGroupCommand                 Command = "addgroup"
-	DeleteGroupCommand              Command = "deletegroup"
-	GroupsCommand                   Command = "groups"
-	ShowEnnobledBarbariansCommand   Command = "showennobledbarbs"
-	ObserveCommand                  Command = "observe"
-	ObservationsCommand             Command = "observations"
-	DeleteObservationCommand        Command = "deleteobservation"
-	LostVillagesCommand             Command = "lostvillages"
-	DisableLostVillagesCommand      Command = "disablelostvillages"
-	ConqueredVillagesCommand        Command = "conqueredvillages"
-	DisableConqueredVillagesCommand Command = "disableconqueredvillages"
-	ChangeLanguageCommand           Command = "changelanguage"
-	ShowInternalsCommand            Command = "showinternals"
+	cmdAddGroup                 command = "addgroup"
+	cmdDeleteGroup              command = "deletegroup"
+	cmdGroups                   command = "groups"
+	cmdShowEnnobledBarbarians   command = "showennobledbarbs"
+	cmdObserve                  command = "observe"
+	cmdObservations             command = "observations"
+	cmdDeleteObservation        command = "deleteobservation"
+	cmdLostVillages             command = "lostvillages"
+	cmdDisableLostVillages      command = "disablelostvillages"
+	cmdConqueredVillages        command = "conqueredvillages"
+	cmdDisableConqueredVillages command = "disableconqueredvillages"
+	cmdShowInternals            command = "showinternals"
 )
 
-func (s *Session) handleAddGroupCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrAddGroup struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrAddGroup{}
+
+func (hndlr *hndlrAddGroup) cmd() command {
+	return cmdAddGroup
+}
+
+func (hndlr *hndlrAddGroup) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrAddGroup) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	if len(ctx.server.Groups) >= groupsPerServer {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.AddGroupGroupLimitHasBeenReached,
-				DefaultMessage: message.FallbackMsg(message.AddGroupGroupLimitHasBeenReached,
-					"{{.Mention}} The group limit has been reached ({{.Total}}/{{.Limit}})."),
+				MessageID: message.AddGroupLimitHasBeenReached,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 					"Total":   len(ctx.server.Groups),
@@ -55,17 +66,15 @@ func (s *Session) handleAddGroupCommand(ctx *commandCtx, m *discordgo.MessageCre
 		return
 	}
 
-	group := &models.Group{
+	group := &model.Group{
 		ServerID:               m.GuildID,
 		ShowEnnobledBarbarians: true,
 	}
 
-	if err := s.cfg.GroupRepository.Store(context.Background(), group); err != nil {
-		s.SendMessage(m.ChannelID,
+	if err := hndlr.cfg.GroupRepository.Store(context.Background(), group); err != nil {
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.InternalServerError,
-				DefaultMessage: message.FallbackMsg(message.InternalServerError,
-					"{{.Mention}} An internal server error has occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -73,11 +82,9 @@ func (s *Session) handleAddGroupCommand(ctx *commandCtx, m *discordgo.MessageCre
 		return
 	}
 
-	s.SendMessage(m.ChannelID,
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.AddGroupSuccess,
-			DefaultMessage: message.FallbackMsg(message.AddGroupSuccess,
-				"{{.Mention}} A new group has been created (ID: {{.ID}})."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 				"ID":      group.ID,
@@ -85,17 +92,29 @@ func (s *Session) handleAddGroupCommand(ctx *commandCtx, m *discordgo.MessageCre
 		}))
 }
 
-func (s *Session) handleDeleteGroupCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrDeleteGroup struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrDeleteGroup{}
+
+func (hndlr *hndlrDeleteGroup) cmd() command {
+	return cmdDeleteGroup
+}
+
+func (hndlr *hndlrDeleteGroup) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrDeleteGroup) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDeleteGroup,
-				DefaultMessage: message.FallbackMsg(message.HelpDeleteGroup,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - deletes an observation group."),
 				TemplateData: map[string]interface{}{
-					"Command":       DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       cmdDeleteGroup.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -103,11 +122,9 @@ func (s *Session) handleDeleteGroupCommand(ctx *commandCtx, m *discordgo.Message
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.DeleteGroupInvalidID,
-				DefaultMessage: message.FallbackMsg(message.DeleteGroupInvalidID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -115,26 +132,38 @@ func (s *Session) handleDeleteGroupCommand(ctx *commandCtx, m *discordgo.Message
 		return
 	}
 
-	go s.cfg.GroupRepository.Delete(context.Background(), &models.GroupFilter{
+	go hndlr.cfg.GroupRepository.Delete(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
 
-	s.SendMessage(m.ChannelID,
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.DeleteGroupSuccess,
-			DefaultMessage: message.FallbackMsg(message.DeleteGroupSuccess,
-				"{{.Mention}} The group has been deleted."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
 		}))
 }
 
-func (s *Session) handleGroupsCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+type hndlrGroups struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrGroups{}
+
+func (hndlr *hndlrGroups) cmd() command {
+	return cmdGroups
+}
+
+func (hndlr *hndlrGroups) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrGroups) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+	groups, _, err := hndlr.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ServerID: []string{m.GuildID},
-		DefaultFilter: models.DefaultFilter{
+		DefaultFilter: model.DefaultFilter{
 			Order: []string{"id ASC"},
 		},
 	})
@@ -144,47 +173,53 @@ func (s *Session) handleGroupsCommand(ctx *commandCtx, m *discordgo.MessageCreat
 
 	msg := ""
 	for i, groups := range groups {
-
 		msg += fmt.Sprintf("**%d** | %d | %s | %s | %s | %s\n", i+1,
 			groups.ID,
-			getEmojiForGroupsCommand(groups.ConqueredVillagesChannelID != ""),
-			getEmojiForGroupsCommand(groups.LostVillagesChannelID != ""),
-			getEmojiForGroupsCommand(groups.ShowEnnobledBarbarians),
-			getEmojiForGroupsCommand(groups.ShowInternals),
+			boolToEmoji(groups.ConqueredVillagesChannelID != ""),
+			boolToEmoji(groups.LostVillagesChannelID != ""),
+			boolToEmoji(groups.ShowEnnobledBarbarians),
+			boolToEmoji(groups.ShowInternals),
 		)
 	}
 
 	if msg == "" {
 		msg = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.GroupsNoGroupsAdded,
-			DefaultMessage: message.FallbackMsg(message.GroupsNoGroupsAdded,
-				"No records to display."),
 		})
 	}
 
-	s.SendEmbed(m.ChannelID, NewEmbed().
+	hndlr.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      message.GroupsTitle,
-			DefaultMessage: message.FallbackMsg(message.GroupsTitle, "Group list"),
+			MessageID: message.GroupsTitle,
 		})).
 		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID:      message.GroupsFieldTitle,
-			DefaultMessage: message.FallbackMsg(message.GroupsFieldTitle, "Index | ID | Conquer | Loss | Barbarian | Internal"),
-		}), msg).
-		MessageEmbed)
+			MessageID: message.GroupsFieldTitle,
+		}), msg))
 }
 
-func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrConqueredVillages struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrConqueredVillages{}
+
+func (hndlr *hndlrConqueredVillages) cmd() command {
+	return cmdConqueredVillages
+}
+
+func (hndlr *hndlrConqueredVillages) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrConqueredVillages) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpConqueredVillages,
-				DefaultMessage: message.FallbackMsg(message.HelpConqueredVillages,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - sets the channel on which notifications about conquered village will be displayed. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
 				TemplateData: map[string]interface{}{
-					"Command":       ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -192,11 +227,9 @@ func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.M
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ConqueredVillagesInvalidID,
-				DefaultMessage: message.FallbackMsg(message.ConqueredVillagesInvalidID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -204,16 +237,14 @@ func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.M
 		return
 	}
 
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := hndlr.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
 	if err != nil || len(groups) == 0 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ConqueredVillagesGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.ConqueredVillagesGroupNotFound,
-					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -222,29 +253,39 @@ func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.M
 	}
 
 	groups[0].ConqueredVillagesChannelID = m.ChannelID
-	go s.cfg.GroupRepository.Update(context.Background(), groups[0])
-	s.SendMessage(m.ChannelID,
+	go hndlr.cfg.GroupRepository.Update(context.Background(), groups[0])
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.ConqueredVillagesSuccess,
-			DefaultMessage: message.FallbackMsg(message.ConqueredVillagesSuccess,
-				"{{.Mention}} The channel has been successfully set."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
 		}))
 }
 
-func (s *Session) handleDisableConqueredVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrDisableConqueredVillages struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrDisableConqueredVillages{}
+
+func (hndlr *hndlrDisableConqueredVillages) cmd() command {
+	return cmdDisableConqueredVillages
+}
+
+func (hndlr *hndlrDisableConqueredVillages) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrDisableConqueredVillages) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDisableConqueredVillages,
-				DefaultMessage: message.FallbackMsg(message.HelpDisableConqueredVillages,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disables notifications about conquered villages."),
 				TemplateData: map[string]interface{}{
-					"Command":       DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -252,11 +293,9 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx *commandCtx, m *disc
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.DisableConqueredVillagesInvalidID,
-				DefaultMessage: message.FallbackMsg(message.DisableConqueredVillagesInvalidID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -264,16 +303,14 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx *commandCtx, m *disc
 		return
 	}
 
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := hndlr.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
 	if err != nil || len(groups) == 0 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.DisableConqueredVillagesGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.DisableConqueredVillagesGroupNotFound,
-					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -283,30 +320,40 @@ func (s *Session) handleDisableConqueredVillagesCommand(ctx *commandCtx, m *disc
 
 	if groups[0].ConqueredVillagesChannelID != "" {
 		groups[0].ConqueredVillagesChannelID = ""
-		go s.cfg.GroupRepository.Update(context.Background(), groups[0])
+		go hndlr.cfg.GroupRepository.Update(context.Background(), groups[0])
 	}
-	s.SendMessage(m.ChannelID,
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.DisableConqueredVillagesSuccess,
-			DefaultMessage: message.FallbackMsg(message.DisableConqueredVillagesSuccess,
-				"{{.Mention}} Notifications about conquered villages will no longer show up."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
 		}))
 }
 
-func (s *Session) handleLostVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrLostVillages struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrLostVillages{}
+
+func (hndlr *hndlrLostVillages) cmd() command {
+	return cmdLostVillages
+}
+
+func (hndlr *hndlrLostVillages) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrLostVillages) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpLostVillages,
-				DefaultMessage: message.FallbackMsg(message.HelpLostVillages,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] sets the channel on which notifications about lost village will be displayed. **IMPORTANT!** Run this command on the channel you want to display these notifications."),
 				TemplateData: map[string]interface{}{
-					"Command":       LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -314,11 +361,9 @@ func (s *Session) handleLostVillagesCommand(ctx *commandCtx, m *discordgo.Messag
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.LostVillagesInvalidID,
-				DefaultMessage: message.FallbackMsg(message.LostVillagesInvalidID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -326,16 +371,14 @@ func (s *Session) handleLostVillagesCommand(ctx *commandCtx, m *discordgo.Messag
 		return
 	}
 
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := hndlr.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
 	if err != nil || len(groups) == 0 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.LostVillagesGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.LostVillagesGroupNotFound,
-					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -344,30 +387,40 @@ func (s *Session) handleLostVillagesCommand(ctx *commandCtx, m *discordgo.Messag
 	}
 
 	groups[0].LostVillagesChannelID = m.ChannelID
-	go s.cfg.GroupRepository.Update(context.Background(), groups[0])
+	go hndlr.cfg.GroupRepository.Update(context.Background(), groups[0])
 
-	s.SendMessage(m.ChannelID,
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.LostVillagesSuccess,
-			DefaultMessage: message.FallbackMsg(message.LostVillagesSuccess,
-				"{{.Mention}} The channel has been successfully set."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
 		}))
 }
 
-func (s *Session) handleDisableLostVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrDisableLostVillages struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrDisableLostVillages{}
+
+func (hndlr *hndlrDisableLostVillages) cmd() command {
+	return cmdDisableLostVillages
+}
+
+func (hndlr *hndlrDisableLostVillages) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrDisableLostVillages) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDisableLostVillages,
-				DefaultMessage: message.FallbackMsg(message.HelpDisableLostVillages,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - disables notifications about lost villages."),
 				TemplateData: map[string]interface{}{
-					"Command":       DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -375,11 +428,9 @@ func (s *Session) handleDisableLostVillagesCommand(ctx *commandCtx, m *discordgo
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.DisableLostVillagesInvalidID,
-				DefaultMessage: message.FallbackMsg(message.DisableLostVillagesInvalidID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -387,16 +438,14 @@ func (s *Session) handleDisableLostVillagesCommand(ctx *commandCtx, m *discordgo
 		return
 	}
 
-	groups, _, err := s.cfg.GroupRepository.Fetch(context.Background(), &models.GroupFilter{
+	groups, _, err := hndlr.cfg.GroupRepository.Fetch(context.Background(), &model.GroupFilter{
 		ID:       []int{groupID},
 		ServerID: []string{m.GuildID},
 	})
 	if err != nil || len(groups) == 0 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.DisableLostVillagesGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.DisableLostVillagesGroupNotFound,
-					"{{.Mention}} Group not found."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -406,31 +455,41 @@ func (s *Session) handleDisableLostVillagesCommand(ctx *commandCtx, m *discordgo
 
 	if groups[0].LostVillagesChannelID != "" {
 		groups[0].LostVillagesChannelID = ""
-		go s.cfg.GroupRepository.Update(context.Background(), groups[0])
+		go hndlr.cfg.GroupRepository.Update(context.Background(), groups[0])
 	}
 
-	s.SendMessage(m.ChannelID,
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.DisableLostVillagesSuccess,
-			DefaultMessage: message.FallbackMsg(message.DisableLostVillagesSuccess,
-				"{{.Mention}} Notifications about lost villages will no longer show up."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
 		}))
 }
 
-func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrObserve struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrObserve{}
+
+func (hndlr *hndlrObserve) cmd() command {
+	return cmdObserve
+}
+
+func (hndlr *hndlrObserve) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrObserve) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 3 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpObserve,
-				DefaultMessage: message.FallbackMsg(message.HelpObserve,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] [server] [tribe id or tribe tag] - command adds a tribe to the observation group."),
 				TemplateData: map[string]interface{}{
-					"Command":       ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -438,11 +497,9 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ObserveInvalidGroupID,
-				DefaultMessage: message.FallbackMsg(message.ObserveInvalidGroupID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -453,11 +510,9 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 	tribeTag := strings.TrimSpace(args[2])
 	tribeID, err := strconv.Atoi(tribeTag)
 	if (err != nil || tribeID <= 0) && tribeTag == "" {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ObserveInvalidTribeID,
-				DefaultMessage: message.FallbackMsg(message.ObserveInvalidTribeID,
-					"{{.Mention}} The third parameter must be a number greater than 0 or a valid string."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -465,12 +520,11 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	server, err := s.cfg.API.Server.Read(serverKey, nil)
+	server, err := hndlr.cfg.API.Server.Read(serverKey, nil)
 	if err != nil || server == nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.ObserveServerNotFound,
-				DefaultMessage: message.FallbackMsg(message.ObserveServerNotFound, "{{.Mention}} Server not found."),
+				MessageID: message.ObserveServerNotFound,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -478,10 +532,9 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 	if server.Status == twmodel.ServerStatusClosed {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.ObserveServerIsClosed,
-				DefaultMessage: message.FallbackMsg(message.ObserveServerIsClosed, "{{.Mention}} Server is closed."),
+				MessageID: message.ObserveServerIsClosed,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -491,10 +544,10 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 
 	var tribe *twmodel.Tribe
 	if tribeID > 0 {
-		tribe, err = s.cfg.API.Tribe.Read(server.Key, tribeID)
+		tribe, err = hndlr.cfg.API.Tribe.Read(server.Key, tribeID)
 	} else {
 		list := &sdk.TribeList{}
-		list, err = s.cfg.API.Tribe.Browse(server.Key, 1, 0, []string{}, &twmodel.TribeFilter{
+		list, err = hndlr.cfg.API.Tribe.Browse(server.Key, 1, 0, []string{}, &twmodel.TribeFilter{
 			Tag: []string{tribeTag},
 		})
 		if list != nil && list.Items != nil && len(list.Items) > 0 {
@@ -502,10 +555,9 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		}
 	}
 	if err != nil || tribe == nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.ObserveTribeNotFound,
-				DefaultMessage: message.FallbackMsg(message.ObserveTribeNotFound, "{{.Mention}} Tribe not found."),
+				MessageID: message.ObserveTribeNotFound,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -513,12 +565,11 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	group, err := hndlr.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.ObserveGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.ObserveGroupNotFound, "{{.Mention}} Group not found."),
+				MessageID: message.ObserveGroupNotFound,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -527,11 +578,9 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 	}
 
 	if len(group.Observations) >= observationsPerGroup {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ObserveLimitHasBeenReached,
-				DefaultMessage: message.FallbackMsg(message.ObserveLimitHasBeenReached,
-					"{{.Mention}} The observation limit for this group has been reached ({{.Total}}/{{.Limit}})."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 					"Total":   len(group.Observations),
@@ -541,33 +590,44 @@ func (s *Session) handleObserveCommand(ctx *commandCtx, m *discordgo.MessageCrea
 		return
 	}
 
-	go s.cfg.ObservationRepository.Store(context.Background(), &models.Observation{
+	go hndlr.cfg.ObservationRepository.Store(context.Background(), &model.Observation{
 		Server:  server.Key,
 		TribeID: tribe.ID,
 		GroupID: groupID,
 	})
 
-	s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-		MessageID:      message.ObserveSuccess,
-		DefaultMessage: message.FallbackMsg(message.ObserveSuccess, "{{.Mention}} The tribe has been added to the group."),
+	hndlr.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+		MessageID: message.ObserveSuccess,
 		TemplateData: map[string]interface{}{
 			"Mention": m.Author.Mention(),
 		},
 	}))
 }
 
-func (s *Session) handleDeleteObservationCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrDeleteObservation struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrDeleteObservation{}
+
+func (hndlr *hndlrDeleteObservation) cmd() command {
+	return cmdDeleteObservation
+}
+
+func (hndlr *hndlrDeleteObservation) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrDeleteObservation) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 2 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDeleteObservation,
-				DefaultMessage: message.FallbackMsg(message.HelpDeleteObservation,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] [id from {{.ObservationsCommand}}] - removes a tribe from the observation group."),
 				TemplateData: map[string]interface{}{
-					"Command":             DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix),
-					"ObservationsCommand": ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand":       GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":             hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
+					"ObservationsCommand": cmdObservations.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand":       cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -575,11 +635,9 @@ func (s *Session) handleDeleteObservationCommand(ctx *commandCtx, m *discordgo.M
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.DeleteObservationInvalidGroupID,
-				DefaultMessage: message.FallbackMsg(message.DeleteObservationInvalidGroupID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -588,11 +646,9 @@ func (s *Session) handleDeleteObservationCommand(ctx *commandCtx, m *discordgo.M
 	}
 	observationID, err := strconv.Atoi(args[1])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.DeleteObservationInvalidTribeID,
-				DefaultMessage: message.FallbackMsg(message.DeleteObservationInvalidTribeID,
-					"{{.Mention}} The tribe ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -600,12 +656,11 @@ func (s *Session) handleDeleteObservationCommand(ctx *commandCtx, m *discordgo.M
 		return
 	}
 
-	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	group, err := hndlr.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.DeleteObservationGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.DeleteObservationGroupNotFound, "{{.Mention}} Group not found."),
+				MessageID: message.DeleteObservationGroupNotFound,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -613,31 +668,42 @@ func (s *Session) handleDeleteObservationCommand(ctx *commandCtx, m *discordgo.M
 		return
 	}
 
-	go s.cfg.ObservationRepository.Delete(context.Background(), &models.ObservationFilter{
+	go hndlr.cfg.ObservationRepository.Delete(context.Background(), &model.ObservationFilter{
 		GroupID: []int{groupID},
 		ID:      []int{observationID},
 	})
 
-	s.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-		MessageID:      message.DeleteObservationSuccess,
-		DefaultMessage: message.FallbackMsg(message.DeleteObservationSuccess, "{{.Mention}} The tribe has been removed from the group."),
+	hndlr.SendMessage(m.ChannelID, ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+		MessageID: message.DeleteObservationSuccess,
 		TemplateData: map[string]interface{}{
 			"Mention": m.Author.Mention(),
 		},
 	}))
 }
 
-func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrObservations struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrObservations{}
+
+func (hndlr *hndlrObservations) cmd() command {
+	return cmdObservations
+}
+
+func (hndlr *hndlrObservations) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrObservations) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpObservations,
-				DefaultMessage: message.FallbackMsg(message.HelpObservations,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - shows a list of monitored tribes added to this group."),
 				TemplateData: map[string]interface{}{
-					"Command":       ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -645,41 +711,36 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ObservationsInvalidGroupID,
-				DefaultMessage: message.FallbackMsg(message.ObservationsInvalidGroupID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
 			}))
 		return
 	}
-	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	group, err := hndlr.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.ObservationsGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.ObservationsGroupNotFound, "{{.Mention}} Group not found."),
+				MessageID: message.ObservationsGroupNotFound,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
 			}))
 		return
 	}
-	observations, _, err := s.cfg.ObservationRepository.Fetch(context.Background(), &models.ObservationFilter{
+	observations, _, err := hndlr.cfg.ObservationRepository.Fetch(context.Background(), &model.ObservationFilter{
 		GroupID: []int{groupID},
-		DefaultFilter: models.DefaultFilter{
+		DefaultFilter: model.DefaultFilter{
 			Order: []string{"id ASC"},
 		},
 	})
 	if err != nil {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.InternalServerError,
-				DefaultMessage: message.FallbackMsg(message.InternalServerError,
-					"{{.Mention}} An internal server error has occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -688,7 +749,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 	}
 
 	tribeIDsByServer := make(map[string][]int)
-	versionCodes := []twmodel.VersionCode{}
+	var versionCodes []twmodel.VersionCode
 	for _, observation := range observations {
 		tribeIDsByServer[observation.Server] = append(tribeIDsByServer[observation.Server], observation.TribeID)
 		currentCode := twmodel.VersionCodeFromServerKey(observation.Server)
@@ -704,15 +765,13 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 		}
 	}
 	for server, tribeIDs := range tribeIDsByServer {
-		list, err := s.cfg.API.Tribe.Browse(server, 0, 0, []string{}, &twmodel.TribeFilter{
+		list, err := hndlr.cfg.API.Tribe.Browse(server, 0, 0, []string{}, &twmodel.TribeFilter{
 			ID: tribeIDs,
 		})
 		if err != nil {
-			s.SendMessage(m.ChannelID,
+			hndlr.SendMessage(m.ChannelID,
 				ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 					MessageID: message.InternalServerError,
-					DefaultMessage: message.FallbackMsg(message.InternalServerError,
-						"{{.Mention}} An internal server error has occurred, please try again later."),
 					TemplateData: map[string]interface{}{
 						"Mention": m.Author.Mention(),
 					},
@@ -728,13 +787,13 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			}
 		}
 	}
-	versionList, err := s.cfg.API.Version.Browse(0, 0, []string{}, &twmodel.VersionFilter{
+	versionList, err := hndlr.cfg.API.Version.Browse(0, 0, []string{}, &twmodel.VersionFilter{
 		Code: versionCodes,
 	})
 
-	msg := &MessageEmbed{}
+	bldr := &MessageEmbedFieldBuilder{}
 	if len(observations) <= 0 || err != nil || versionList == nil || versionList.Items == nil {
-		msg.Append("-")
+		bldr.Append("-")
 	} else {
 		for i, observation := range observations {
 			tag := "Unknown"
@@ -746,32 +805,41 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			if version != nil {
 				tribeURL = twurlbuilder.BuildTribeURL(observation.Server, version.Host, observation.TribeID)
 			}
-			msg.Append(fmt.Sprintf("**%d** | %d - %s - %s\n", i+1, observation.ID,
+			bldr.Append(fmt.Sprintf("**%d** | %d - %s - %s\n", i+1, observation.ID,
 				observation.Server,
 				BuildLink(tag, tribeURL)))
 		}
 	}
-	s.SendEmbed(m.ChannelID, NewEmbed().
+	hndlr.SendEmbed(m.ChannelID, NewEmbed().
 		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.ObservationsTitle,
-			DefaultMessage: message.FallbackMsg(message.ObservationsTitle,
-				"Observed tribes\nIndex | ID - Server - Tribe"),
 		})).
-		SetFields(msg.ToMessageEmbedFields()).
-		MessageEmbed)
+		SetFields(bldr.ToMessageEmbedFields()))
 }
 
-func (s *Session) handleShowEnnobledBarbariansCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrShowEnnobledBarbarians struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrShowEnnobledBarbarians{}
+
+func (hndlr *hndlrShowEnnobledBarbarians) cmd() command {
+	return cmdShowEnnobledBarbarians
+}
+
+func (hndlr *hndlrShowEnnobledBarbarians) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrShowEnnobledBarbarians) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpShowEnnobledBarbs,
-				DefaultMessage: message.FallbackMsg(message.HelpShowEnnobledBarbs,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about ennobling barbarian villages."),
 				TemplateData: map[string]interface{}{
-					"Command":       ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       cmdShowEnnobledBarbarians.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -779,23 +847,20 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx *commandCtx, m *discor
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil || groupID <= 0 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ShowEnnobledBarbsInvalidGroupID,
-				DefaultMessage: message.FallbackMsg(message.ShowEnnobledBarbsInvalidGroupID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
 			}))
 		return
 	}
-	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	group, err := hndlr.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.ShowEnnobledBarbsGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.ShowEnnobledBarbsGroupNotFound, "{{.Mention}} Group not found."),
+				MessageID: message.ShowEnnobledBarbsGroupNotFound,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -805,12 +870,10 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx *commandCtx, m *discor
 
 	oldValue := group.ShowEnnobledBarbarians
 	group.ShowEnnobledBarbarians = !oldValue
-	if err := s.cfg.GroupRepository.Update(context.Background(), group); err != nil {
-		s.SendMessage(m.ChannelID,
+	if err := hndlr.cfg.GroupRepository.Update(context.Background(), group); err != nil {
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.InternalServerError,
-				DefaultMessage: message.FallbackMsg(message.InternalServerError,
-					"{{.Mention}} An internal server error has occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -819,96 +882,47 @@ func (s *Session) handleShowEnnobledBarbariansCommand(ctx *commandCtx, m *discor
 	}
 
 	if oldValue {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ShowEnnobledBarbsSuccess1,
-				DefaultMessage: message.FallbackMsg(message.ShowEnnobledBarbsSuccess1,
-					"{{.Mention}} Notifications about conquered barbarian villages will no longer show up."),
-				TemplateData: map[string]interface{}{
-					"Mention": m.Author.Mention(),
-				},
-			}))
-	} else {
-		s.SendMessage(m.ChannelID,
-			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.ShowEnnobledBarbsSuccess2,
-				DefaultMessage: message.FallbackMsg(message.ShowEnnobledBarbsSuccess2,
-					"{{.Mention}} Enabled notifications about conquered barbarian villages."),
-				TemplateData: map[string]interface{}{
-					"Mention": m.Author.Mention(),
-				},
-			}))
-	}
-}
-
-func (s *Session) handleChangeLanguageCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
-	argsLength := len(args)
-	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
-			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.HelpChangageLanguage,
-				DefaultMessage: message.FallbackMsg(message.HelpChangageLanguage,
-					"**{{.Command}}** [{{.Languages}}] - changes language."),
-				TemplateData: map[string]interface{}{
-					"Command":   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
-					"Languages": getAvailableLanguages(),
-				},
-			}))
-		return
-	}
-
-	lang := args[0]
-	valid := isValidLanguageTag(lang)
-	if !valid {
-		s.SendMessage(m.ChannelID,
-			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.ChangeLanguageLanguageNotSupported,
-				DefaultMessage: message.FallbackMsg(message.ChangeLanguageLanguageNotSupported,
-					"{{.Mention}} Language not supported."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
 			}))
 		return
 	}
-
-	ctx.server.Lang = lang
-	if err := s.cfg.ServerRepository.Update(context.Background(), ctx.server); err != nil {
-		s.SendMessage(m.ChannelID,
-			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.InternalServerError,
-				DefaultMessage: message.FallbackMsg(message.InternalServerError,
-					"{{.Mention}} An internal server error has occurred, please try again later."),
-				TemplateData: map[string]interface{}{
-					"Mention": m.Author.Mention(),
-				},
-			}))
-		return
-	}
-	ctx.localizer = message.NewLocalizer(lang)
-
-	s.SendMessage(m.ChannelID,
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: message.ChangeLanguageSuccess,
-			DefaultMessage: message.FallbackMsg(message.ChangeLanguageSuccess,
-				"{{.Mention}} The language has been changed."),
+			MessageID: message.ShowEnnobledBarbsSuccess2,
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
 		}))
 }
 
-func (s *Session) handleShowInternalsCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+type hndlrShowInternals struct {
+	*Session
+}
+
+var _ commandHandler = &hndlrShowInternals{}
+
+func (hndlr *hndlrShowInternals) cmd() command {
+	return cmdShowInternals
+}
+
+func (hndlr *hndlrShowInternals) requireAdmPermissions() bool {
+	return true
+}
+
+func (hndlr *hndlrShowInternals) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpShowInternals,
-				DefaultMessage: message.FallbackMsg(message.HelpShowInternals,
-					"**{{.Command}}** [group id from {{.GroupsCommand}}] - enables/disables notifications about in-group/in-tribe conquering."),
 				TemplateData: map[string]interface{}{
-					"Command":       ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
+					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -916,23 +930,20 @@ func (s *Session) handleShowInternalsCommand(ctx *commandCtx, m *discordgo.Messa
 
 	groupID, err := strconv.Atoi(args[0])
 	if err != nil || groupID <= 0 {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ShowInternalsInvalidGroupID,
-				DefaultMessage: message.FallbackMsg(message.ShowInternalsInvalidGroupID,
-					"{{.Mention}} The group ID must be a number greater than 0."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
 			}))
 		return
 	}
-	group, err := s.cfg.GroupRepository.GetByID(context.Background(), groupID)
+	group, err := hndlr.cfg.GroupRepository.GetByID(context.Background(), groupID)
 	if err != nil || group.ServerID != m.GuildID {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.ShowInternalsGroupNotFound,
-				DefaultMessage: message.FallbackMsg(message.ShowInternalsGroupNotFound, "{{.Mention}} Group not found."),
+				MessageID: message.ShowInternalsGroupNotFound,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -942,12 +953,10 @@ func (s *Session) handleShowInternalsCommand(ctx *commandCtx, m *discordgo.Messa
 
 	oldValue := group.ShowInternals
 	group.ShowInternals = !oldValue
-	if err := s.cfg.GroupRepository.Update(context.Background(), group); err != nil {
-		s.SendMessage(m.ChannelID,
+	if err := hndlr.cfg.GroupRepository.Update(context.Background(), group); err != nil {
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.InternalServerError,
-				DefaultMessage: message.FallbackMsg(message.InternalServerError,
-					"{{.Mention}} An internal server error has occurred, please try again later."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
@@ -956,24 +965,20 @@ func (s *Session) handleShowInternalsCommand(ctx *commandCtx, m *discordgo.Messa
 	}
 
 	if oldValue {
-		s.SendMessage(m.ChannelID,
+		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.ShowInternalsSuccess1,
-				DefaultMessage: message.FallbackMsg(message.ShowInternalsSuccess1,
-					"{{.Mention}} Notifications about internals will no longer show up."),
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
 			}))
-	} else {
-		s.SendMessage(m.ChannelID,
-			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.ShowInternalsSuccess2,
-				DefaultMessage: message.FallbackMsg(message.ShowInternalsSuccess2,
-					"{{.Mention}} Notifications about internals have been enabled."),
-				TemplateData: map[string]interface{}{
-					"Mention": m.Author.Mention(),
-				},
-			}))
+		return
 	}
+	hndlr.SendMessage(m.ChannelID,
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: message.ShowInternalsSuccess2,
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
 }
