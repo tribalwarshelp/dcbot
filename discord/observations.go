@@ -147,10 +147,10 @@ func (s *Session) handleGroupsCommand(ctx *commandCtx, m *discordgo.MessageCreat
 
 		msg += fmt.Sprintf("**%d** | %d | %s | %s | %s | %s\n", i+1,
 			groups.ID,
-			getEmojiForGroupsCommand(groups.ConqueredVillagesChannelID != ""),
-			getEmojiForGroupsCommand(groups.LostVillagesChannelID != ""),
-			getEmojiForGroupsCommand(groups.ShowEnnobledBarbarians),
-			getEmojiForGroupsCommand(groups.ShowInternals),
+			boolToEmoji(groups.ConqueredVillagesChannelID != ""),
+			boolToEmoji(groups.LostVillagesChannelID != ""),
+			boolToEmoji(groups.ShowEnnobledBarbarians),
+			boolToEmoji(groups.ShowInternals),
 		)
 	}
 

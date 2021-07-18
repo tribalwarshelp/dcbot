@@ -7,7 +7,7 @@ import (
 	"github.com/tribalwarshelp/dcbot/message"
 )
 
-func getEmojiForGroupsCommand(val bool) string {
+func boolToEmoji(val bool) string {
 	if val {
 		return ":white_check_mark:"
 	}
@@ -15,7 +15,7 @@ func getEmojiForGroupsCommand(val bool) string {
 }
 
 func getAvailableLanguages() string {
-	langTags := []string{}
+	var langTags []string
 	for _, langTag := range message.LanguageTags() {
 		langTags = append(langTags, langTag.String())
 	}
@@ -23,14 +23,12 @@ func getAvailableLanguages() string {
 }
 
 func isValidLanguageTag(lang string) bool {
-	valid := false
 	for _, langTag := range message.LanguageTags() {
 		if langTag.String() == lang {
-			valid = true
-			break
+			return true
 		}
 	}
-	return valid
+	return false
 }
 
 func BuildLink(text string, url string) string {

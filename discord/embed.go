@@ -255,6 +255,7 @@ func (b *MessageEmbedFieldBuilder) IsEmpty() bool {
 func (b *MessageEmbedFieldBuilder) Append(m string) {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
+
 	for len(b.chunks) < b.index+1 {
 		b.chunks = append(b.chunks, "")
 	}
