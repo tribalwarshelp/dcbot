@@ -304,8 +304,8 @@ func splitEmbedFields(e *Embed) [][]*discordgo.MessageEmbedField {
 		fNameLen := len(field.Name)
 		fValLen := len(field.Value)
 		if characters+fNameLen+fValLen > EmbedSizeLimit || index == fieldsLen-1 {
-			splitFields = append(splitFields, fields[fromIndex:index])
-			fromIndex = index
+			splitFields = append(splitFields, fields[fromIndex:index+1])
+			fromIndex = index + 1
 			characters = baseNumberOfCharacters
 		}
 		characters += fNameLen
