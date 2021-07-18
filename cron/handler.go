@@ -161,8 +161,8 @@ func (h *handler) checkEnnoblements() {
 			continue
 		}
 		localizer := message.NewLocalizer(g.Server.Lang)
-		lostVillagesMsg := &discord.MessageEmbedFieldBuilder{}
-		conqueredVillagesMsg := &discord.MessageEmbedFieldBuilder{}
+		lostVillagesBldr := &discord.MessageEmbedFieldBuilder{}
+		conqueredVillagesBldr := &discord.MessageEmbedFieldBuilder{}
 		for _, obs := range g.Observations {
 			enblmnts, ok := ennoblementsByServerKey[obs.Server]
 			version := twutil.FindVersionByCode(versions, twmodel.VersionCodeFromServerKey(obs.Server))
@@ -180,7 +180,7 @@ func (h *handler) checkEnnoblements() {
 							t:           messageTypeLost,
 							localizer:   localizer,
 						}
-						lostVillagesMsg.Append(newMessage(newMsgDataConfig).String())
+						lostVillagesBldr.Append(newMessage(newMsgDataConfig).String())
 					}
 				}
 
@@ -200,40 +200,38 @@ func (h *handler) checkEnnoblements() {
 							t:           messageTypeConquer,
 							localizer:   localizer,
 						}
-						conqueredVillagesMsg.Append(newMessage(newMsgDataConfig).String())
+						conqueredVillagesBldr.Append(newMessage(newMsgDataConfig).String())
 					}
 				}
 			}
 		}
 
 		timestamp := time.Now().Format(time.RFC3339)
-		if g.ConqueredVillagesChannelID != "" && !conqueredVillagesMsg.IsEmpty() {
+		if g.ConqueredVillagesChannelID != "" && !conqueredVillagesBldr.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CronConqueredVillagesTitle,
-				DefaultMessage: message.FallbackMsg(message.CronConqueredVillagesTitle,
-					"Conquered villages"),
 			})
+			conqueredVillagesBldr.SetName(title)
 			go h.discord.SendEmbed(g.ConqueredVillagesChannelID,
 				discord.
 					NewEmbed().
 					SetTitle(title).
 					SetColor(colorConqueredVillages).
-					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
+					SetFields(conqueredVillagesBldr.ToMessageEmbedFields()).
 					SetTimestamp(timestamp))
 		}
 
-		if g.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
+		if g.LostVillagesChannelID != "" && !lostVillagesBldr.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CronLostVillagesTitle,
-				DefaultMessage: message.FallbackMsg(message.CronLostVillagesTitle,
-					"Lost villages"),
 			})
+			conqueredVillagesBldr.SetName(title)
 			go h.discord.SendEmbed(g.LostVillagesChannelID,
 				discord.
 					NewEmbed().
 					SetTitle(title).
 					SetColor(colorLostVillages).
-					SetFields(lostVillagesMsg.ToMessageEmbedFields()).
+					SetFields(lostVillagesBldr.ToMessageEmbedFields()).
 					SetTimestamp(timestamp))
 		}
 	}

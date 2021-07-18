@@ -169,10 +169,12 @@ func (p *procTranslateCoords) process(ctx *commandCtx, m *discordgo.MessageCreat
 			}) + "\n")
 		}
 
+		title := ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: message.CoordsTranslationTitle,
+		})
+		bldr.SetName(title)
 		p.SendEmbed(m.ChannelID, NewEmbed().
-			SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.CoordsTranslationTitle,
-			})).
+			SetTitle(title).
 			SetFields(bldr.ToMessageEmbedFields()))
 	}
 }

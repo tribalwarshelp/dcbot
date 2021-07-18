@@ -81,8 +81,6 @@ func newMessage(cfg newMessageConfig) checkEnnoblementsMsg {
 func (msg checkEnnoblementsMsg) String() string {
 	return msg.localizer.MustLocalize(&i18n.LocalizeConfig{
 		MessageID: message.CronCheckEnnoblementsMsgLine,
-		DefaultMessage: message.FallbackMsg(message.CronCheckEnnoblementsMsgLine,
-			"{{.NewOwner}} ({{.NewOwnerTribe}}) has conquered {{.Village}} (Old owner: {{.OldOwner}} ({{.OldOwnerTribe}}))"),
 		TemplateData: map[string]interface{}{
 			"NewOwner":      discord.BuildLink(msg.newOwnerName, msg.newOwnerURL),
 			"NewOwnerTribe": discord.BuildLink(msg.newOwnerTribeTag, msg.newOwnerTribeURL),

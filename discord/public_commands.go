@@ -410,6 +410,7 @@ func (hndlr *hndlrTribe) execute(ctx *commandCtx, m *discordgo.MessageCreate, ar
 	}
 
 	bldr := &MessageEmbedFieldBuilder{}
+	bldr.SetName(title)
 	for i, player := range playerList.Items {
 		if player == nil {
 			continue
