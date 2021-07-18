@@ -118,7 +118,7 @@ func (s *Session) SendEmbed(channelID string, e *Embed) error {
 }
 
 func (s *Session) UpdateStatus(status string) error {
-	if err := s.dg.UpdateStatus(0, status); err != nil {
+	if err := s.dg.UpdateGameStatus(0, status); err != nil {
 		return err
 	}
 	return nil
@@ -182,7 +182,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 	}
 }
 
-func (s *Session) memberHasPermission(guildID string, userID string, permission int) (bool, error) {
+func (s *Session) memberHasPermission(guildID string, userID string, permission int64) (bool, error) {
 	member, err := s.dg.State.Member(guildID, userID)
 	if err != nil {
 		if member, err = s.dg.GuildMember(guildID, userID); err != nil {
