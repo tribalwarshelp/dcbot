@@ -22,29 +22,29 @@ const (
 
 var coordsRegex = regexp.MustCompile(`(\d+)\|(\d+)`)
 
-type commandCoordsTranslation struct {
+type hndlrCoordsTranslation struct {
 	*Session
 }
 
-var _ commandHandler = &commandCoordsTranslation{}
+var _ commandHandler = &hndlrCoordsTranslation{}
 
-func (c *commandCoordsTranslation) cmd() Command {
+func (hndlr *hndlrCoordsTranslation) cmd() Command {
 	return CoordsTranslationCommand
 }
 
-func (c *commandCoordsTranslation) requireAdmPermissions() bool {
+func (hndlr *hndlrCoordsTranslation) requireAdmPermissions() bool {
 	return true
 }
 
-func (c *commandCoordsTranslation) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+func (hndlr *hndlrCoordsTranslation) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
-		c.SendMessage(
+		hndlr.SendMessage(
 			m.ChannelID,
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpCoordsTranslation,
 				TemplateData: map[string]interface{}{
-					"Command": c.cmd().WithPrefix(c.cfg.CommandPrefix),
+					"Command": hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}),
 		)
@@ -52,9 +52,9 @@ func (c *commandCoordsTranslation) execute(ctx *commandCtx, m *discordgo.Message
 	}
 
 	serverKey := args[0]
-	server, err := c.cfg.API.Server.Read(serverKey, nil)
+	server, err := hndlr.cfg.API.Server.Read(serverKey, nil)
 	if err != nil || server == nil {
-		c.SendMessage(
+		hndlr.SendMessage(
 			m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CoordsTranslationServerNotFound,
@@ -67,9 +67,9 @@ func (c *commandCoordsTranslation) execute(ctx *commandCtx, m *discordgo.Message
 	}
 
 	ctx.server.CoordsTranslation = serverKey
-	go c.cfg.ServerRepository.Update(context.Background(), ctx.server)
+	go hndlr.cfg.ServerRepository.Update(context.Background(), ctx.server)
 
-	c.SendMessage(m.ChannelID,
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.CoordsTranslationSuccess,
 			TemplateData: map[string]interface{}{
@@ -78,25 +78,25 @@ func (c *commandCoordsTranslation) execute(ctx *commandCtx, m *discordgo.Message
 		}))
 }
 
-type commandDisableCoordsTranslation struct {
+type hndlrDisableCoordsTranslation struct {
 	*Session
 }
 
-var _ commandHandler = &commandDisableCoordsTranslation{}
+var _ commandHandler = &hndlrDisableCoordsTranslation{}
 
-func (c *commandDisableCoordsTranslation) cmd() Command {
+func (hndlr *hndlrDisableCoordsTranslation) cmd() Command {
 	return DisableCoordsTranslationCommand
 }
 
-func (c *commandDisableCoordsTranslation) requireAdmPermissions() bool {
+func (hndlr *hndlrDisableCoordsTranslation) requireAdmPermissions() bool {
 	return true
 }
 
-func (c *commandDisableCoordsTranslation) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+func (hndlr *hndlrDisableCoordsTranslation) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	ctx.server.CoordsTranslation = ""
-	go c.cfg.ServerRepository.Update(context.Background(), ctx.server)
+	go hndlr.cfg.ServerRepository.Update(context.Background(), ctx.server)
 
-	c.SendMessage(m.ChannelID,
+	hndlr.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.DisableCoordsTranslationSuccess,
 			TemplateData: map[string]interface{}{
@@ -105,21 +105,25 @@ func (c *commandDisableCoordsTranslation) execute(ctx *commandCtx, m *discordgo.
 		}))
 }
 
-func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
+type procTranslateCoords struct {
+	*Session
+}
+
+func (p *procTranslateCoords) process(ctx *commandCtx, m *discordgo.MessageCreate) {
 	if ctx.server.CoordsTranslation == "" {
 		return
 	}
 	coords := coordsRegex.FindAllString(m.Content, -1)
 	coordsLen := len(coords)
 	if coordsLen > 0 {
-		version, err := s.cfg.API.Version.Read(twmodel.VersionCodeFromServerKey(ctx.server.CoordsTranslation))
+		version, err := p.cfg.API.Version.Read(twmodel.VersionCodeFromServerKey(ctx.server.CoordsTranslation))
 		if err != nil || version == nil {
 			return
 		}
 		if coordsLen > coordsLimit {
 			coords = coords[0:coordsLimit]
 		}
-		list, err := s.cfg.API.Village.Browse(ctx.server.CoordsTranslation,
+		list, err := p.cfg.API.Village.Browse(ctx.server.CoordsTranslation,
 			0,
 			0,
 			[]string{},
@@ -137,7 +141,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 			return
 		}
 
-		msg := &MessageEmbedFieldBuilder{}
+		bldr := &MessageEmbedFieldBuilder{}
 		for _, village := range list.Items {
 			villageURL := twurlbuilder.BuildVillageURL(ctx.server.CoordsTranslation, version.Host, village.ID)
 			playerName := "-"
@@ -153,7 +157,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 				tribeURL = twurlbuilder.BuildTribeURL(ctx.server.CoordsTranslation, version.Host, village.Player.Tribe.ID)
 			}
 
-			msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			bldr.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CoordsTranslationMessage,
 				TemplateData: map[string]interface{}{
 					"Village": BuildLink(village.FullName(), villageURL),
@@ -163,10 +167,10 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 			}) + "\n")
 		}
 
-		s.SendEmbed(m.ChannelID, NewEmbed().
+		p.SendEmbed(m.ChannelID, NewEmbed().
 			SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CoordsTranslationTitle,
 			})).
-			SetFields(msg.ToMessageEmbedFields()))
+			SetFields(bldr.ToMessageEmbedFields()))
 	}
 }
