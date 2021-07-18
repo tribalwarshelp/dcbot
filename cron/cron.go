@@ -22,6 +22,11 @@ import (
 	"github.com/tribalwarshelp/dcbot/util/twutil"
 )
 
+const (
+	colorLostVillage      = 0xff0000
+	colorConqueredVillage = 0x00ff00
+)
+
 var log = logrus.WithField("package", "cron")
 
 type Config struct {
@@ -224,14 +229,13 @@ func (c *Cron) checkEnnoblements() {
 							g.Observations.Contains(obs.Server, ennoblement.NewOwner.Tribe.ID) {
 							continue
 						}
-						newMsgDataConfig := newMessageConfig{
+						newMsgDataConfig := newEnnoblementMsgConfig{
 							host:        version.Host,
 							server:      obs.Server,
 							ennoblement: ennoblement,
-							t:           messageTypeLost,
 							localizer:   localizer,
 						}
-						lostVillagesBldr.Append(newMessage(newMsgDataConfig).String())
+						lostVillagesBldr.Append(newEnnoblementMsg(newMsgDataConfig).String())
 					}
 				}
 
@@ -244,21 +248,20 @@ func (c *Cron) checkEnnoblements() {
 							continue
 						}
 
-						newMsgDataConfig := newMessageConfig{
+						newMsgDataConfig := newEnnoblementMsgConfig{
 							host:        version.Host,
 							server:      obs.Server,
 							ennoblement: ennoblement,
-							t:           messageTypeConquer,
 							localizer:   localizer,
 						}
-						conqueredVillagesBldr.Append(newMessage(newMsgDataConfig).String())
+						conqueredVillagesBldr.Append(newEnnoblementMsg(newMsgDataConfig).String())
 					}
 				}
 			}
 		}
 
 		timestamp := time.Now().Format(time.RFC3339)
-		if g.ConqueredVillagesChannelID != "" && !conqueredVillagesBldr.IsEmpty() {
+		if !conqueredVillagesBldr.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CronConqueredVillagesTitle,
 			})
@@ -267,12 +270,12 @@ func (c *Cron) checkEnnoblements() {
 				discord.
 					NewEmbed().
 					SetTitle(title).
-					SetColor(colorConqueredVillages).
+					SetColor(colorConqueredVillage).
 					SetFields(conqueredVillagesBldr.ToMessageEmbedFields()).
 					SetTimestamp(timestamp))
 		}
 
-		if g.LostVillagesChannelID != "" && !lostVillagesBldr.IsEmpty() {
+		if !lostVillagesBldr.IsEmpty() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CronLostVillagesTitle,
 			})
@@ -281,7 +284,7 @@ func (c *Cron) checkEnnoblements() {
 				discord.
 					NewEmbed().
 					SetTitle(title).
-					SetColor(colorLostVillages).
+					SetColor(colorLostVillage).
 					SetFields(lostVillagesBldr.ToMessageEmbedFields()).
 					SetTimestamp(timestamp))
 		}
