@@ -44,8 +44,8 @@ const (
 	TribeExceededMaximumNumberOfPages = "tribe.exceededMaximumNumberOfPages"
 	TribeMessageLine                  = "tribe.messageLine"
 
-	AddGroupGroupLimitHasBeenReached = "addGroup.groupLimitHasBeenReached"
-	AddGroupSuccess                  = "addGroup.success"
+	AddGroupLimitHasBeenReached = "addGroup.groupLimitHasBeenReached"
+	AddGroupSuccess             = "addGroup.success"
 
 	DeleteGroupInvalidID = "deleteGroup.invalidID"
 	DeleteGroupSuccess   = "deleteGroup.success"

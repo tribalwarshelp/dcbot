@@ -5,7 +5,7 @@ import (
 	"github.com/tribalwarshelp/shared/tw/twmodel"
 	"time"
 
-	"github.com/tribalwarshelp/dcbot/tw/twutil"
+	"github.com/tribalwarshelp/dcbot/util/twutil"
 )
 
 func isBarbarian(p *twmodel.Player) bool {
