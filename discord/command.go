@@ -13,8 +13,8 @@ func (cmd Command) String() string {
 	return string(cmd)
 }
 
-func (cmd Command) WithPrefix(prefix string) Command {
-	return Command(prefix + cmd.String())
+func (cmd Command) WithPrefix(prefix string) string {
+	return prefix + cmd.String()
 }
 
 type commandCtx struct {
@@ -22,25 +22,19 @@ type commandCtx struct {
 	localizer *i18n.Localizer
 }
 
-type commandHandler struct {
-	cmd                   Command
-	requireAdmPermissions bool
-	fn                    func(ctx *commandCtx, m *discordgo.MessageCreate, args ...string)
+type commandHandler interface {
+	cmd() Command
+	requireAdmPermissions() bool
+	execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string)
 }
 
-type commandHandlers []*commandHandler
+type commandHandlers []commandHandler
 
-func (hs commandHandlers) find(cmd Command) *commandHandler {
+func (hs commandHandlers) find(prefix, cmd string) commandHandler {
 	for _, h := range hs {
-		if h.cmd == cmd {
+		if h.cmd().WithPrefix(prefix) == cmd {
 			return h
 		}
 	}
 	return nil
-}
-
-type commandHandlerInterface interface {
-	cmd() Command
-	requireAdmPermissions() bool
-	execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string)
 }

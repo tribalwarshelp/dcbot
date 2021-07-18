@@ -26,7 +26,7 @@ type commandCoordsTranslation struct {
 	*Session
 }
 
-var _ commandHandlerInterface = &commandCoordsTranslation{}
+var _ commandHandler = &commandCoordsTranslation{}
 
 func (c *commandCoordsTranslation) cmd() Command {
 	return CoordsTranslationCommand
@@ -78,54 +78,11 @@ func (c *commandCoordsTranslation) execute(ctx *commandCtx, m *discordgo.Message
 		}))
 }
 
-func (s *Session) handleCoordsTranslationCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
-	argsLength := len(args)
-	if argsLength != 1 {
-		s.SendMessage(m.ChannelID,
-			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.HelpCoordsTranslation,
-				DefaultMessage: message.FallbackMsg(message.HelpCoordsTranslation,
-					"**{{.Command}}** [server] - enables coords translation feature."),
-				TemplateData: map[string]interface{}{
-					"Command": CoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
-				},
-			}))
-		return
-	}
-
-	serverKey := args[0]
-	server, err := s.cfg.API.Server.Read(serverKey, nil)
-	if err != nil || server == nil {
-		s.SendMessage(m.ChannelID,
-			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.CoordsTranslationServerNotFound,
-				DefaultMessage: message.FallbackMsg(message.CoordsTranslationServerNotFound, "{{.Mention}} Server not found."),
-				TemplateData: map[string]interface{}{
-					"Mention": m.Author.Mention(),
-				},
-			}))
-		return
-	}
-
-	ctx.server.CoordsTranslation = serverKey
-	go s.cfg.ServerRepository.Update(context.Background(), ctx.server)
-
-	s.SendMessage(m.ChannelID,
-		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: message.CoordsTranslationSuccess,
-			DefaultMessage: message.FallbackMsg(message.CoordsTranslationSuccess,
-				"{{.Mention}} Coords translation feature has been enabled."),
-			TemplateData: map[string]interface{}{
-				"Mention": m.Author.Mention(),
-			},
-		}))
-}
-
 type commandDisableCoordsTranslation struct {
 	*Session
 }
 
-var _ commandHandlerInterface = &commandDisableCoordsTranslation{}
+var _ commandHandler = &commandDisableCoordsTranslation{}
 
 func (c *commandDisableCoordsTranslation) cmd() Command {
 	return DisableCoordsTranslationCommand
@@ -142,21 +99,6 @@ func (c *commandDisableCoordsTranslation) execute(ctx *commandCtx, m *discordgo.
 	c.SendMessage(m.ChannelID,
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.DisableCoordsTranslationSuccess,
-			TemplateData: map[string]interface{}{
-				"Mention": m.Author.Mention(),
-			},
-		}))
-}
-
-func (s *Session) handleDisableCoordsTranslationCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
-	ctx.server.CoordsTranslation = ""
-	go s.cfg.ServerRepository.Update(context.Background(), ctx.server)
-
-	s.SendMessage(m.ChannelID,
-		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: message.DisableCoordsTranslationSuccess,
-			DefaultMessage: message.FallbackMsg(message.DisableCoordsTranslationSuccess,
-				"{{.Mention}} Coords translation feature has been disabled."),
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},
@@ -213,8 +155,6 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 
 			msg.Append(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CoordsTranslationMessage,
-				DefaultMessage: message.FallbackMsg(message.CoordsTranslationMessage,
-					"{{.Village}} owned by {{.Player}} (Tribe: {{.Tribe}})."),
 				TemplateData: map[string]interface{}{
 					"Village": BuildLink(village.FullName(), villageURL),
 					"Player":  BuildLink(playerName, playerURL),
@@ -225,8 +165,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 
 		s.SendEmbed(m.ChannelID, NewEmbed().
 			SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:      message.CoordsTranslationTitle,
-				DefaultMessage: message.FallbackMsg(message.CoordsTranslationTitle, "Villages"),
+				MessageID: message.CoordsTranslationTitle,
 			})).
 			SetFields(msg.ToMessageEmbedFields()))
 	}

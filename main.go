@@ -31,7 +31,7 @@ const (
 	commandPrefix = "tw!"
 )
 
-var status = "tribalwarshelp.com | " + discord.HelpCommand.WithPrefix(commandPrefix).String()
+var status = "tribalwarshelp.com | " + discord.HelpCommand.WithPrefix(commandPrefix)
 
 func init() {
 	os.Setenv("TZ", "UTC")

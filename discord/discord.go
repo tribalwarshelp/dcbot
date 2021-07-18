@@ -54,93 +54,24 @@ func New(cfg SessionConfig) (*Session, error) {
 
 func (s *Session) init() error {
 	s.handlers = commandHandlers{
-		&commandHandler{
-			cmd: HelpCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:  s.handleHelpCommand,
-		},
-		&commandHandler{
-			cmd: AuthorCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:  s.handleAuthorCommand,
-		},
-		&commandHandler{
-			cmd: TribeCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:  s.handleTribeCommand,
-		},
-		&commandHandler{
-			cmd:                   ChangeLanguageCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleChangeLanguageCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   AddGroupCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleAddGroupCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   DeleteGroupCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleDeleteGroupCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   GroupsCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleGroupsCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   ObserveCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleObserveCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   DeleteObservationCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleDeleteObservationCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   ObservationsCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleObservationsCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   ConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleConqueredVillagesCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   DisableConqueredVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleDisableConqueredVillagesCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   LostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleLostVillagesCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   DisableLostVillagesCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleDisableLostVillagesCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   ShowEnnobledBarbariansCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleShowEnnobledBarbariansCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   ShowInternalsCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleShowInternalsCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   CoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleCoordsTranslationCommand,
-			requireAdmPermissions: true,
-		},
-		&commandHandler{
-			cmd:                   DisableCoordsTranslationCommand.WithPrefix(s.cfg.CommandPrefix),
-			fn:                    s.handleDisableCoordsTranslationCommand,
-			requireAdmPermissions: true,
-		},
+		&commandHelp{s},
+		&commandAuthor{s},
+		&commandTribe{s},
+		&commandChangeLanguage{s},
+		&commandAddGroup{s},
+		&commandDeleteGroup{s},
+		&commandGroups{s},
+		&commandObserve{s},
+		&commandDeleteObservation{s},
+		&commandObservations{s},
+		&commandConqueredVillages{s},
+		&commandDisableConqueredVillages{s},
+		&commandLostVillages{s},
+		&commandDisableLostVillages{s},
+		&commandShowEnnobledBarbarians{s},
+		&commandShowInternals{s},
+		&commandCoordsTranslation{s},
+		&commandDisableCoordsTranslation{s},
 	}
 
 	s.dg.AddHandler(s.handleNewMessage)
@@ -222,10 +153,9 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 		localizer: message.NewLocalizer(svr.Lang),
 	}
 
-	cmd := Command(parts[0])
-	h := s.handlers.find(cmd)
+	h := s.handlers.find(s.cfg.CommandPrefix, parts[0])
 	if h != nil {
-		if h.requireAdmPermissions {
+		if h.requireAdmPermissions() {
 			if m.GuildID == "" {
 				return
 			}
@@ -238,13 +168,13 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 			WithFields(logrus.Fields{
 				"serverID":       svr.ID,
 				"lang":           svr.Lang,
-				"command":        cmd,
+				"command":        parts[0],
 				"args":           args,
 				"authorID":       m.Author.ID,
 				"authorUsername": m.Author.Username,
 			}).
-			Info("handleNewMessage: Executing command...")
-		h.fn(ctx, m, args...)
+			Infof("handleNewMessage: Executing command %s...", parts[0])
+		h.execute(ctx, m, args...)
 		return
 	}
 
