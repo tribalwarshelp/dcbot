@@ -225,7 +225,7 @@ func (h *handler) checkEnnoblements() {
 			title := localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.CronLostVillagesTitle,
 			})
-			conqueredVillagesBldr.SetName(title)
+			lostVillagesBldr.SetName(title)
 			go h.discord.SendEmbed(g.LostVillagesChannelID,
 				discord.
 					NewEmbed().

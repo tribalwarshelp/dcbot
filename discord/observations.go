@@ -810,12 +810,10 @@ func (hndlr *hndlrObservations) execute(ctx *commandCtx, m *discordgo.MessageCre
 				BuildLink(tag, tribeURL)))
 		}
 	}
-	title := ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-		MessageID: message.ObservationsTitle,
-	})
-	bldr.SetName(title)
 	hndlr.SendEmbed(m.ChannelID, NewEmbed().
-		SetTitle(title).
+		SetTitle(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: message.ObservationsTitle,
+		})).
 		SetFields(bldr.ToMessageEmbedFields()))
 }
 
