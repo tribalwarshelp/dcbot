@@ -279,7 +279,7 @@ func (b *MessageEmbedFieldBuilder) ToMessageEmbedFields() []*discordgo.MessageEm
 	}
 	for i, chunk := range b.chunks {
 		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:  name + strconv.Itoa(i+1),
+			Name:  name + " " + strconv.Itoa(i+1),
 			Value: chunk,
 		})
 	}

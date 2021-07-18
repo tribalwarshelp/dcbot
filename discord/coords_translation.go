@@ -22,6 +22,62 @@ const (
 
 var coordsRegex = regexp.MustCompile(`(\d+)\|(\d+)`)
 
+type commandCoordsTranslation struct {
+	*Session
+}
+
+var _ commandHandlerInterface = &commandCoordsTranslation{}
+
+func (c *commandCoordsTranslation) cmd() Command {
+	return CoordsTranslationCommand
+}
+
+func (c *commandCoordsTranslation) requireAdmPermissions() bool {
+	return true
+}
+
+func (c *commandCoordsTranslation) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+	argsLength := len(args)
+	if argsLength != 1 {
+		c.SendMessage(
+			m.ChannelID,
+			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: message.HelpCoordsTranslation,
+				TemplateData: map[string]interface{}{
+					"Command": c.cmd().WithPrefix(c.cfg.CommandPrefix),
+				},
+			}),
+		)
+		return
+	}
+
+	serverKey := args[0]
+	server, err := c.cfg.API.Server.Read(serverKey, nil)
+	if err != nil || server == nil {
+		c.SendMessage(
+			m.ChannelID,
+			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: message.CoordsTranslationServerNotFound,
+				TemplateData: map[string]interface{}{
+					"Mention": m.Author.Mention(),
+				},
+			}),
+		)
+		return
+	}
+
+	ctx.server.CoordsTranslation = serverKey
+	go c.cfg.ServerRepository.Update(context.Background(), ctx.server)
+
+	c.SendMessage(m.ChannelID,
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: message.CoordsTranslationSuccess,
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
+}
+
 func (s *Session) handleCoordsTranslationCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
 	argsLength := len(args)
 	if argsLength != 1 {
@@ -59,6 +115,33 @@ func (s *Session) handleCoordsTranslationCommand(ctx *commandCtx, m *discordgo.M
 			MessageID: message.CoordsTranslationSuccess,
 			DefaultMessage: message.FallbackMsg(message.CoordsTranslationSuccess,
 				"{{.Mention}} Coords translation feature has been enabled."),
+			TemplateData: map[string]interface{}{
+				"Mention": m.Author.Mention(),
+			},
+		}))
+}
+
+type commandDisableCoordsTranslation struct {
+	*Session
+}
+
+var _ commandHandlerInterface = &commandDisableCoordsTranslation{}
+
+func (c *commandDisableCoordsTranslation) cmd() Command {
+	return DisableCoordsTranslationCommand
+}
+
+func (c *commandDisableCoordsTranslation) requireAdmPermissions() bool {
+	return true
+}
+
+func (c *commandDisableCoordsTranslation) execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
+	ctx.server.CoordsTranslation = ""
+	go c.cfg.ServerRepository.Update(context.Background(), ctx.server)
+
+	c.SendMessage(m.ChannelID,
+		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: message.DisableCoordsTranslationSuccess,
 			TemplateData: map[string]interface{}{
 				"Mention": m.Author.Mention(),
 			},

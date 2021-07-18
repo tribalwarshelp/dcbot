@@ -38,3 +38,9 @@ func (hs commandHandlers) find(cmd Command) *commandHandler {
 	}
 	return nil
 }
+
+type commandHandlerInterface interface {
+	cmd() Command
+	requireAdmPermissions() bool
+	execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string)
+}
