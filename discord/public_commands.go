@@ -262,8 +262,7 @@ func (s *Session) handleHelpCommand(ctx *commandCtx, m *discordgo.MessageCreate,
 			DefaultMessage: message.FallbackMsg(message.HelpForAllUsers, "For everyone"),
 		}), commandsForAll).
 		AddField(forAdmins, commandsForGuildAdmins).
-		AddField(forAdmins+" 2", commandsForGuildAdmins2).
-		MessageEmbed)
+		AddField(forAdmins+" 2", commandsForGuildAdmins2))
 }
 
 func (s *Session) handleAuthorCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
@@ -487,6 +486,5 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 				"Page":    page,
 				"MaxPage": totalPages,
 			},
-		})).
-		MessageEmbed)
+		})))
 }

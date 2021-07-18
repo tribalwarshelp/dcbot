@@ -219,8 +219,7 @@ func (h *handler) checkEnnoblements() {
 					SetTitle(title).
 					SetColor(colorConqueredVillages).
 					SetFields(conqueredVillagesMsg.ToMessageEmbedFields()).
-					SetTimestamp(timestamp).
-					MessageEmbed)
+					SetTimestamp(timestamp))
 		}
 
 		if g.LostVillagesChannelID != "" && !lostVillagesMsg.IsEmpty() {
@@ -235,8 +234,7 @@ func (h *handler) checkEnnoblements() {
 					SetTitle(title).
 					SetColor(colorLostVillages).
 					SetFields(lostVillagesMsg.ToMessageEmbedFields()).
-					SetTimestamp(timestamp).
-					MessageEmbed)
+					SetTimestamp(timestamp))
 		}
 	}
 }

@@ -285,3 +285,32 @@ func (b *MessageEmbedFieldBuilder) ToMessageEmbedFields() []*discordgo.MessageEm
 	}
 	return fields
 }
+
+func splitEmbedFields(e *Embed) [][]*discordgo.MessageEmbedField {
+	fields := e.Fields
+	baseNumberOfCharacters := len(e.Description) + len(e.Title)
+	if e.Author != nil {
+		baseNumberOfCharacters += len(e.Author.Name)
+	}
+	if e.Footer != nil {
+		baseNumberOfCharacters += len(e.Footer.Text)
+	}
+
+	var splitFields [][]*discordgo.MessageEmbedField
+	characters := baseNumberOfCharacters
+	fromIndex := 0
+	fieldsLen := len(fields)
+	for index, field := range fields {
+		fNameLen := len(field.Name)
+		fValLen := len(field.Value)
+		if characters+fNameLen+fValLen > EmbedSizeLimit || index == fieldsLen-1 {
+			splitFields = append(splitFields, fields[fromIndex:index+1])
+			fromIndex = index
+			characters = baseNumberOfCharacters
+		}
+		characters += fNameLen
+		characters += fValLen
+	}
+
+	return splitFields
+}

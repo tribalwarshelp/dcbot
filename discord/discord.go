@@ -166,41 +166,16 @@ func (s *Session) SendMessage(channelID, message string) error {
 	return err
 }
 
-func (s *Session) SendEmbed(channelID string, message *discordgo.MessageEmbed) error {
-	fields := message.Fields
-	baseNumberOfCharacters := len(message.Description) + len(message.Title)
-	if message.Author != nil {
-		baseNumberOfCharacters += len(message.Author.Name)
-	}
-	if message.Footer != nil {
-		baseNumberOfCharacters += len(message.Footer.Text)
-	}
-
-	var splitFields [][]*discordgo.MessageEmbedField
-	characters := baseNumberOfCharacters
-	fromIndex := 0
-	fieldsLen := len(fields)
-	for index, field := range fields {
-		fNameLen := len(field.Name)
-		fValLen := len(field.Value)
-		if characters+fNameLen+fValLen > EmbedSizeLimit || index == fieldsLen-1 {
-			splitFields = append(splitFields, fields[fromIndex:index+1])
-			fromIndex = index
-			characters = baseNumberOfCharacters
-		}
-		characters += fNameLen
-		characters += fValLen
-	}
-	for _, fields := range splitFields {
+func (s *Session) SendEmbed(channelID string, e *Embed) error {
+	for _, fields := range splitEmbedFields(e) {
 		fieldsLen := len(fields)
 		for i := 0; i < fieldsLen; i += EmbedLimitField {
 			end := i + EmbedLimitField
-
 			if end > fieldsLen {
 				end = fieldsLen
 			}
-			message.Fields = fields[i:end]
-			if _, err := s.dg.ChannelMessageSendEmbed(channelID, message); err != nil {
+			e.Fields = fields[i:end]
+			if _, err := s.dg.ChannelMessageSendEmbed(channelID, e.MessageEmbed); err != nil {
 				return err
 			}
 		}

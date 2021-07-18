@@ -170,8 +170,7 @@ func (s *Session) handleGroupsCommand(ctx *commandCtx, m *discordgo.MessageCreat
 		AddField(ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID:      message.GroupsFieldTitle,
 			DefaultMessage: message.FallbackMsg(message.GroupsFieldTitle, "Index | ID | Conquer | Loss | Barbarian | Internal"),
-		}), msg).
-		MessageEmbed)
+		}), msg))
 }
 
 func (s *Session) handleConqueredVillagesCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {
@@ -757,8 +756,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 			DefaultMessage: message.FallbackMsg(message.ObservationsTitle,
 				"Observed tribes\nIndex | ID - Server - Tribe"),
 		})).
-		SetFields(msg.ToMessageEmbedFields()).
-		MessageEmbed)
+		SetFields(msg.ToMessageEmbedFields()))
 }
 
 func (s *Session) handleShowEnnobledBarbariansCommand(ctx *commandCtx, m *discordgo.MessageCreate, args ...string) {

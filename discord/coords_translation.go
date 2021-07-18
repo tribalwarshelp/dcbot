@@ -145,7 +145,6 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 				MessageID:      message.CoordsTranslationTitle,
 				DefaultMessage: message.FallbackMsg(message.CoordsTranslationTitle, "Villages"),
 			})).
-			SetFields(msg.ToMessageEmbedFields()).
-			MessageEmbed)
+			SetFields(msg.ToMessageEmbedFields()))
 	}
 }
