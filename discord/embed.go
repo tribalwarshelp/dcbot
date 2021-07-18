@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"strconv"
 	"sync"
 
 	"github.com/bwmarrin/discordgo"
@@ -61,7 +62,6 @@ func (e *Embed) AddField(name, value string) *Embed {
 	})
 
 	return e
-
 }
 
 func (e *Embed) SetFields(fields []*discordgo.MessageEmbedField) *Embed {
@@ -235,39 +235,50 @@ func (e *Embed) TruncateFooter() *Embed {
 	return e
 }
 
-type MessageEmbed struct {
+type MessageEmbedFieldBuilder struct {
 	chunks []string
 	index  int
+	name   string
 	mutex  sync.Mutex
 }
 
-func (msg *MessageEmbed) IsEmpty() bool {
-	return len(msg.chunks) == 0
+func (b *MessageEmbedFieldBuilder) SetName(name string) {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+	b.name = name
 }
 
-func (msg *MessageEmbed) Append(m string) {
-	msg.mutex.Lock()
-	defer msg.mutex.Unlock()
-	for len(msg.chunks) < msg.index+1 {
-		msg.chunks = append(msg.chunks, "")
+func (b *MessageEmbedFieldBuilder) IsEmpty() bool {
+	return len(b.chunks) == 0
+}
+
+func (b *MessageEmbedFieldBuilder) Append(m string) {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+	for len(b.chunks) < b.index+1 {
+		b.chunks = append(b.chunks, "")
 	}
 
-	if len(m)+len(msg.chunks[msg.index]) > EmbedLimitFieldValue {
-		msg.chunks = append(msg.chunks, m)
-		msg.index++
+	if len(m)+len(b.chunks[b.index]) > EmbedLimitFieldValue {
+		b.chunks = append(b.chunks, m)
+		b.index++
 		return
 	}
 
-	msg.chunks[msg.index] += m
+	b.chunks[b.index] += m
 }
 
-func (msg *MessageEmbed) ToMessageEmbedFields() []*discordgo.MessageEmbedField {
-	msg.mutex.Lock()
-	defer msg.mutex.Unlock()
+func (b *MessageEmbedFieldBuilder) ToMessageEmbedFields() []*discordgo.MessageEmbedField {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
 	var fields []*discordgo.MessageEmbedField
-	for _, chunk := range msg.chunks {
+	name := b.name
+	if name == "" {
+		name = "Field"
+	}
+	for i, chunk := range b.chunks {
 		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:  "-",
+			Name:  name + strconv.Itoa(i+1),
 			Value: chunk,
 		})
 	}

@@ -428,7 +428,7 @@ func (s *Session) handleTribeCommand(ctx *commandCtx, m *discordgo.MessageCreate
 		return
 	}
 
-	msg := &MessageEmbed{}
+	msg := &MessageEmbedFieldBuilder{}
 	for i, player := range playerList.Items {
 		if player == nil {
 			continue

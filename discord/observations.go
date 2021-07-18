@@ -732,7 +732,7 @@ func (s *Session) handleObservationsCommand(ctx *commandCtx, m *discordgo.Messag
 		Code: versionCodes,
 	})
 
-	msg := &MessageEmbed{}
+	msg := &MessageEmbedFieldBuilder{}
 	if len(observations) <= 0 || err != nil || versionList == nil || versionList.Items == nil {
 		msg.Append("-")
 	} else {

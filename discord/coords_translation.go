@@ -112,7 +112,7 @@ func (s *Session) translateCoords(ctx *commandCtx, m *discordgo.MessageCreate) {
 			return
 		}
 
-		msg := &MessageEmbed{}
+		msg := &MessageEmbedFieldBuilder{}
 		for _, village := range list.Items {
 			villageURL := twurlbuilder.BuildVillageURL(ctx.server.CoordsTranslation, version.Host, village.ID)
 			playerName := "-"

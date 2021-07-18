@@ -161,8 +161,8 @@ func (h *handler) checkEnnoblements() {
 			continue
 		}
 		localizer := message.NewLocalizer(g.Server.Lang)
-		lostVillagesMsg := &discord.MessageEmbed{}
-		conqueredVillagesMsg := &discord.MessageEmbed{}
+		lostVillagesMsg := &discord.MessageEmbedFieldBuilder{}
+		conqueredVillagesMsg := &discord.MessageEmbedFieldBuilder{}
 		for _, obs := range g.Observations {
 			enblmnts, ok := ennoblementsByServerKey[obs.Server]
 			version := twutil.FindVersionByCode(versions, twmodel.VersionCodeFromServerKey(obs.Server))
