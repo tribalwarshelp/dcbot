@@ -24,18 +24,18 @@ const (
 )
 
 const (
-	AddGroupCommand                 Command = "addgroup"
-	DeleteGroupCommand              Command = "deletegroup"
-	GroupsCommand                   Command = "groups"
-	ShowEnnobledBarbariansCommand   Command = "showennobledbarbs"
-	ObserveCommand                  Command = "observe"
-	ObservationsCommand             Command = "observations"
-	DeleteObservationCommand        Command = "deleteobservation"
-	LostVillagesCommand             Command = "lostvillages"
-	DisableLostVillagesCommand      Command = "disablelostvillages"
-	ConqueredVillagesCommand        Command = "conqueredvillages"
-	DisableConqueredVillagesCommand Command = "disableconqueredvillages"
-	ShowInternalsCommand            Command = "showinternals"
+	cmdAddGroup                 command = "addgroup"
+	cmdDeleteGroup              command = "deletegroup"
+	cmdGroups                   command = "groups"
+	cmdShowEnnobledBarbarians   command = "showennobledbarbs"
+	cmdObserve                  command = "observe"
+	cmdObservations             command = "observations"
+	cmdDeleteObservation        command = "deleteobservation"
+	cmdLostVillages             command = "lostvillages"
+	cmdDisableLostVillages      command = "disablelostvillages"
+	cmdConqueredVillages        command = "conqueredvillages"
+	cmdDisableConqueredVillages command = "disableconqueredvillages"
+	cmdShowInternals            command = "showinternals"
 )
 
 type hndlrAddGroup struct {
@@ -44,8 +44,8 @@ type hndlrAddGroup struct {
 
 var _ commandHandler = &hndlrAddGroup{}
 
-func (hndlr *hndlrAddGroup) cmd() Command {
-	return AddGroupCommand
+func (hndlr *hndlrAddGroup) cmd() command {
+	return cmdAddGroup
 }
 
 func (hndlr *hndlrAddGroup) requireAdmPermissions() bool {
@@ -98,8 +98,8 @@ type hndlrDeleteGroup struct {
 
 var _ commandHandler = &hndlrDeleteGroup{}
 
-func (hndlr *hndlrDeleteGroup) cmd() Command {
-	return DeleteGroupCommand
+func (hndlr *hndlrDeleteGroup) cmd() command {
+	return cmdDeleteGroup
 }
 
 func (hndlr *hndlrDeleteGroup) requireAdmPermissions() bool {
@@ -113,8 +113,8 @@ func (hndlr *hndlrDeleteGroup) execute(ctx *commandCtx, m *discordgo.MessageCrea
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpDeleteGroup,
 				TemplateData: map[string]interface{}{
-					"Command":       DeleteGroupCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"Command":       cmdDeleteGroup.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -152,8 +152,8 @@ type hndlrGroups struct {
 
 var _ commandHandler = &hndlrGroups{}
 
-func (hndlr *hndlrGroups) cmd() Command {
-	return GroupsCommand
+func (hndlr *hndlrGroups) cmd() command {
+	return cmdGroups
 }
 
 func (hndlr *hndlrGroups) requireAdmPermissions() bool {
@@ -203,8 +203,8 @@ type hndlrConqueredVillages struct {
 
 var _ commandHandler = &hndlrConqueredVillages{}
 
-func (hndlr *hndlrConqueredVillages) cmd() Command {
-	return ConqueredVillagesCommand
+func (hndlr *hndlrConqueredVillages) cmd() command {
+	return cmdConqueredVillages
 }
 
 func (hndlr *hndlrConqueredVillages) requireAdmPermissions() bool {
@@ -219,7 +219,7 @@ func (hndlr *hndlrConqueredVillages) execute(ctx *commandCtx, m *discordgo.Messa
 				MessageID: message.HelpConqueredVillages,
 				TemplateData: map[string]interface{}{
 					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -269,8 +269,8 @@ type hndlrDisableConqueredVillages struct {
 
 var _ commandHandler = &hndlrDisableConqueredVillages{}
 
-func (hndlr *hndlrDisableConqueredVillages) cmd() Command {
-	return DisableConqueredVillagesCommand
+func (hndlr *hndlrDisableConqueredVillages) cmd() command {
+	return cmdDisableConqueredVillages
 }
 
 func (hndlr *hndlrDisableConqueredVillages) requireAdmPermissions() bool {
@@ -285,7 +285,7 @@ func (hndlr *hndlrDisableConqueredVillages) execute(ctx *commandCtx, m *discordg
 				MessageID: message.HelpDisableConqueredVillages,
 				TemplateData: map[string]interface{}{
 					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -337,8 +337,8 @@ type hndlrLostVillages struct {
 
 var _ commandHandler = &hndlrLostVillages{}
 
-func (hndlr *hndlrLostVillages) cmd() Command {
-	return LostVillagesCommand
+func (hndlr *hndlrLostVillages) cmd() command {
+	return cmdLostVillages
 }
 
 func (hndlr *hndlrLostVillages) requireAdmPermissions() bool {
@@ -353,7 +353,7 @@ func (hndlr *hndlrLostVillages) execute(ctx *commandCtx, m *discordgo.MessageCre
 				MessageID: message.HelpLostVillages,
 				TemplateData: map[string]interface{}{
 					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -404,8 +404,8 @@ type hndlrDisableLostVillages struct {
 
 var _ commandHandler = &hndlrDisableLostVillages{}
 
-func (hndlr *hndlrDisableLostVillages) cmd() Command {
-	return DisableLostVillagesCommand
+func (hndlr *hndlrDisableLostVillages) cmd() command {
+	return cmdDisableLostVillages
 }
 
 func (hndlr *hndlrDisableLostVillages) requireAdmPermissions() bool {
@@ -420,7 +420,7 @@ func (hndlr *hndlrDisableLostVillages) execute(ctx *commandCtx, m *discordgo.Mes
 				MessageID: message.HelpDisableLostVillages,
 				TemplateData: map[string]interface{}{
 					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -473,8 +473,8 @@ type hndlrObserve struct {
 
 var _ commandHandler = &hndlrObserve{}
 
-func (hndlr *hndlrObserve) cmd() Command {
-	return ObserveCommand
+func (hndlr *hndlrObserve) cmd() command {
+	return cmdObserve
 }
 
 func (hndlr *hndlrObserve) requireAdmPermissions() bool {
@@ -489,7 +489,7 @@ func (hndlr *hndlrObserve) execute(ctx *commandCtx, m *discordgo.MessageCreate, 
 				MessageID: message.HelpObserve,
 				TemplateData: map[string]interface{}{
 					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -610,8 +610,8 @@ type hndlrDeleteObservation struct {
 
 var _ commandHandler = &hndlrDeleteObservation{}
 
-func (hndlr *hndlrDeleteObservation) cmd() Command {
-	return DeleteObservationCommand
+func (hndlr *hndlrDeleteObservation) cmd() command {
+	return cmdDeleteObservation
 }
 
 func (hndlr *hndlrDeleteObservation) requireAdmPermissions() bool {
@@ -626,8 +626,8 @@ func (hndlr *hndlrDeleteObservation) execute(ctx *commandCtx, m *discordgo.Messa
 				MessageID: message.HelpDeleteObservation,
 				TemplateData: map[string]interface{}{
 					"Command":             hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
-					"ObservationsCommand": ObservationsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand":       GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"ObservationsCommand": cmdObservations.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand":       cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -687,8 +687,8 @@ type hndlrObservations struct {
 
 var _ commandHandler = &hndlrObservations{}
 
-func (hndlr *hndlrObservations) cmd() Command {
-	return ObservationsCommand
+func (hndlr *hndlrObservations) cmd() command {
+	return cmdObservations
 }
 
 func (hndlr *hndlrObservations) requireAdmPermissions() bool {
@@ -703,7 +703,7 @@ func (hndlr *hndlrObservations) execute(ctx *commandCtx, m *discordgo.MessageCre
 				MessageID: message.HelpObservations,
 				TemplateData: map[string]interface{}{
 					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -823,8 +823,8 @@ type hndlrShowEnnobledBarbarians struct {
 
 var _ commandHandler = &hndlrShowEnnobledBarbarians{}
 
-func (hndlr *hndlrShowEnnobledBarbarians) cmd() Command {
-	return ShowEnnobledBarbariansCommand
+func (hndlr *hndlrShowEnnobledBarbarians) cmd() command {
+	return cmdShowEnnobledBarbarians
 }
 
 func (hndlr *hndlrShowEnnobledBarbarians) requireAdmPermissions() bool {
@@ -838,8 +838,8 @@ func (hndlr *hndlrShowEnnobledBarbarians) execute(ctx *commandCtx, m *discordgo.
 			m.Author.Mention()+" "+ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: message.HelpShowEnnobledBarbs,
 				TemplateData: map[string]interface{}{
-					"Command":       ShowEnnobledBarbariansCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"Command":       cmdShowEnnobledBarbarians.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return
@@ -906,8 +906,8 @@ type hndlrShowInternals struct {
 
 var _ commandHandler = &hndlrShowInternals{}
 
-func (hndlr *hndlrShowInternals) cmd() Command {
-	return ShowInternalsCommand
+func (hndlr *hndlrShowInternals) cmd() command {
+	return cmdShowInternals
 }
 
 func (hndlr *hndlrShowInternals) requireAdmPermissions() bool {
@@ -922,7 +922,7 @@ func (hndlr *hndlrShowInternals) execute(ctx *commandCtx, m *discordgo.MessageCr
 				MessageID: message.HelpShowInternals,
 				TemplateData: map[string]interface{}{
 					"Command":       hndlr.cmd().WithPrefix(hndlr.cfg.CommandPrefix),
-					"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+					"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 				},
 			}))
 		return

@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	ChangeLanguageCommand Command = "changelanguage"
+	cmdChangeLanguage command = "changelanguage"
 )
 
 type hndlrChangeLanguage struct {
@@ -18,8 +18,8 @@ type hndlrChangeLanguage struct {
 
 var _ commandHandler = &hndlrChangeLanguage{}
 
-func (hndlr *hndlrChangeLanguage) cmd() Command {
-	return ChangeLanguageCommand
+func (hndlr *hndlrChangeLanguage) cmd() command {
+	return cmdChangeLanguage
 }
 
 func (hndlr *hndlrChangeLanguage) requireAdmPermissions() bool {

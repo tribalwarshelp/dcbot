@@ -18,14 +18,14 @@ import (
 )
 
 const (
-	HelpCommand      Command = "help"
-	TribeCommand     Command = "tribe"
-	TopODACommand    Command = "topoda"
-	TopODDCommand    Command = "topodd"
-	TopODSCommand    Command = "topods"
-	TopODCommand     Command = "topod"
-	TopPointsCommand Command = "toppoints"
-	AuthorCommand    Command = "author"
+	cmdHelp      command = "help"
+	cmdTribe     command = "tribe"
+	cmdTopODA    command = "topoda"
+	cmdTopODD    command = "topodd"
+	cmdTopODS    command = "topods"
+	cmdTopOD     command = "topod"
+	cmdTopPoints command = "toppoints"
+	cmdAuthor    command = "author"
 )
 
 type hndlrHelp struct {
@@ -34,8 +34,8 @@ type hndlrHelp struct {
 
 var _ commandHandler = &hndlrHelp{}
 
-func (hndlr *hndlrHelp) cmd() Command {
-	return HelpCommand
+func (hndlr *hndlrHelp) cmd() command {
+	return cmdHelp
 }
 
 func (hndlr *hndlrHelp) requireAdmPermissions() bool {
@@ -54,37 +54,37 @@ func (hndlr *hndlrHelp) execute(ctx *commandCtx, m *discordgo.MessageCreate, arg
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopODA,
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand.WithPrefix(hndlr.cfg.CommandPrefix) + " " + TopODACommand.String(),
+				"Command": cmdTribe.WithPrefix(hndlr.cfg.CommandPrefix) + " " + cmdTopODA.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopODD,
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand.WithPrefix(hndlr.cfg.CommandPrefix) + " " + TopODDCommand.String(),
+				"Command": cmdTribe.WithPrefix(hndlr.cfg.CommandPrefix) + " " + cmdTopODD.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopODS,
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand.WithPrefix(hndlr.cfg.CommandPrefix) + " " + TopODSCommand.String(),
+				"Command": cmdTribe.WithPrefix(hndlr.cfg.CommandPrefix) + " " + cmdTopODS.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopOD,
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand.WithPrefix(hndlr.cfg.CommandPrefix) + " " + TopODCommand.String(),
+				"Command": cmdTribe.WithPrefix(hndlr.cfg.CommandPrefix) + " " + cmdTopOD.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpTribeTopPoints,
 			TemplateData: map[string]interface{}{
-				"Command": TribeCommand.WithPrefix(hndlr.cfg.CommandPrefix) + " " + TopPointsCommand.String(),
+				"Command": cmdTribe.WithPrefix(hndlr.cfg.CommandPrefix) + " " + cmdTopPoints.String(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpAuthor,
 			TemplateData: map[string]interface{}{
-				"Command": AuthorCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command": cmdAuthor.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 	)
@@ -103,63 +103,63 @@ func (hndlr *hndlrHelp) execute(ctx *commandCtx, m *discordgo.MessageCreate, arg
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpAddGroup,
 			TemplateData: map[string]interface{}{
-				"Command": AddGroupCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command": cmdAddGroup.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpGroups,
 			TemplateData: map[string]interface{}{
-				"Command": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpDeleteGroup,
 			TemplateData: map[string]interface{}{
-				"Command":       DeleteGroupCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdDeleteGroup.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpShowEnnobledBarbs,
 			TemplateData: map[string]interface{}{
-				"Command":       ShowEnnobledBarbariansCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdShowEnnobledBarbarians.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpObserve,
 			TemplateData: map[string]interface{}{
-				"Command":       ObserveCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdObserve.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpGroups,
 			TemplateData: map[string]interface{}{
-				"Command":       ObservationsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdObservations.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpDeleteObservation,
 			TemplateData: map[string]interface{}{
-				"Command":             DeleteObservationCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"ObservationsCommand": ObservationsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand":       GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":             cmdDeleteObservation.WithPrefix(hndlr.cfg.CommandPrefix),
+				"ObservationsCommand": cmdObservations.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand":       cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpConqueredVillages,
 			TemplateData: map[string]interface{}{
-				"Command":       ConqueredVillagesCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdConqueredVillages.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpDisableConqueredVillages,
 			TemplateData: map[string]interface{}{
-				"Command":       DisableConqueredVillagesCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdDisableConqueredVillages.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 	)
@@ -175,41 +175,41 @@ func (hndlr *hndlrHelp) execute(ctx *commandCtx, m *discordgo.MessageCreate, arg
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpLostVillages,
 			TemplateData: map[string]interface{}{
-				"Command":       LostVillagesCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdLostVillages.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpDisableLostVillages,
 			TemplateData: map[string]interface{}{
-				"Command":       DisableLostVillagesCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdDisableLostVillages.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpShowInternals,
 			TemplateData: map[string]interface{}{
-				"Command":       ShowInternalsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
-				"GroupsCommand": GroupsCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":       cmdShowInternals.WithPrefix(hndlr.cfg.CommandPrefix),
+				"GroupsCommand": cmdGroups.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpChangageLanguage,
 			TemplateData: map[string]interface{}{
-				"Command":   ChangeLanguageCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command":   cmdChangeLanguage.WithPrefix(hndlr.cfg.CommandPrefix),
 				"Languages": getAvailableLanguages(),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpCoordsTranslation,
 			TemplateData: map[string]interface{}{
-				"Command": CoordsTranslationCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command": cmdCoordsTranslation.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 		ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.HelpDisableCoordsTranslation,
 			TemplateData: map[string]interface{}{
-				"Command": DisableCoordsTranslationCommand.WithPrefix(hndlr.cfg.CommandPrefix),
+				"Command": cmdDisableCoordsTranslation.WithPrefix(hndlr.cfg.CommandPrefix),
 			},
 		}),
 	)
@@ -239,8 +239,8 @@ type hndlrAuthor struct {
 
 var _ commandHandler = &hndlrAuthor{}
 
-func (hndlr *hndlrAuthor) cmd() Command {
-	return AuthorCommand
+func (hndlr *hndlrAuthor) cmd() command {
+	return cmdAuthor
 }
 
 func (hndlr *hndlrAuthor) requireAdmPermissions() bool {
@@ -259,8 +259,8 @@ type hndlrTribe struct {
 
 var _ commandHandler = &hndlrTribe{}
 
-func (hndlr *hndlrTribe) cmd() Command {
-	return TribeCommand
+func (hndlr *hndlrTribe) cmd() command {
+	return cmdTribe
 }
 
 func (hndlr *hndlrTribe) requireAdmPermissions() bool {
@@ -273,7 +273,7 @@ func (hndlr *hndlrTribe) execute(ctx *commandCtx, m *discordgo.MessageCreate, ar
 		return
 	}
 
-	command := Command(args[0])
+	command := command(args[0])
 	server := args[1]
 	page, err := strconv.Atoi(args[2])
 	if err != nil || page <= 0 {
@@ -324,31 +324,31 @@ func (hndlr *hndlrTribe) execute(ctx *commandCtx, m *discordgo.MessageCreate, ar
 	title := ""
 	sort := ""
 	switch command {
-	case TopODACommand:
+	case cmdTopODA:
 		filter.RankAttGTE = 1
 		sort = "rankAtt ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.TribeTitleOrderedByODA,
 		})
-	case TopODDCommand:
+	case cmdTopODD:
 		filter.RankDefGTE = 1
 		sort = "rankDef ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.TribeTitleOrderedByODD,
 		})
-	case TopODSCommand:
+	case cmdTopODS:
 		filter.RankSupGTE = 1
 		sort = "rankSup ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.TribeTitleOrderedByODS,
 		})
-	case TopODCommand:
+	case cmdTopOD:
 		filter.RankTotalGTE = 1
 		sort = "rankTotal ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.TribeTitleOrderedByOD,
 		})
-	case TopPointsCommand:
+	case cmdTopPoints:
 		sort = "rank ASC"
 		title = ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: message.TribeTitleOrderedByPoints,
@@ -419,19 +419,19 @@ func (hndlr *hndlrTribe) execute(ctx *commandCtx, m *discordgo.MessageCreate, ar
 		rank := 0
 		score := 0
 		switch command {
-		case TopODACommand:
+		case cmdTopODA:
 			rank = player.RankAtt
 			score = player.ScoreAtt
-		case TopODDCommand:
+		case cmdTopODD:
 			rank = player.RankDef
 			score = player.ScoreDef
-		case TopODSCommand:
+		case cmdTopODS:
 			rank = player.RankSup
 			score = player.ScoreSup
-		case TopODCommand:
+		case cmdTopOD:
 			rank = player.RankTotal
 			score = player.ScoreTotal
-		case TopPointsCommand:
+		case cmdTopPoints:
 			rank = player.Rank
 			score = player.Points
 		}

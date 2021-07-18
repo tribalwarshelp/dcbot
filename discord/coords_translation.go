@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	coordsLimit                             = 20
-	CoordsTranslationCommand        Command = "coordstranslation"
-	DisableCoordsTranslationCommand Command = "disablecoordstranslation"
+	coordsLimit                         = 20
+	cmdCoordsTranslation        command = "coordstranslation"
+	cmdDisableCoordsTranslation command = "disablecoordstranslation"
 )
 
 var coordsRegex = regexp.MustCompile(`(\d+)\|(\d+)`)
@@ -28,8 +28,8 @@ type hndlrCoordsTranslation struct {
 
 var _ commandHandler = &hndlrCoordsTranslation{}
 
-func (hndlr *hndlrCoordsTranslation) cmd() Command {
-	return CoordsTranslationCommand
+func (hndlr *hndlrCoordsTranslation) cmd() command {
+	return cmdCoordsTranslation
 }
 
 func (hndlr *hndlrCoordsTranslation) requireAdmPermissions() bool {
@@ -84,8 +84,8 @@ type hndlrDisableCoordsTranslation struct {
 
 var _ commandHandler = &hndlrDisableCoordsTranslation{}
 
-func (hndlr *hndlrDisableCoordsTranslation) cmd() Command {
-	return DisableCoordsTranslationCommand
+func (hndlr *hndlrDisableCoordsTranslation) cmd() command {
+	return cmdDisableCoordsTranslation
 }
 
 func (hndlr *hndlrDisableCoordsTranslation) requireAdmPermissions() bool {

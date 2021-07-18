@@ -157,10 +157,7 @@ func (s *Session) handleNewMessage(_ *discordgo.Session, m *discordgo.MessageCre
 
 	h := s.handlers.find(s.cfg.CommandPrefix, parts[0])
 	if h != nil {
-		if h.requireAdmPermissions() {
-			if m.GuildID == "" {
-				return
-			}
+		if h.requireAdmPermissions() && m.GuildID != "" {
 			has, err := s.memberHasPermission(m.GuildID, m.Author.ID, discordgo.PermissionAdministrator)
 			if err != nil || !has {
 				return

@@ -7,13 +7,13 @@ import (
 	"github.com/tribalwarshelp/dcbot/model"
 )
 
-type Command string
+type command string
 
-func (cmd Command) String() string {
+func (cmd command) String() string {
 	return string(cmd)
 }
 
-func (cmd Command) WithPrefix(prefix string) string {
+func (cmd command) WithPrefix(prefix string) string {
 	return prefix + cmd.String()
 }
 
@@ -23,7 +23,7 @@ type commandCtx struct {
 }
 
 type commandHandler interface {
-	cmd() Command
+	cmd() command
 	requireAdmPermissions() bool
 	execute(ctx *commandCtx, m *discordgo.MessageCreate, args ...string)
 }
