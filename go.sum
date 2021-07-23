@@ -33,6 +33,8 @@ github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4
 github.com/go-pg/pg/v10 v10.9.1/go.mod h1:rgmTPgHgl5EN2CNKKoMwC7QT62t8BqsdpEkUQuiZMQs=
 github.com/go-pg/pg/v10 v10.10.2 h1:8G2DdKrB3/0nRIlpur0HySEWBJnHYUByiC0ko4XzE8w=
 github.com/go-pg/pg/v10 v10.10.2/go.mod h1:EmoJGYErc+stNN/1Jf+o4csXuprjxcRztBnn6cHe38E=
+github.com/go-pg/pg/v10 v10.10.3 h1:WobSfk5I+v7XwD1h9x2B7n4slDzjdBIonJ5PID95Aag=
+github.com/go-pg/pg/v10 v10.10.3/go.mod h1:EmoJGYErc+stNN/1Jf+o4csXuprjxcRztBnn6cHe38E=
 github.com/go-pg/zerochecker v0.2.0 h1:pp7f72c3DobMWOb2ErtZsnrPaSvHd2W4o9//8HtF4mU=
 github.com/go-pg/zerochecker v0.2.0/go.mod h1:NJZ4wKL0NmTtz0GKCoJ8kym6Xn/EQzXRl2OnAe7MmDo=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
@@ -101,8 +103,12 @@ github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc h1:9lRDQMhESg+zvGYm
 github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc/go.mod h1:bciPuU6GHm1iF1pBvUfxfsH0Wmnc2VbpgvbI9ZWuIRs=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210717112029-bb518cbee33d h1:Xh5rVjUP55jOZZM3PaI2AvMpCoiRadwIe5gfDBpDC+0=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210717112029-bb518cbee33d/go.mod h1:COakTplg+GL/4mIPyry00PcZqOcCNCDXkhM36Dci+kA=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20210723120943-268fb0b1886c h1:oBou+YRRWo8TrkypdlRtvEWOKX31nL4Ssjj2bFBjWNg=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20210723120943-268fb0b1886c/go.mod h1:0kbOYFVkA6eHHxAQ5QVLsFRRWF92aha0mIAm7HyaIso=
 github.com/tribalwarshelp/shared v0.0.0-20210717094429-6efa1a4f614c h1:dgWoORgR3COUbO0Dhho+fB1axhsKGXadaxeCiw9APFA=
 github.com/tribalwarshelp/shared v0.0.0-20210717094429-6efa1a4f614c/go.mod h1:6xooIU27fjagr/KVBPayktW4gn9ylTdBPGgxlQ6+x9s=
+github.com/tribalwarshelp/shared v0.0.0-20210723104616-9fe0aafafeb6 h1:QkMH4eQXHs8Q4fT1hXgEAun4F679c4rErBWvhD0pGTM=
+github.com/tribalwarshelp/shared v0.0.0-20210723104616-9fe0aafafeb6/go.mod h1:J3UEkw7lgTWFxOIp+fqCImeQBOyyXMFAfXYSHhEILys=
 github.com/vmihailenco/bufpool v0.1.11 h1:gOq2WmBrq0i2yW5QJ16ykccQ4wH9UyEsgLm6czKAd94=
 github.com/vmihailenco/bufpool v0.1.11/go.mod h1:AFf/MOy3l2CFTKbxwt0mp2MwnqjNEs5H/UxrkA5jxTQ=
 github.com/vmihailenco/msgpack/v5 v5.3.0/go.mod h1:7xyJ9e+0+9SaZT0Wt1RGleJXzli6Q/V5KbhBonMG9jc=
