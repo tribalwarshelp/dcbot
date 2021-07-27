@@ -12,6 +12,8 @@ github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210521204542-cc672e361b3d/go.mod h1:
 github.com/Kichiyaki/goutil v0.0.0-20210502095630-318d17091eab/go.mod h1:+HhI932Xb0xrCodNcCv5GPiCjLYhDxWhCtlEqMIJhB4=
 github.com/Kichiyaki/goutil v0.0.0-20210504132659-3d843a787db7 h1:OU3ZA5H8fHTzaYIw9UBfH3gtWRL0XmnczlhH3E2PjV4=
 github.com/Kichiyaki/goutil v0.0.0-20210504132659-3d843a787db7/go.mod h1:+HhI932Xb0xrCodNcCv5GPiCjLYhDxWhCtlEqMIJhB4=
+github.com/Kichiyaki/goutil v0.0.0-20210727060523-b40a549d5a72 h1:KVFjB2eyaiLm/fWQPvHrHSoWB2PNAnGROnqLnLAhpoU=
+github.com/Kichiyaki/goutil v0.0.0-20210727060523-b40a549d5a72/go.mod h1:+HhI932Xb0xrCodNcCv5GPiCjLYhDxWhCtlEqMIJhB4=
 github.com/Kichiyaki/gqlgen-client v0.0.0-20200604145848-274796c104f4 h1:QiOarkkKHdFYI+0m6F1H3rRzP6DqJsKJVLirGXEHGSU=
 github.com/Kichiyaki/gqlgen-client v0.0.0-20200604145848-274796c104f4/go.mod h1:weCVl47ZANyeX60sdsSl0bWHf8HWXyVFmlGHHCR/i5M=
 github.com/bwmarrin/discordgo v0.22.0 h1:uBxY1HmlVCsW1IuaPjpCGT6A2DBwRn0nvOguQIxDdFM=
@@ -105,6 +107,8 @@ github.com/tribalwarshelp/golang-sdk v0.0.0-20210717112029-bb518cbee33d h1:Xh5rV
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210717112029-bb518cbee33d/go.mod h1:COakTplg+GL/4mIPyry00PcZqOcCNCDXkhM36Dci+kA=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210723120943-268fb0b1886c h1:oBou+YRRWo8TrkypdlRtvEWOKX31nL4Ssjj2bFBjWNg=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210723120943-268fb0b1886c/go.mod h1:0kbOYFVkA6eHHxAQ5QVLsFRRWF92aha0mIAm7HyaIso=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20210727085356-d4c8ccf8b367 h1:arfekMpLQNIyQefp98uoqO1GgvfeDF+kxl6szMErF1w=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20210727085356-d4c8ccf8b367/go.mod h1:cLwB0mi+rZsPhc+GTyuyUoaUN9uXX3+Moa96/FXzvvg=
 github.com/tribalwarshelp/shared v0.0.0-20210717094429-6efa1a4f614c h1:dgWoORgR3COUbO0Dhho+fB1axhsKGXadaxeCiw9APFA=
 github.com/tribalwarshelp/shared v0.0.0-20210717094429-6efa1a4f614c/go.mod h1:6xooIU27fjagr/KVBPayktW4gn9ylTdBPGgxlQ6+x9s=
 github.com/tribalwarshelp/shared v0.0.0-20210723104616-9fe0aafafeb6 h1:QkMH4eQXHs8Q4fT1hXgEAun4F679c4rErBWvhD0pGTM=
