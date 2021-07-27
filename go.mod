@@ -6,7 +6,7 @@ require (
 	github.com/Kichiyaki/appmode v0.0.0-20210502105643-0a26207c548d
 	github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210428180109-fb97298564d9
 	github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210521204542-cc672e361b3d
-	github.com/Kichiyaki/goutil v0.0.0-20210504132659-3d843a787db7
+	github.com/Kichiyaki/goutil v0.0.0-20210727060523-b40a549d5a72
 	github.com/bwmarrin/discordgo v0.23.2
 	github.com/dustin/go-humanize v1.0.0
 	github.com/go-pg/pg/v10 v10.10.3
