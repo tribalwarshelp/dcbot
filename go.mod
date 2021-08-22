@@ -1,12 +1,12 @@
 module github.com/tribalwarshelp/dcbot
 
-go 1.16
+go 1.17
 
 require (
-	github.com/Kichiyaki/appmode v0.0.0-20210502105643-0a26207c548d
-	github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210428180109-fb97298564d9
-	github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210521204542-cc672e361b3d
-	github.com/Kichiyaki/goutil v0.0.0-20210727060523-b40a549d5a72
+	github.com/Kichiyaki/appmode v1.0.0
+	github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210822140425-1724064d6e5c
+	github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210822140115-69ad4084d89f
+	github.com/Kichiyaki/goutil v0.1.0
 	github.com/bwmarrin/discordgo v0.23.2
 	github.com/dustin/go-humanize v1.0.0
 	github.com/go-pg/pg/v10 v10.10.3
@@ -15,7 +15,22 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/tribalwarshelp/golang-sdk v0.0.0-20210727085356-d4c8ccf8b367
-	github.com/tribalwarshelp/shared v0.0.0-20210723104616-9fe0aafafeb6
+	github.com/tribalwarshelp/golang-sdk v0.0.0-20210822141452-7694391fc9c9
+	github.com/tribalwarshelp/shared v0.0.0-20210822141120-6c7e460daed8
 	golang.org/x/text v0.3.7
+)
+
+require (
+	github.com/Kichiyaki/gqlgen-client v0.0.0-20200604145848-274796c104f4 // indirect
+	github.com/go-pg/zerochecker v0.2.0 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
+	github.com/vmihailenco/bufpool v0.1.11 // indirect
+	github.com/vmihailenco/msgpack/v5 v5.3.4 // indirect
+	github.com/vmihailenco/tagparser v0.1.2 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
+	golang.org/x/sys v0.0.0-20210423185535-09eb48e85fd7 // indirect
+	mellium.im/sasl v0.2.1 // indirect
 )
