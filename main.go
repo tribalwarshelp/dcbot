@@ -62,7 +62,7 @@ func main() {
 		}
 	}()
 	if envutil.GetenvBool("LOG_DB_QUERIES") {
-		db.AddQueryHook(gopglogrusquerylogger.QueryLogger{
+		db.AddQueryHook(querylogger.Logger{
 			Log:            logrus.NewEntry(logrus.StandardLogger()),
 			MaxQueryLength: 5000,
 		})
