@@ -30,6 +30,8 @@ github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4
 github.com/go-pg/pg/v10 v10.9.1/go.mod h1:rgmTPgHgl5EN2CNKKoMwC7QT62t8BqsdpEkUQuiZMQs=
 github.com/go-pg/pg/v10 v10.10.3 h1:WobSfk5I+v7XwD1h9x2B7n4slDzjdBIonJ5PID95Aag=
 github.com/go-pg/pg/v10 v10.10.3/go.mod h1:EmoJGYErc+stNN/1Jf+o4csXuprjxcRztBnn6cHe38E=
+github.com/go-pg/pg/v10 v10.10.4 h1:ahPbvQHeQuKl7sxhsMdCpV23igkfPEu9hfMrB3cPhjY=
+github.com/go-pg/pg/v10 v10.10.4/go.mod h1:EmoJGYErc+stNN/1Jf+o4csXuprjxcRztBnn6cHe38E=
 github.com/go-pg/zerochecker v0.2.0 h1:pp7f72c3DobMWOb2ErtZsnrPaSvHd2W4o9//8HtF4mU=
 github.com/go-pg/zerochecker v0.2.0/go.mod h1:NJZ4wKL0NmTtz0GKCoJ8kym6Xn/EQzXRl2OnAe7MmDo=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
@@ -98,6 +100,8 @@ github.com/tribalwarshelp/golang-sdk v0.0.0-20210822141452-7694391fc9c9 h1:6zvKl
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210822141452-7694391fc9c9/go.mod h1:9mdH10tX8tNTL6nXAhDrXr2o8c3sBINd0gfojHpmy88=
 github.com/tribalwarshelp/shared v0.0.0-20210822141120-6c7e460daed8 h1:D/aJEuikcllnWnBPb9745412Kv5ihrisVHaHkU+dVTI=
 github.com/tribalwarshelp/shared v0.0.0-20210822141120-6c7e460daed8/go.mod h1:ka8BzXm+IPv/ZemsMu/YmcwlqIDNgV3y3e4MfmIem0U=
+github.com/tribalwarshelp/shared v0.0.0-20210825131936-340bd352f411 h1:+zsyvezMyM1F3TBSaXsQbx0S9GzSorSJHAX/aY93qrg=
+github.com/tribalwarshelp/shared v0.0.0-20210825131936-340bd352f411/go.mod h1:ztGV36L+sVf25JOJnL7txTFaEWdJ4yjQmMj6L1NDtHs=
 github.com/vmihailenco/bufpool v0.1.11 h1:gOq2WmBrq0i2yW5QJ16ykccQ4wH9UyEsgLm6czKAd94=
 github.com/vmihailenco/bufpool v0.1.11/go.mod h1:AFf/MOy3l2CFTKbxwt0mp2MwnqjNEs5H/UxrkA5jxTQ=
 github.com/vmihailenco/msgpack/v5 v5.3.0/go.mod h1:7xyJ9e+0+9SaZT0Wt1RGleJXzli6Q/V5KbhBonMG9jc=
