@@ -9,14 +9,14 @@ require (
 	github.com/Kichiyaki/goutil v0.1.0
 	github.com/bwmarrin/discordgo v0.23.2
 	github.com/dustin/go-humanize v1.0.0
-	github.com/go-pg/pg/v10 v10.10.5
+	github.com/go-pg/pg/v10 v10.10.6
 	github.com/joho/godotenv v1.3.0
 	github.com/nicksnyder/go-i18n/v2 v2.1.2
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/tribalwarshelp/golang-sdk v0.0.0-20210905053138-40b8dcf00b4a
-	github.com/tribalwarshelp/shared v0.0.0-20210904125629-f6de0a03b185
+	github.com/tribalwarshelp/golang-sdk v0.0.0-20210924090040-4cb44d48db65
+	github.com/tribalwarshelp/shared v0.0.0-20210924044719-a52277d8a5e0
 	golang.org/x/text v0.3.7
 )
 
@@ -30,7 +30,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.3.4 // indirect
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
-	golang.org/x/sys v0.0.0-20210423185535-09eb48e85fd7 // indirect
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+	golang.org/x/sys v0.0.0-20210923061019-b8560ed6a9b7 // indirect
 	mellium.im/sasl v0.2.1 // indirect
 )
