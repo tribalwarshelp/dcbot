@@ -10,7 +10,7 @@ require (
 	github.com/bwmarrin/discordgo v0.23.2
 	github.com/dustin/go-humanize v1.0.0
 	github.com/go-pg/pg/v10 v10.10.6
-	github.com/joho/godotenv v1.3.0
+	github.com/joho/godotenv v1.4.0
 	github.com/nicksnyder/go-i18n/v2 v2.1.2
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
