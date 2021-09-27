@@ -3,7 +3,7 @@ module github.com/tribalwarshelp/dcbot
 go 1.17
 
 require (
-	github.com/Kichiyaki/appmode v1.0.0
+	github.com/Kichiyaki/appmode v1.0.1
 	github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210822140425-1724064d6e5c
 	github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210822140115-69ad4084d89f
 	github.com/Kichiyaki/goutil v0.1.0
