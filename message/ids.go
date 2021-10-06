@@ -80,7 +80,7 @@ const (
 	ObserveSuccess             = "observe.success"
 
 	DeleteObservationInvalidGroupID = "deleteObservation.invalidGroupID"
-	DeleteObservationInvalidTribeID = "deleteObservation.invalidTribeID"
+	DeleteObservationInvalidObservationID = "deleteObservation.invalidObservationID"
 	DeleteObservationGroupNotFound  = "deleteObservation.groupNotFound"
 	DeleteObservationSuccess        = "deleteObservation.success"
 

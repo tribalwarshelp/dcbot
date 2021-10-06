@@ -648,7 +648,7 @@ func (hndlr *hndlrDeleteObservation) execute(ctx *commandCtx, m *discordgo.Messa
 	if err != nil {
 		hndlr.SendMessage(m.ChannelID,
 			ctx.localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: message.DeleteObservationInvalidTribeID,
+				MessageID: message.DeleteObservationInvalidObservationID,
 				TemplateData: map[string]interface{}{
 					"Mention": m.Author.Mention(),
 				},
