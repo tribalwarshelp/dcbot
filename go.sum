@@ -95,8 +95,12 @@ github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc h1:9lRDQMhESg+zvGYm
 github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc/go.mod h1:bciPuU6GHm1iF1pBvUfxfsH0Wmnc2VbpgvbI9ZWuIRs=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210924090040-4cb44d48db65 h1:0k/+pv7P6APs/okup6Nm9RaLSPkHl0s0G590lZ+SKKM=
 github.com/tribalwarshelp/golang-sdk v0.0.0-20210924090040-4cb44d48db65/go.mod h1:QSRTDmnvxFMVxxrDRDfYaes3KsscQRLpsWmWC9fv4No=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20220218103323-ac5a0c28e845 h1:92lfpAvWxo44EK/s+RCNMZIX70USTYwCCQK4L2Z3uNE=
+github.com/tribalwarshelp/golang-sdk v0.0.0-20220218103323-ac5a0c28e845/go.mod h1:bBIs9W0KR4N9bF1t4uDJtm303Kl80YmHopuKowk6L4s=
 github.com/tribalwarshelp/shared v0.0.0-20210924044719-a52277d8a5e0 h1:KzHt+mplWVZMQGfsiDR6fTCOUFsakUCrKBiXFkvUOD8=
 github.com/tribalwarshelp/shared v0.0.0-20210924044719-a52277d8a5e0/go.mod h1:e7btUzVL+8ESwxt8sto2uVbIJbHN43wTEg44mJW8YzM=
+github.com/tribalwarshelp/shared v0.0.0-20220218101729-f4cb4c1f2026 h1:ncDx2chRqGr/ZdmnZTe0FWUhrOoZxwvwADh4VF4f58I=
+github.com/tribalwarshelp/shared v0.0.0-20220218101729-f4cb4c1f2026/go.mod h1:e7btUzVL+8ESwxt8sto2uVbIJbHN43wTEg44mJW8YzM=
 github.com/vmihailenco/bufpool v0.1.11 h1:gOq2WmBrq0i2yW5QJ16ykccQ4wH9UyEsgLm6czKAd94=
 github.com/vmihailenco/bufpool v0.1.11/go.mod h1:AFf/MOy3l2CFTKbxwt0mp2MwnqjNEs5H/UxrkA5jxTQ=
 github.com/vmihailenco/msgpack/v5 v5.3.0/go.mod h1:7xyJ9e+0+9SaZT0Wt1RGleJXzli6Q/V5KbhBonMG9jc=

@@ -15,8 +15,8 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/tribalwarshelp/golang-sdk v0.0.0-20210924090040-4cb44d48db65
-	github.com/tribalwarshelp/shared v0.0.0-20210924044719-a52277d8a5e0
+	github.com/tribalwarshelp/golang-sdk v0.0.0-20220218103323-ac5a0c28e845
+	github.com/tribalwarshelp/shared v0.0.0-20220218101729-f4cb4c1f2026
 	golang.org/x/text v0.3.7
 )
 
