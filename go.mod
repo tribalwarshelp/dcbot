@@ -7,7 +7,7 @@ require (
 	github.com/Kichiyaki/go-pg-logrus-query-logger/v10 v10.0.0-20210822140425-1724064d6e5c
 	github.com/Kichiyaki/gopgutil/v10 v10.0.0-20210822140115-69ad4084d89f
 	github.com/Kichiyaki/goutil v0.1.0
-	github.com/bwmarrin/discordgo v0.23.2
+	github.com/bwmarrin/discordgo v0.24.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/joho/godotenv v1.4.0
